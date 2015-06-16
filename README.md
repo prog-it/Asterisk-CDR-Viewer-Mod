@@ -1,2 +1,7 @@
-# Asterisk-CDR-Viewer-Mod
-Simple and fast viewer for Asterisk CDRs and Recordings (Mod)
+# Asterisk CDR Viewer Mod
+Web-интерфейс на для просмотра и прослушивания записей звонков Asterisk
+
+***
+Простая установка. Справку по настройке можно найти в папке **docs**.
+
+**Посмотреть скрины и основные особенности можно на сайте [проекта](http://prog-it.github.io/Asterisk-CDR-Viewer-Mod)**
