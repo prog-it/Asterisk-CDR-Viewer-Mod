@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Asterisk CDR Viewer Mod by prog-it</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Asterisk CDR Viewer Mod</h1>
+        <h2>Simple and fast viewer for Asterisk CDRs and Recordings</h2>
+        <a href="https://github.com/prog-it/Asterisk-CDR-Viewer-Mod" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h2>
+<a id="web-интерфейс-на-php-для-просмотра-и-прослушивания-записей-звонков-asterisk" class="anchor" href="#web-%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D1%84%D0%B5%D0%B9%D1%81-%D0%BD%D0%B0-php-%D0%B4%D0%BB%D1%8F-%D0%BF%D1%80%D0%BE%D1%81%D0%BC%D0%BE%D1%82%D1%80%D0%B0-%D0%B8-%D0%BF%D1%80%D0%BE%D1%81%D0%BB%D1%83%D1%88%D0%B8%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F-%D0%B7%D0%B0%D0%BF%D0%B8%D1%81%D0%B5%D0%B9-%D0%B7%D0%B2%D0%BE%D0%BD%D0%BA%D0%BE%D0%B2-asterisk" aria-hidden="true"><span class="octicon octicon-link"></span></a>Web-интерфейс на PHP для просмотра и прослушивания записей звонков Asterisk</h2>
+
+<p>За основу взят одноименный проект на английском языке, который можно найти в интернете. Это его значительно переработанная версия, <strong>Asterisk CDR Viewer Mod</strong>.</p>
+
+<p>Ниже можно прочитать об основных особенностях и посмотреть скриншоты. Подробную информацию о том, как все установить и настроить можно найти в файле <strong>Readme</strong>, который находится в папке docs.</p>
+
+<hr>
+
+<p><strong>Если нашлись какие-либо баги или недоработки, то оставляйте свои заявки на <a href="https://github.com/prog-it/Asterisk-CDR-Viewer-Mod/issues">Гитхабе</a></strong>.</p>
+
+<p><strong><em>Скрипт распространяется под лицензией GNU GPL v3</em></strong></p>
+
+<hr>
+
+<h3>
+<a id="Основные-особенности" class="anchor" href="#%D0%9E%D1%81%D0%BD%D0%BE%D0%B2%D0%BD%D1%8B%D0%B5-%D0%BE%D1%81%D0%BE%D0%B1%D0%B5%D0%BD%D0%BD%D0%BE%D1%81%D1%82%D0%B8" aria-hidden="true"><span class="octicon octicon-link"></span></a>Основные особенности</h3>
+
+<ul>
+<li>Полностью русский интерфейс</li>
+<li>Обновленный дизайн</li>
+<li>Всплывающие подсказки</li>
+<li>Корректный экспорт записей в CSV файл</li>
+<li>Правильный подсчет стоимости звонков (плагин)</li>
+<li>Просмотр стоимости каждого звонка (плагин)</li>
+<li>Возможность указать нетарифицируемый интервал для правильного подсчета стоимости</li>
+<li>Возможность указать доп. тариф. Например: Стоимость первой минуты 1 руб., далее по 10 коп. (доп. тариф)</li>
+<li>Имя файла записи звонка хранится в базе</li>
+<li>Возможность прослушивания записи звонка через веб-интерфейс</li>
+<li>На номер телефона можно нажать и получить о нем информацию</li>
+<li>Плеер для прослушивания звонка подгружается через javascript, так что ничего не тормозит</li>
+<li>Если записи звонков архивируются, будет предложено скачать запись</li>
+<li>Если поступил факс, его также можно скачать</li>
+<li>Файлы для скачивания отдаются скриптом с возможностью докачки</li>
+<li>Папка для хранения записей может находиться в любой директории вашего сервера</li>
+</ul>
+
+<p>И еще много всего...</p>
+
+<hr>
+
+<h3>
+<a id="Общий-вид" class="anchor" href="#%D0%9E%D0%B1%D1%89%D0%B8%D0%B9-%D0%B2%D0%B8%D0%B4" aria-hidden="true"><span class="octicon octicon-link"></span></a>Общий вид</h3>
+
+<p><img src="images/screen_general.jpg" alt=""></p>
+
+<h3>
+<a id="Просмотр-записей-звонков-Здесь-же-указана-стоимость-каждого-звонка" class="anchor" href="#%D0%9F%D1%80%D0%BE%D1%81%D0%BC%D0%BE%D1%82%D1%80-%D0%B7%D0%B0%D0%BF%D0%B8%D1%81%D0%B5%D0%B9-%D0%B7%D0%B2%D0%BE%D0%BD%D0%BA%D0%BE%D0%B2-%D0%97%D0%B4%D0%B5%D1%81%D1%8C-%D0%B6%D0%B5-%D1%83%D0%BA%D0%B0%D0%B7%D0%B0%D0%BD%D0%B0-%D1%81%D1%82%D0%BE%D0%B8%D0%BC%D0%BE%D1%81%D1%82%D1%8C-%D0%BA%D0%B0%D0%B6%D0%B4%D0%BE%D0%B3%D0%BE-%D0%B7%D0%B2%D0%BE%D0%BD%D0%BA%D0%B0" aria-hidden="true"><span class="octicon octicon-link"></span></a>Просмотр записей звонков. Здесь же указана стоимость каждого звонка.</h3>
+
+<p><img src="images/screen_items.jpg" alt=""></p>
+
+<h3>
+<a id="Прослушивание-записей" class="anchor" href="#%D0%9F%D1%80%D0%BE%D1%81%D0%BB%D1%83%D1%88%D0%B8%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-%D0%B7%D0%B0%D0%BF%D0%B8%D1%81%D0%B5%D0%B9" aria-hidden="true"><span class="octicon octicon-link"></span></a>Прослушивание записей</h3>
+
+<p><img src="images/screen_audio.jpg" alt=""></p>
+
+<h3>
+<a id="Всплывающие-подсказки" class="anchor" href="#%D0%92%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B8%D0%B5-%D0%BF%D0%BE%D0%B4%D1%81%D0%BA%D0%B0%D0%B7%D0%BA%D0%B8" aria-hidden="true"><span class="octicon octicon-link"></span></a>Всплывающие подсказки</h3>
+
+<p><img src="images/screen_tooltips.jpg" alt=""></p>
+
+<h3>
+<a id="Экспорт-в-csv" class="anchor" href="#%D0%AD%D0%BA%D1%81%D0%BF%D0%BE%D1%80%D1%82-%D0%B2-csv" aria-hidden="true"><span class="octicon octicon-link"></span></a>Экспорт в CSV</h3>
+
+<p><img src="images/screen_csv.jpg" alt=""></p>
+
+<h3>
+<a id="Графики-звонков" class="anchor" href="#%D0%93%D1%80%D0%B0%D1%84%D0%B8%D0%BA%D0%B8-%D0%B7%D0%B2%D0%BE%D0%BD%D0%BA%D0%BE%D0%B2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Графики звонков</h3>
+
+<p><img src="images/screen_graph.jpg" alt=""></p>
+
+<h3>
+<a id="Длительность-звонков" class="anchor" href="#%D0%94%D0%BB%D0%B8%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D0%BE%D1%81%D1%82%D1%8C-%D0%B7%D0%B2%D0%BE%D0%BD%D0%BA%D0%BE%D0%B2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Длительность звонков</h3>
+
+<p><img src="images/screen_minutes.jpg" alt=""></p>
+
+<h3>
+<a id="Стоимость-звонков" class="anchor" href="#%D0%A1%D1%82%D0%BE%D0%B8%D0%BC%D0%BE%D1%81%D1%82%D1%8C-%D0%B7%D0%B2%D0%BE%D0%BD%D0%BA%D0%BE%D0%B2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Стоимость звонков</h3>
+
+<p><img src="images/screen_costs.jpg" alt=""></p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/prog-it/Asterisk-CDR-Viewer-Mod/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/prog-it/Asterisk-CDR-Viewer-Mod/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/prog-it/Asterisk-CDR-Viewer-Mod"></a> is maintained by <a href="https://github.com/prog-it">prog-it</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-64199932-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
