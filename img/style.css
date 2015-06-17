@@ -354,31 +354,6 @@ td.failed {
 }
 
 /* Стрелки вверх/вниз */
-/*.scroll {
-    background-color: #000;
-    border-radius: 5px;
-    bottom: 20px;
-    color: #fff;
-    display: block;
-    font: 24px/1 "Genericons";
-    opacity: 0.5;
-    padding: 5px;
-    position: fixed;
-    right: 20px;
-    text-decoration: none;
-    vertical-align: top;
-    z-index: 999;	
-}
-
-.scroll:hover {
-	opacity: 1;
-}
-
-a#scrollUp::before {
-    content: "1";
-}
-*/
-
 
 a.scroll {
 	background-color: #000;
