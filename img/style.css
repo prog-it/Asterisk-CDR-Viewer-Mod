@@ -75,7 +75,7 @@ img {
 }
 
 #header_title {
-	color: #1384C9; /*#D01414;*/
+	color: #1384C9;
 	font-family: serif;
 	font-size: 1.8em;
 	font-variant: small-caps;
@@ -101,6 +101,8 @@ img {
 #main {
 	padding-top:10px;
 	color: #000;
+	width:98%;
+	margin: 0 auto;
 }
 
 #footer, #footer a {
@@ -143,7 +145,7 @@ img {
 .cdr {
 	margin:0 auto;
 	border-width:0;
-	width:98%;
+	width: 100%;
 	font-size: 0.9em;
 }
 
@@ -155,11 +157,11 @@ img {
 
 
 .cdr th, .total td {
-	background-color: rgba(184, 240, 255, 0.69);/*#E6E6FF;*/
+	background-color: rgba(184, 240, 255, 0.69);
 	text-align:center;
 	box-shadow: 0 0 2px #85CDE1 inset;
 	border-radius:5px;
-	color:#1896B8;/*#0086AB;  #1FA9CF*/
+	color:#1896B8;
 	padding:3px;
 }
 
@@ -389,10 +391,5 @@ a#scrollUp {
 a#scrollDown {
 	bottom: 20px;
 }
-
-
-
-
-
 
 
