@@ -76,8 +76,6 @@ $site_desc = 'Детализация звонков';
 $site_robots = 'noindex, nofollow';
 # Текст в шапке
 $site_head = 'Детализация звонков';
-# Путь к favicon
-$site_favicon = 'favicon.ico';
 # Путь к основному разделу сайта
 $site_gen_section = '../';
 
