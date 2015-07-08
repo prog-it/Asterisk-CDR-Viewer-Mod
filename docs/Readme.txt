@@ -1,3 +1,11 @@
+===============================================
+ Системные требования
+===============================================
+
+PHP 5.3 и выше
+База данных Mysql
+Веб-сервер Apache или Nginx
+
 
 ===============================================
  Для чего файл "Старый код form.tpl.txt" ?
@@ -79,7 +87,7 @@ mv /var/calls/*$ymd* /var/calls/$y/$ym/$ymd/
 Все настройки скрипта прописаны в файле "inc/config.inc.php" с подробными комментариями, тут не должно возникнуть сложностей.
 
 Кратко:
-1. Скачать ZIP архив с GitHub или выполнить git clone git@github.com:prog-it/Asterisk-CDR-Viewer-Mod.git
+1. Скачать ZIP архив с GitHub или выполнить git@github.com:prog-it/Asterisk-CDR-Viewer-Mod.git
 2. Распаковать / перенести файлы в нужную папку на сервере
 3. Настроить параметры в "inc/config.inc.php"
 4. Почти готово. Если необходим доступ только для определенных пользователей, то необходимо создать файл .htpasswd
@@ -96,7 +104,7 @@ location /path/to/script {
 
 Пример конфига для Apache:
 ===
-<Location "/path/to/script">
+<Location "/cdr/">
 	AuthName "Asterisk"
 	AuthType Basic
 	AuthUserFile /path/to/.htpasswd
@@ -138,18 +146,5 @@ $admin_user_names = 'admin1,admin2,admin3';
 ===============================================
 
 Остальное можно прочитать с файле "Старый ReadMe.txt"	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	

@@ -113,9 +113,7 @@ class sendFile {
 		# Включено автоопределение
 		if ($this->ContentTypeAuto === true) {
 			$finfo = new \finfo(FILEINFO_MIME_TYPE);
-			if (is_object($finfo) === true) {
-				$res = $finfo->file($path);
-			}
+			$res = $finfo->file($path);
 		}
 		return $res;
 	}
