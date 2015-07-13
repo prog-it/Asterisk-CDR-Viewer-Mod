@@ -28,7 +28,11 @@ PHP 5.3 и выше
  Настройка Asterisk
 ===============================================
 
-Настройки для extensions.ael.
+Все изменения производим в extensions.ael, либо в extensions.conf. В зависимости от того, в какой файле у нас написан диалплан.
+
+==
+ Для extensions.ael, extensions.conf
+==
 
 В "globals" добавим пару переменных:
 
@@ -37,6 +41,10 @@ DIR_RECORDS=/var/calls/;	// папка с записями разговоров
 
 Добавим макрос.
 Сразу уточним, что в этом макросе запись прямо во время разговора конвертируется в MP3.
+
+==
+ Для extensions.ael
+==
 
 // MixMonitor
 macro recording(calling,called) {
@@ -59,6 +67,24 @@ context internal {
 	};
 };
 
+==
+ Для extensions.conf
+==
+
+[macro-recording]
+exten => s,1,GoToIf($["${RECORDING}" = "1"]?yes:no)
+exten => s,n(yes),Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${ARG1}-${ARG2});
+exten => s,n,Set(monopt=nice -n 19 /usr/bin/lame -b 32  --silent "${DIR_RECORDS}${fname}.wav"  "${DIR_RECORDS}${fname}.mp3" && rm -f "${DIR_RECORDS}${fname}.wav" && chmod o+r "${DIR_RECORDS}${fname}.mp3");
+exten => s,n,Set(CDR(filename)=${fname}.mp3);
+exten => s,n,Set(CDR(realdst)=${called});
+exten => s,n,MixMonitor(${DIR_RECORDS}${fname}.wav,b,${monopt});
+exten => s,n(no),Verbose(Exit record);
+
+Пример вызова макроса:
+[internal]
+exten => _X.,1,Macro(recording,${CALLERID(num)},${EXTEN})
+exten => _X.,n,Dial(SIP/${EXTEN},60)
+exten => _X.,n,Hangup
 
 ===============================================
  Настройка папки со звонками
