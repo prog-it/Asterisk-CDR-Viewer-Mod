@@ -71,6 +71,7 @@ context internal {
  Для extensions.conf
 ==
 
+; MixMonitor
 [macro-recording]
 exten => s,1,GoToIf($["${RECORDING}" = "1"]?yes:no)
 exten => s,n(yes),Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${ARG1}-${ARG2});
@@ -84,7 +85,7 @@ exten => s,n(no),Verbose(Exit record);
 [internal]
 exten => _X.,1,Macro(recording,${CALLERID(num)},${EXTEN})
 exten => _X.,n,Dial(SIP/${EXTEN},60)
-exten => _X.,n,Hangup
+exten => _X.,n,Hangup()
 
 ===============================================
  Настройка папки со звонками
