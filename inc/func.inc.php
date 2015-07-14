@@ -2,7 +2,7 @@
 
 /* Recorded file */
 function formatFiles($row,$calldate) {
-	global $system_monitor_dir, $system_fax_archive_dir, $system_audio_format, $system_archive_format, $system_fsize_exists;
+	global $system_monitor_dir, $system_fax_archive_dir, $system_audio_format, $system_archive_format, $system_fsize_exists, $system_column_name, $system_storage_format;
 
 	/* File name formats, please specify: */
 	
@@ -124,7 +124,7 @@ function formatFiles($row,$calldate) {
 	*/
 	
 	# uniq_name.mp3
-	$recorded_file = $row['filename'];
+	$recorded_file = $row[$system_column_name];
 	$mycalldate_ymd = substr($calldate, 0, 10); // ymd
 	$mycalldate_ym = substr($calldate, 0, 7); // ym
 	$mycalldate_y = substr($calldate, 0, 4); // y
@@ -155,7 +155,7 @@ function formatFiles($row,$calldate) {
 	// -----------------------------------------------
 	
 	# Получение имени файла и пути
-	if ($mycalldate_ymd < $mydate) {
+	if ($mycalldate_ymd < $mydate && $system_storage_format === 1) {
 		$rec['filename'] = "$mycalldate_y/$mycalldate_ym/$mycalldate_ymd/$recorded_file";
 		$rec['path'] = $system_monitor_dir.'/'.$rec['filename'];
 		$rec['filesize'] = file_exists($rec['path']) ? filesize($rec['path'])/1024 : 0;
