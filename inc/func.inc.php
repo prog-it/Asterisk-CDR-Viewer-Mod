@@ -123,39 +123,19 @@ function formatFiles($row,$calldate) {
 	
 	*/
 	
-	// uniq_name.mp3
+	# uniq_name.mp3
 	$recorded_file = $row['filename'];
-	$recorded_file_url = urlencode($recorded_file); // чтобы нормально скачивались файлы с [+] в имени
-	$mycalldate = substr($calldate, 0, 10); // ymd
+	$mycalldate_ymd = substr($calldate, 0, 10); // ymd
 	$mycalldate_ym = substr($calldate, 0, 7); // ym
 	$mycalldate_y = substr($calldate, 0, 4); // y
-	$mydate = date("Y-m-d");
+	$mydate = date('Y-m-d');
 
 	// -----------------------------------------------
-	// файл перемещ в папку по дате 
-	$fileNameDays = "$mycalldate_y/$mycalldate_ym/$mycalldate/$recorded_file";
-	// файл не перемещ по дате скриптом	
-	$fileNameToday = $recorded_file;
-	// пути к файлам
-	$fileNameDaysPath = $system_monitor_dir.'/'.$fileNameDays;
-	$fileNameTodayPath = $system_monitor_dir.'/'.$fileNameToday;
-
-	// Размеры файлов в Кб
-	if (file_exists($fileNameDaysPath)) {
-		$fileDaysSize = filesize($fileNameDaysPath)/1024;
-	}
 	
-	if (file_exists($fileNameTodayPath)) {
-		$fileTodaySize = filesize($fileNameTodayPath)/1024;
-	}
-	
-	// файлы в URL для скачивания (без base64)
-	$fileDaysUrl = "$mycalldate_y/$mycalldate_ym/$mycalldate/$recorded_file_url"; //файл перемещ в папку по дате 
-	$fileTodayUrl = $recorded_file_url; //файл не перемещ по дате скриптом
-
+	# Файл не найден
 	$tmpError = '<td class="record_col"><img class="img_notfound" src="img/record_notfound.png"></td>';
 
-	// Прослушивание и скачивание
+	# Прослушивание и скачивание
 	$tmpRec = '<td class="record_col">
 					<div class="recordBox">
 						<a onclick="showRecord(\'dl.php?f=[_file]\');"><img class="img_play" src="img/record_play.png"></a>
@@ -164,7 +144,7 @@ function formatFiles($row,$calldate) {
 				</td>
 					';
 	
-	// Только скачивание
+	# Только скачивание
 	$tmpDl = '<td class="record_col">
 					<div class="recordBox">
 						<a href="dl.php?f=[_file]"><img class="img_dl" src="img/record_dl.png"></a>
@@ -174,28 +154,28 @@ function formatFiles($row,$calldate) {
 					
 	// -----------------------------------------------
 	
-	// Получение имени файла и пути
-	if ($mycalldate < $mydate) {
-		$rec['path'] = $fileNameDaysPath;
-		$rec['filename'] = $fileNameDays;
-		$rec['filesize'] = isset($fileDaysSize) ? $fileDaysSize : 0;
+	# Получение имени файла и пути
+	if ($mycalldate_ymd < $mydate) {
+		$rec['filename'] = "$mycalldate_y/$mycalldate_ym/$mycalldate_ymd/$recorded_file";
+		$rec['path'] = $system_monitor_dir.'/'.$rec['filename'];
+		$rec['filesize'] = file_exists($rec['path']) ? filesize($rec['path'])/1024 : 0;
 	} else {
-		$rec['path'] = $fileNameTodayPath;
-		$rec['filename'] = $fileNameToday;
-		$rec['filesize'] = isset($fileTodaySize) ? $fileTodaySize : 0;	
+		$rec['filename'] = $recorded_file;
+		$rec['path'] = $system_monitor_dir.'/'.$rec['filename'];
+		$rec['filesize'] = file_exists($rec['path']) ? filesize($rec['path'])/1024 : 0;	
 	}
 	
-	// аудио
-	if (file_exists($rec['path']) && $rec['filesize'] >= $system_fsize_exists && preg_match('#(.*)\.'.$system_audio_format.'$#i', $rec['filename'])) {
+	# аудио
+	if (file_exists($rec['path']) && $recorded_file && $rec['filesize'] >= $system_fsize_exists && preg_match('#(.*)\.'.$system_audio_format.'$#i', $rec['filename'])) {
 		$tmpRes = str_replace('[_file]', base64_encode($rec['filename']), $tmpRec);
 	}
-	// архив
-	else if (isset($system_archive_format) && file_exists($rec['path'].'.'.$system_archive_format) && $rec['filesize'] >= $system_fsize_exists) {
+	# архив
+	else if (isset($system_archive_format) && $recorded_file && file_exists($rec['path'].'.'.$system_archive_format) && $rec['filesize'] >= $system_fsize_exists) {
 		$tmpRes = str_replace('[_file]', base64_encode($rec['filename'].'.'.$system_archive_format), $tmpDl);
 	}
-	// факс
+	# факс
 	//else if (file_exists($rec['path']) && preg_match('#(.*)\.tiff?$#i', $rec['filename']) && $rec['filesize'] >= $system_fsize_exists) {
-	else if (file_exists($rec['path']) && $rec['filesize'] >= $system_fsize_exists) {
+	else if (file_exists($rec['path']) && $recorded_file && $rec['filesize'] >= $system_fsize_exists) {
 		$tmpRes = str_replace('[_file]', base64_encode($rec['filename']), $tmpDl);
 	}
 	
@@ -205,12 +185,7 @@ function formatFiles($row,$calldate) {
 
 	echo $tmpRes;
 	
-}//function
-
-
-
-
-
+}
 
 
 /* CDR Table Display Functions */
