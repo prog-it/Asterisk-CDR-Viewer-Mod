@@ -280,9 +280,22 @@ legend.title {
 	z-index: 999999999999999999999999998;
 }
 
+#playerBox .objTitle {
+	margin-bottom: 8px;
+	color: #308ce0;
+	font-size: 0.85em;
+	text-align: left;
+	clear: both;
+	overflow: hidden;
+	white-space: nowrap;
+	word-wrap: break-word;
+	text-overflow: ellipsis;
+	text-shadow: 1px 1px 1px #000000;
+}
+
 #playerBox .objPlayer {
 	width:425px;
-	height:40px;
+	height: 75px;
 	margin:auto;
 	top:0;
 	left:0;

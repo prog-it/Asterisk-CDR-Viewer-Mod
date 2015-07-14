@@ -397,7 +397,7 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 				formatClid($row['clid']);
 			}
 			formatChannel($row['dstchannel']);
-			formatFiles($row,$row['calldate']);
+			formatFiles($row);
 			if ( isset($display_column['accountcode']) and $display_column['accountcode'] == 1 ) {
 				formatAccountCode($row['accountcode']);
 			}

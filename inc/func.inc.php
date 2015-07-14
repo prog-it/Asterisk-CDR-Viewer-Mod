@@ -1,7 +1,7 @@
 <?php
 
 /* Recorded file */
-function formatFiles($row,$calldate) {
+function formatFiles($row) {
 	global $system_monitor_dir, $system_fax_archive_dir, $system_audio_format, $system_archive_format, $system_fsize_exists, $system_column_name, $system_storage_format;
 
 	/* File name formats, please specify: */
@@ -125,9 +125,9 @@ function formatFiles($row,$calldate) {
 	
 	# uniq_name.mp3
 	$recorded_file = $row[$system_column_name];
-	$mycalldate_ymd = substr($calldate, 0, 10); // ymd
-	$mycalldate_ym = substr($calldate, 0, 7); // ym
-	$mycalldate_y = substr($calldate, 0, 4); // y
+	$mycalldate_ymd = substr($row['calldate'], 0, 10); // ymd
+	$mycalldate_ym = substr($row['calldate'], 0, 7); // ym
+	$mycalldate_y = substr($row['calldate'], 0, 4); // y
 	$mydate = date('Y-m-d');
 
 	// -----------------------------------------------
@@ -138,7 +138,7 @@ function formatFiles($row,$calldate) {
 	# Прослушивание и скачивание
 	$tmpRec = '<td class="record_col">
 					<div class="recordBox">
-						<a onclick="showRecord(\'dl.php?f=[_file]\');"><img class="img_play" src="img/record_play.png"></a>
+						<a onclick="showRecord(\'dl.php?f=[_file]\', \''.$row['calldate'].'\');"><img class="img_play" src="img/record_play.png"></a>
 						<a href="dl.php?f=[_file]"><img class="img_dl" src="img/record_dl.png"></a>
 					</div>
 				</td>
