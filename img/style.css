@@ -251,12 +251,6 @@ legend.title {
 }
 
 .record_col img.img_notfound {
-	filter: grayscale(100%);
-	-moz-filter: grayscale(100%);
-	-webkit-filter: grayscale(100%);
-	-ms-filter: grayscale(100%);
-	-o-filter: grayscale(100%);
-	filter: gray; /* IE 6-9 */
 	opacity: .5;
 }
 
