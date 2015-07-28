@@ -305,8 +305,8 @@ legend.title {
 }
 
 .record_col img.status {
-	margin-right:1px;
-	vertical-align:bottom;
+	margin-right: 1px;
+	vertical-align: bottom;
 }
 
 td.answer {
@@ -397,6 +397,16 @@ a#scrollUp {
 
 a#scrollDown {
 	bottom: 20px;
+}
+
+/* Остальное */
+
+.margin-left0 {
+	margin-left: 0;
+}
+
+#id_result_limit {
+	margin-left: 4px;
 }
 
 
