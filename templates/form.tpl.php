@@ -125,12 +125,20 @@ if ( isset($plugins) && $plugins && count($plugins) > 0 ) {
 <td><label for="id_result_limit">Кол-во строк</label>&ensp;</td>
 <td>
 <hr>
-<input id="id_result_limit" value="<?php 
+<input id="id_result_limit" list="list_result_limit" value="<?php 
 if (isset($_REQUEST['limit']) ) { 
 	echo htmlspecialchars($_REQUEST['limit']);
 } else {
 	echo $db_result_limit;
-} ?>" name="limit" size="6">
+} ?>" name="limit" size="6" autocomplete="off">
+<datalist id="list_result_limit">
+	<option value="100"></option>
+	<option value="500"></option>
+	<option value="1000"></option>
+	<option value="2000"></option>
+	<option value="5000"></option>
+	<option value="10000"></option>
+</datalist>
 </td>
 </tr>
 </table>
