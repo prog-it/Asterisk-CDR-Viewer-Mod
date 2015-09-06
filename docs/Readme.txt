@@ -80,7 +80,7 @@ exten => s,1,GoToIf($["${RECORDING}" = "1"]?yes:no)
 exten => s,n(yes),Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${ARG1}-${ARG2});
 exten => s,n,Set(monopt=nice -n 19 /usr/bin/lame -b 32  --silent "${DIR_RECORDS}${fname}.wav"  "${DIR_RECORDS}${fname}.mp3" && rm -f "${DIR_RECORDS}${fname}.wav" && chmod o+r "${DIR_RECORDS}${fname}.mp3");
 exten => s,n,Set(CDR(filename)=${fname}.mp3);
-exten => s,n,Set(CDR(realdst)=${called});
+exten => s,n,Set(CDR(realdst)=${ARG2});
 exten => s,n,MixMonitor(${DIR_RECORDS}${fname}.wav,b,${monopt});
 exten => s,n(no),Verbose(Exit record);
 
@@ -89,6 +89,35 @@ exten => s,n(no),Verbose(Exit record);
 exten => _X.,1,Macro(recording,${CALLERID(num)},${EXTEN})
 exten => _X.,n,Dial(SIP/${EXTEN},60)
 exten => _X.,n,Hangup()
+
+====
+ Дополнительно (необязательно)
+====
+
+В Asterisk если используется макрос, то звонок совершается с экстеншеном s. Чтобы Номер назначения был действительным, а не s или ~~s~~, то сделаем следующее:
+Через phpMyAdmin. В таблицу нужно добавить новое поле "realdst" с типом "varchar" и размером "80". Теперь нужно добавить триггер на таблицу.
+Для этого зайдем в Триггеры - Добавить триггер. Назначаем имя триггеру, остальное оставляем без изменений. В поле "Определение" вставляем текст ниже (то, что начинается на // - не вставлять):
+//-- Начало --//
+BEGIN
+	IF ((NEW.dst = 's' OR NEW.dst = '~~s~~') AND NEW.realdst != '') THEN 
+		SET NEW.dst = NEW.realdst;
+	END IF;
+END
+//-- / Конец --//
+
+Для того, чтобы в поле "realdst" записывался правильный Номер назначения, нужно в отредактировать диалплан. Макрос выше в редактировании не нуждается.
+В используемом у вас макросе необходимо добавить строчку, это только пример. Задайте правильные имена параметров (${number}, ${ARG1}).
+==
+ Для extensions.ael
+==
+Set(CDR(realdst)=${number});
+
+==
+ Для extensions.conf
+==
+exten => s,n,Set(CDR(realdst)=${ARG1});
+
+
 
 ===============================================
  Настройка папки со звонками

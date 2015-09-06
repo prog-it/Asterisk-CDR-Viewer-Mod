@@ -21,7 +21,7 @@ foreach ( array_keys($_REQUEST) as $key ) {
 	$_REQUEST[$key] = substr($dbh->quote($_REQUEST[$key]),1,-1);
 }
 
-$startmonth = is_blank($_REQUEST['startmonth']) ? date('m') : $_REQUEST['startmonth'];
+$startmonth = is_blank($_REQUEST['startmonth']) ? date('m') : sprintf('%02d', $_REQUEST['startmonth']);
 $startyear = is_blank($_REQUEST['startyear']) ? date('Y') : $_REQUEST['startyear'];
 
 if (is_blank($_REQUEST['startday'])) {
@@ -37,7 +37,7 @@ $startmin = is_blank($_REQUEST['startmin']) ? '00' : sprintf('%02d',$_REQUEST['s
 $startdate = "'$startyear-$startmonth-$startday $starthour:$startmin:00'";
 $start_timestamp = mktime( $starthour, $startmin, 59, $startmonth, $startday, $startyear );
 
-$endmonth = is_blank($_REQUEST['endmonth']) ? date('m') : $_REQUEST['endmonth'];  
+$endmonth = is_blank($_REQUEST['endmonth']) ? date('m') : sprintf('%02d', $_REQUEST['endmonth']); 
 $endyear = is_blank($_REQUEST['endyear']) ? date('Y') : $_REQUEST['endyear'];  
 
 if (is_blank($_REQUEST['endday']) || (isset($_REQUEST['endday']) && ($_REQUEST['endday'] > date('t', strtotime("$endyear-$endmonth-01"))))) {

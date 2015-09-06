@@ -43,7 +43,7 @@ for ( $i = 2000; $i <= date('Y'); $i++) {
 :
 <input type="text" name="startmin" id="startmin" size="2" maxlength="2" value="<?php if (isset($_REQUEST['startmin'])) { echo htmlspecialchars($_REQUEST['startmin']); } else { echo '00'; } ?>">&ensp;
 По&ensp;
-<input type="text" name="endday" id="endday" size="2" maxlength="2" value="<?php if (isset($_REQUEST['endday'])) { echo htmlspecialchars($_REQUEST['endday']); } else { echo '31'; } ?>">
+<input type="text" name="endday" id="endday" size="2" maxlength="2" value="<?php if (isset($_REQUEST['endday'])) { echo htmlspecialchars($_REQUEST['endday']); } else { echo date('t', time()); } ?>">
 <select name="endmonth" id="endmonth">
 <?php
 foreach ($months as $i => $month) {
@@ -69,6 +69,19 @@ for ( $i = 2000; $i <= date('Y'); $i++) {
 <input type="text" name="endhour" id="endhour" size="2" maxlength="2" value="<?php if (isset($_REQUEST['endhour'])) { echo htmlspecialchars($_REQUEST['endhour']); } else { echo '23'; } ?>">
 :
 <input type="text" name="endmin" id="endmin" size="2" maxlength="2" value="<?php if (isset($_REQUEST['endmin'])) { echo htmlspecialchars($_REQUEST['endmin']); } else { echo '59'; } ?>">
+&emsp;
+<select id="id_range" name="range" onchange="selectRange(this.value);">
+	<option class="head" value="">Выбрать период...</option>
+	<option value="td">Сегодня</option>
+	<option value="yd">Вчера</option>
+	<option value="3d">Последние 3 дня</option>
+	<option value="tw">Текущая неделя</option>
+	<option value="pw">Предыдущая неделя</option>
+	<option value="3w">Последние 3 недели</option>
+	<option value="tm">Текущий месяц</option>
+	<option value="pm">Предыдущий месяц</option>
+	<option value="3m">Последние 3 месяца</option>
+</select>
 </td>
 <td rowspan="13" valign='top' align='right'>
 <fieldset>

@@ -14,12 +14,17 @@
 <link rel="stylesheet" type="text/css" href="<?php echo isset($cdn_addr) ? $cdn_css_tooltip : 'img/simptip.css'; ?>">
 <script src="img/script.js?<?=filemtime('img/script.js');?>"></script>
 </head>
-<body>
+<body onload="showScroll();">
 <div id="container">
 	<table id="header">
 		<tr>
 			<td id="header_title" colspan="2">
-				<span><a title="Перейти в основной раздел" href="<?php echo $site_gen_section;?>">&#8592;</a></span>
+				<?php 
+				if (isset($site_gen_section) && $site_gen_section != '') {
+					echo '<span><a title="Перейти в основной раздел" href="'.$site_gen_section.'">&#8592;</a></span>';
+				}
+				?>
+				
 				<a href="."><?php echo $site_head;?></a>
 			</td>
 		</tr>
