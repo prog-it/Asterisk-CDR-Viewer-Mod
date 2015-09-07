@@ -366,8 +366,8 @@ td.failed {
 
 #scrollBox {
 	position: fixed;
-	bottom: 45%;
-	right: 20px;
+	top: 45%;
+	right: 10px;
 	height: 80px;
 	display: none;
 	z-index: 999;

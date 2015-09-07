@@ -85,8 +85,9 @@ function selectRange(range) {
 			last = new Date(curr.getFullYear(), curr.getMonth()+1, 0);
 			break;
 		default:
-			first = new Date(curr.getFullYear(), curr.getMonth(), 1);
-			last = new Date(curr.getFullYear(), curr.getMonth()+1, 0);		
+			first = curr.getDate();
+			last = new Date(curr.getFullYear(), curr.getMonth()+1, 0);
+			first = new Date(curr.setDate(first));
 	}
 	
 
@@ -121,7 +122,7 @@ function showScroll() {
 	var docHeight = document.documentElement.clientHeight;
 	var scroll = document.getElementById('scrollBox');
 	
-	if (bodyHeight >= docHeight) {
+	if (bodyHeight > docHeight) {
 		scroll.style.display = 'block';
 	}
 }
