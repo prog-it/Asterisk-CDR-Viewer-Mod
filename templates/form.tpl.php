@@ -43,7 +43,7 @@ for ( $i = 2000; $i <= date('Y'); $i++) {
 :
 <input type="text" name="startmin" id="startmin" size="2" maxlength="2" value="<?php if (isset($_REQUEST['startmin'])) { echo htmlspecialchars($_REQUEST['startmin']); } else { echo '00'; } ?>">&ensp;
 По&ensp;
-<input type="text" name="endday" id="endday" size="2" maxlength="2" value="<?php if (isset($_REQUEST['endday'])) { echo htmlspecialchars($_REQUEST['endday']); } else { echo date('t', time()); } ?>">
+<input type="text" name="endday" id="endday" size="2" maxlength="2" value="<?php if (isset($_REQUEST['endday'])) { echo htmlspecialchars($_REQUEST['endday']); } else { echo '31'; } ?>">
 <select name="endmonth" id="endmonth">
 <?php
 foreach ($months as $i => $month) {
