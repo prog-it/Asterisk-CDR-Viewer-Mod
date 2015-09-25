@@ -195,9 +195,18 @@ function formatCallDate($calldate,$uniqueid) {
 }
 
 function formatChannel($channel) {
+	global $display_full_channel;
 	$chan_type = explode('/', $channel);
 	$chan_id = explode('-', $chan_type[1]);
-	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="Канал: '.$chan_type[0].'/'.$chan_id[0].'">'.$chan_type[0].'</abbr></td>' . PHP_EOL;
+	
+	$chan['short'] = $chan_type[0];
+	$chan['full'] = $chan_type[0].'/'.$chan_id[0];
+	$chan['tooltip'] = 'Канал: '.$chan['full'];
+	$chan['txt'] = $chan['short'];
+	if (isset($display_full_channel) && $display_full_channel === true) {
+		$chan['txt'] = $chan['full'];
+	}
+	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="'.$chan['tooltip'].'">'.$chan['txt'].'</abbr></td>' . PHP_EOL;
 }
 
 function formatClid($clid) {
