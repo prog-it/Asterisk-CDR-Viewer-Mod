@@ -3,13 +3,16 @@
 var playerId = 'playerBox';
 // Автовоспроизведение
 var playerAutoplay = true;
-// Показывать ли дату записи
+// Показ даты записи
 var playerTitle = true;
+// Символ, который будет добавлен в Title во время воспроизведения
+var playerSymbol = '&#9835;&#9835;&#9835;';
 
 // Показать запись
 function showRecord(link, title) {
 	var elem = document.getElementById(playerId);
 	var autoplay = (playerAutoplay === true) ? '&amp;auto=play' : '';
+	var docTitle = document.title;
 	title = (playerTitle === true) ? 'Дата: '+title : '';
 	link = encodeURIComponent(link);
 	var content = 
@@ -24,14 +27,17 @@ function showRecord(link, title) {
 	
 	elem.style.opacity = 1;
 	elem.style.visibility = 'visible';
+	document.getElementsByTagName('title')[0].innerHTML = playerSymbol + ' ' + docTitle;
 	elem.innerHTML = content;
 }
 
 // Скрыть запись
 function hideRecord() {
 	var elem = document.getElementById(playerId);
+	var docTitle = document.title;
 	elem.style.visibility = 'hidden';
 	elem.style.opacity = 0;
+	document.title = docTitle.match(/\s(.*?)$/)[1];
 	elem.innerHTML = '';
 }
 
