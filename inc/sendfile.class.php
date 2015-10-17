@@ -111,7 +111,7 @@ class sendFile {
 	private function getMime($path) {
 		$res = 'application/octet-stream';
 		# Включено автоопределение
-		if ($this->ContentTypeAuto === true) {
+		if ($this->ContentTypeAuto === true && class_exists('\finfo')) {
 			$finfo = new \finfo(FILEINFO_MIME_TYPE);
 			$res = $finfo->file($path);
 		}
