@@ -161,7 +161,7 @@ m=`date +%m -d "-1 day"`
 d=`date +%d -d "-1 day"`
 ymd=`date +%Y-%m-%d -d "-1 day"`
 mkdir -p /var/calls/$y/$m/$d/
-mv /var/calls/*$ymd* /var/calls/$y/$ym/$d/
+mv /var/calls/*$ymd* /var/calls/$y/$m/$d/
 ===
 
 ==
