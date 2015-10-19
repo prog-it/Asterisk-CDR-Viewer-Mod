@@ -128,6 +128,8 @@ function formatFiles($row) {
 	$mycalldate_ymd = substr($row['calldate'], 0, 10); // ymd
 	$mycalldate_ym = substr($row['calldate'], 0, 7); // ym
 	$mycalldate_y = substr($row['calldate'], 0, 4); // y
+	$mycalldate_m = substr($row['calldate'], 5, 2); // m
+	$mycalldate_d = substr($row['calldate'], 8, 2); // d
 	$mydate = date('Y-m-d');
 
 	// -----------------------------------------------
@@ -157,13 +159,18 @@ function formatFiles($row) {
 	# Получение имени файла и пути
 	if ($mycalldate_ymd < $mydate && $system_storage_format === 1) {
 		$rec['filename'] = "$mycalldate_y/$mycalldate_ym/$mycalldate_ymd/$recorded_file";
-		$rec['path'] = $system_monitor_dir.'/'.$rec['filename'];
-		$rec['filesize'] = file_exists($rec['path']) ? filesize($rec['path'])/1024 : 0;
+	} else if ($mycalldate_ymd < $mydate && $system_storage_format === 2) {
+		$rec['filename'] = "$mycalldate_y/$mycalldate_m/$mycalldate_d/$recorded_file";
+	} else if ($system_storage_format === 3) {
+		$rec['filename'] = "$mycalldate_y/$mycalldate_ym/$mycalldate_ymd/$recorded_file";
+	} else if ($system_storage_format === 4) {
+		$rec['filename'] = "$mycalldate_y/$mycalldate_m/$mycalldate_d/$recorded_file";
 	} else {
 		$rec['filename'] = $recorded_file;
-		$rec['path'] = $system_monitor_dir.'/'.$rec['filename'];
-		$rec['filesize'] = file_exists($rec['path']) ? filesize($rec['path'])/1024 : 0;	
 	}
+	
+	$rec['path'] = $system_monitor_dir.'/'.$rec['filename'];
+	$rec['filesize'] = file_exists($rec['path']) ? filesize($rec['path'])/1024 : 0;	
 	
 	# аудио
 	if (file_exists($rec['path']) && $recorded_file && $rec['filesize'] >= $system_fsize_exists && preg_match('#(.*)\.'.$system_audio_format.'$#i', $rec['filename'])) {
