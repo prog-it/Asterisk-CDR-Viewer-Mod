@@ -12,7 +12,7 @@ function my_callrates() {
 						"Россия" 			=> "(dst LIKE '8%') and (dst NOT LIKE '89%' and dst NOT LIKE '79%' and dst NOT LIKE '8351%' and dst NOT LIKE '8495%' and dst NOT LIKE '8499%' and dst NOT LIKE '8812%' and dst NOT LIKE '8800%') and (LENGTH(dst)=11)",
 	);
 
-	$my_callrates_csv_file = __DIR__ . '/' . $callrate_csv_fileName;
+	$my_callrates_csv_file = dirname(__FILE__) . '/' . $callrate_csv_fileName;
 
 	/****************************************************************************************/
 	$my_bill_tototal_q = "SELECT $group_by_field AS group_by_field FROM $db_name.$db_table_name $where GROUP BY group_by_field ORDER BY group_by_field ASC LIMIT $result_limit";

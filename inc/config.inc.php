@@ -46,6 +46,7 @@ $system_fsize_exists = '10';
 $system_tmp_dir = '/tmp';
 
 ### Формат аудио, в котором записываются записи звонков
+# Плеер не воспроизводит WAV формат!
 $system_audio_format = 'mp3';
 
 ### Если записи звонков / факсов через некоторое время архивируются, раскомментировать строку ниже и указать формат архива (zip gz rar bz2 и т.д.)
@@ -62,7 +63,7 @@ $callrate_free_interval = 3;
 # Имя файла с тарифами
 $callrate_csv_fileName = 'gen_callrates.csv';
 # Путь к файлу с тарифами, также этот путь прописан в настройках плагина
-$callrate_csv_file = __DIR__ . '/plugins/' . $callrate_csv_fileName;
+$callrate_csv_file = dirname(__FILE__) . '/plugins/' . $callrate_csv_fileName;
 $callrate_currency = '';
 # Массив путей к файлам с тарифами -> array('/var/tarif1.csv', '/var/tarif2.csv', '/var/tarif3.csv');
 $callrate_cache = array();

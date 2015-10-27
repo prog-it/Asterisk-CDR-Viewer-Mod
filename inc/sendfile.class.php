@@ -1,14 +1,12 @@
 <?php
 
 /**
-* Class sendFile
+* Class Sendfile
 * Send local file to download
 * Support "206 Partial Content"
 */
 
-namespace SendFile;
-
-class sendFile {
+class Sendfile {
 	# Локаль
 	public $Locale = 'ru_RU.utf-8';
 	# Скорость в Кб/сек
