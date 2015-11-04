@@ -70,11 +70,32 @@ $callrate_cache = array();
 
 ### URL сервиса информации о номере
 # Где "%n" будет заменено на номер телефона
-//$rev_lookup_url = 'http://zvonki.octo.net/number.aspx/' . '%n';
+$rev_lookup_url = 'http://zvonki.octo.net/number.aspx/' . '%n';
 # Минимальная длина номер, для которого будет подставлен URL с инфо о номере
 $rev_min_number_len = 7;
 
+### Включение / Отключение показа условий поиска и типов отчетов
+## Если 1 - показать, 0 - скрыть
+$display_search = array();
+# Показ типа отчета - Параллельные звонки
+$display_search['chart_cc'] = 0;
+# Показ типа отчета - ASR и ACD (Коэффициент отвеченных вызовов / Средняя продолжительность вызова)
+$display_search['asr_report'] = 0;
+# Показ условия поиска - Входящий канал
+$display_search['channel'] = 0;
+# Показ условия поиска - Имя звонящего
+$display_search['clid'] = 0;
+# Показ условия поиска - DID (Внешний номер)
+$display_search['did'] = 0;
+# Показ условия поиска - Исходящий канал
+$display_search['dstchannel'] = 0;
+# Показ условия поиска - Описание (userfield)
+$display_search['userfield'] = 0;
+# Показ условия поиска - Код аккаунта
+$display_search['accountcode'] = 0;
+
 ### Включение / Отключение показа некоторых колонок
+## Если 1 - показать, 0 - скрыть
 $display_column = array();
 $display_column['clid'] = 0;
 $display_column['accountcode'] = 0;
@@ -84,8 +105,8 @@ $display_column['callrates_dst'] = 0;
 
 ### Показать Исх. / Вх. канал полностью
 # В колонках Исх. канал и Вх. канал, Например, вместо "SIP" будет показано "SIP/123"
-# Если true - включено, false - отключено
-$display_full_channel = false;
+# Если 1 - показать, 0 - скрыть
+$display_full_channel = 0;
 
 ### CDN
 # Если CDN не используется, то закомментировать $cdn_addr

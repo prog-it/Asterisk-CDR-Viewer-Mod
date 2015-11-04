@@ -203,14 +203,11 @@ function formatCallDate($calldate,$uniqueid) {
 
 function formatChannel($channel) {
 	global $display_full_channel;
-	$chan_type = explode('/', $channel);
-	$chan_id = explode('-', $chan_type[1]);
-	
-	$chan['short'] = $chan_type[0];
-	$chan['full'] = $chan_type[0].'/'.$chan_id[0];
+	$chan['short'] = preg_replace('#(.*)\/[^\/]+$#', '$1', $channel);
+	$chan['full'] = preg_replace('#(.*)-[^-]+$#', '$1', $channel);
 	$chan['tooltip'] = 'Канал: '.$chan['full'];
 	$chan['txt'] = $chan['short'];
-	if (isset($display_full_channel) && $display_full_channel === true) {
+	if (isset($display_full_channel) && $display_full_channel == 1) {
 		$chan['txt'] = $chan['full'];
 	}
 	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="'.$chan['tooltip'].'">'.$chan['txt'].'</abbr></td>' . PHP_EOL;
@@ -270,7 +267,8 @@ function formatDisposition($disposition, $amaflags) {
 			$amaflags = 'DEFAULT';
 	}
 	
-	$style = ''; // стиль текста для вызовов
+	// Стиль текста для вызовов
+	$style = '';
 	switch ($disposition) {
 		case 'ANSWERED':
 			$dispTxt = 'Отвечено';
@@ -375,7 +373,7 @@ function formatMoney($number, $cents = 2, $title = '') {
 	} else {
 		echo '<td class="chart_data">&nbsp;</td>\n' . PHP_EOL;
 	}
-} // formatMoney
+}
 
 /* 
 	CallRate
@@ -393,11 +391,19 @@ function callrates($dst,$duration,$file) {
 	
 	if (!array_key_exists($file, $callrate_cache)) {
 		$callrate_cache[$file] = array();
-		$fr = fopen($file, "r") or die("Can not open callrate file ($file).");
-		while(($fr_data = fgetcsv($fr, 1000, ",")) !== false) {
-			$callrate_cache[$file][$fr_data[0]] = array($fr_data[1], $fr_data[2], $fr_data[3], $fr_data[4]);
+		$fr = fopen($file, 'r') or exit('Не удалось открыть файл с тарифами ('.$file.')');
+		while (($fr_data = fgetcsv($fr, 1000, ',')) !== false) {
+			if ($fr_data[0] !== null) {
+				// Не указан доп. тариф
+				if (!isset($fr_data[4])) {
+					$fr_data[4] = null;
+				}
+				$callrate_cache[$file][$fr_data[0]] = array($fr_data[1], $fr_data[2], $fr_data[3], $fr_data[4]);
+			}
 		}
 		fclose($fr);
+		
+		
 	}
 
 	for ($i = strlen($dst); $i > 0; $i--) {

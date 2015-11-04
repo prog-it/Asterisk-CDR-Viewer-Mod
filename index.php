@@ -26,7 +26,7 @@ $startyear = is_blank($_REQUEST['startyear']) ? date('Y') : $_REQUEST['startyear
 
 if (is_blank($_REQUEST['startday'])) {
 	$startday = '01';
-} elseif (isset($_REQUEST['startday']) && ($_REQUEST['startday'] > date('t', strtotime("$startyear-$startmonth")))) {
+} elseif (isset($_REQUEST['startday']) && ($_REQUEST['startday'] > date('t', strtotime("$startyear-$startmonth-01")))) {
 	$startday = $_REQUEST['startday'] = date('t', strtotime("$startyear-$startmonth"));
 } else {
 	$startday = sprintf('%02d',$_REQUEST['startday']);
@@ -58,15 +58,12 @@ if ( is_blank($_REQUEST['src']) ) {
 	$src_number = NULL;
 } else {
 	$src_number = asteriskregexp2sqllike( 'src', '' );
-	#echo $src_number;
 }
 
 if ( is_blank($_REQUEST['dst']) ) {
 	$dst_number = NULL;
 } else {
 	$dst_number = asteriskregexp2sqllike( 'dst', '' );
-	#echo $_REQUEST['dst'];
-#	$dst_number = $_REQUEST['dst']; 
 }
 
 if ( is_blank($_REQUEST['did']) ) {
@@ -74,13 +71,6 @@ if ( is_blank($_REQUEST['did']) ) {
 } else {
 	$did_number = asteriskregexp2sqllike( 'did', '' );
 }
-
-if ( is_blank($_REQUEST['dstchannel']) ) {
-        $dstchannel_1 = NULL;
-} else {
-        $dstchannel_1 = 'dstchannel' ;
-}
-
 
 $date_range = "calldate BETWEEN $startdate AND $enddate";
 $mod_vars['channel'][] = is_blank($_REQUEST['channel']) ? NULL : $_REQUEST['channel'];
@@ -190,18 +180,8 @@ if ( $search_condition == '' ) {
 		$search_condition = ' AND ';
 	}
 }
-if ($src_number == NULL && $dst_number == NULL && $dstchannel_1 == NULL && $disposition == NULL ) {
-	$where = "clid not like '%Id=%'  $channel $src $clid $did $dstchannel $dst $userfield $accountcode $disposition";
-/*	if ($src_number != NULL or $dist_number != NULL or $dstchannel_1 != NULL) {
-		$where = "clid not like '%Id=%' and $channel $src $clid $did $dstchannel $dst $userfield $accountcode $disposition";
-		echo $where;
-}*/
-	// echo $disposition;
-	//echo $dist_number; 
-} else {
-	$where = "clid not like '%Id=%' and $channel $src $clid $did $dstchannel $dst $userfield $accountcode $disposition";
-	//echo $where;
-}
+
+$where = "$channel $src $clid $did $dstchannel $dst $userfield $accountcode $disposition";
 
 $duration = (!isset($_REQUEST['dur_min']) || is_blank($_REQUEST['dur_max'])) ? NULL : "duration BETWEEN '$_REQUEST[dur_min]' AND '$_REQUEST[dur_max]'";
 
@@ -210,6 +190,16 @@ if ( strlen($duration) > 0 ) {
 		$where = "$where $search_condition $duration";
 	} else {
 		$where = "$where $duration";
+	}
+}
+
+$billsec = (!isset($_REQUEST['bill_min']) || is_blank($_REQUEST['bill_max'])) ? NULL : "billsec BETWEEN '$_REQUEST[bill_min]' AND '$_REQUEST[bill_max]'";
+
+if ( strlen($billsec) > 0 ) {
+	if ( strlen($where) > 8 ) {
+		$where = "$where $search_condition $billsec";
+	} else {
+		$where = "$where $billsec";
 	}
 }
 
@@ -230,7 +220,7 @@ if ( isset($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) {
 	//$csv_file = md5(time().'-'.$where).'.csv';
 	if (!file_exists("$system_tmp_dir/$csv_file")) {
 		$handle = fopen("$system_tmp_dir/$csv_file", "w");
-		$query = "SELECT * FROM $db_name.$db_table_name $where $order $sort LIMIT $result_limit";
+		$query = "SELECT * FROM $db_table_name $where $order $sort LIMIT $result_limit";
 		try {
 			$sth = $dbh->query($query);
 		}
@@ -295,7 +285,7 @@ if ( isset($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) {
 }
 
 if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
-	$query = "SELECT count(*) FROM $db_name.$db_table_name $where LIMIT $result_limit";
+	$query = "SELECT count(*) FROM $db_table_name $where LIMIT $result_limit";
 	try {
 		$sth = $dbh->query($query);
 	}
@@ -321,7 +311,7 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 
 		try {
 		
-		$query = "SELECT *, unix_timestamp(calldate) as call_timestamp FROM $db_name.$db_table_name $where $order $sort LIMIT $result_limit";
+		$query = "SELECT *, unix_timestamp(calldate) as call_timestamp FROM $db_table_name $where $order $sort LIMIT $result_limit";
 		$sth = $dbh->query($query);
 		if (!$sth) {
 			echo "\nPDO::errorInfo():\n";
@@ -371,7 +361,7 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 				<?php
 				$i = 0;
 			}
-			echo "  <tr class=\"record\">\n";
+			echo '<tr class="record">';
 			formatCallDate($row['calldate'],$row['uniqueid']);
 			formatDisposition($row['disposition'], $row['amaflags']);
 			formatSrc($row['src'],$row['clid']);
@@ -388,7 +378,7 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 				$rates = callrates($row['dst'],$row['billsec'],$callrate_csv_file);
 				formatMoney($rates[4],2,htmlspecialchars($rates[2]));
 				if ( isset($display_column['callrates_dst']) and $display_column['callrates_dst'] == 1 ) {
-					echo "<td>". htmlspecialchars($rates[2]) ."</td>\n";
+					echo '<td>'. htmlspecialchars($rates[2]) .'</td>';
 				}
 			}			
 			formatApp($row['lastapp'], $row['lastdata']);
@@ -402,7 +392,7 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 				formatAccountCode($row['accountcode']);
 			}
 			formatUserField($row['userfield']);
-			echo "  </tr>\n";
+			echo '</tr>';
 		}
 		}
 		catch (PDOException $e) {
@@ -502,7 +492,7 @@ switch ($group) {
 }
 
 if ( isset($_REQUEST['need_chart']) && $_REQUEST['need_chart'] == 'true' ) {
-	$query2 = "SELECT $group_by_field AS group_by_field, count(*) AS total_calls, sum(duration) AS total_duration FROM $db_name.$db_table_name $where GROUP BY group_by_field ORDER BY group_by_field ASC LIMIT $result_limit";
+	$query2 = "SELECT $group_by_field AS group_by_field, count(*) AS total_calls, sum(duration) AS total_duration FROM $db_table_name $where GROUP BY group_by_field ORDER BY group_by_field ASC LIMIT $result_limit";
 
 	$tot_calls = 0;
 	$tot_duration = 0;
@@ -550,16 +540,63 @@ if ( isset($_REQUEST['need_chart']) && $_REQUEST['need_chart'] == 'true' ) {
 			$bar_duration = $row[2]/$max_duration*100;
 			$percent_tot_duration = intval($row[2]/$tot_duration_secs*100);
 			$html_duration = sprintf('%02d', intval($row[2]/60)).':'.sprintf('%02d', intval($row[2]%60));
-			echo "  <tr>\n";
-			echo "    <td class=\"end_col\">$row[0]</td><td class=\"center_col\"><div class=\"bar_calls\" style=\"width : $bar_calls%\">$row[1] - $percent_tot_calls%</div><div class=\"bar_duration\" style=\"width : $bar_duration%\">$html_duration - $percent_tot_duration%</div></td><td class=\"chart_data\">$avg_call_time</td>\n";
-			echo "  </tr>\n";
+			echo '<tr>';
+			echo "<td class=\"end_col\">$row[0]</td><td class=\"center_col\"><div class=\"bar_calls\" style=\"width : $bar_calls%\">$row[1] - $percent_tot_calls%</div><div class=\"bar_duration\" style=\"width : $bar_duration%\">$html_duration - $percent_tot_duration%</div></td><td class=\"chart_data\">$avg_call_time</td>";
+			echo '</tr>';
 		}
 		echo "</table>";
 	}
 }
+
+if ( isset($_REQUEST['need_minutes_report']) && $_REQUEST['need_minutes_report'] == 'true' ) {
+	$query2 = "SELECT $group_by_field AS group_by_field, count(*) AS total_calls, sum(duration), sum(billsec) AS total_duration FROM $db_table_name $where GROUP BY group_by_field ORDER BY group_by_field ASC LIMIT $result_limit";
+
+	$tot_calls = 0;
+	$tot_duration = 0;
+
+	echo '<p class="center title">Детализация звонков - Расход минут по '.$graph_col_title.'</p><table class="cdr">
+		<tr>
+			<th class="end_col">'. $graph_col_title . '</th>
+			<th class="end_col">Кол-во звонков</th>
+			<th class="end_col">Минут по биллингу</th>
+			<th class="end_col">Ср. время звонка</th>
+		</tr>';
+
+	try {
+		$sth = $dbh->query($query2);
+		if (!$sth) {
+			echo "\nPDO::errorInfo():\n";
+			print_r($dbh->errorInfo());
+		}
+		while ($row = $sth->fetch(PDO::FETCH_NUM)) {
+			$html_duration = sprintf('%02d', intval($row[3]/60)).':'.sprintf('%02d', intval($row[3]%60));
+			$html_duration_avg	= sprintf('%02d', intval(($row[3]/$row[1])/60)).':'.sprintf('%02d', intval(($row[3]/$row[1])%60));
+
+			echo '<tr class="record">';
+			echo "<td class=\"end_col\">$row[0]</td><td class=\"chart_data\">$row[1]</td><td class=\"chart_data\">$html_duration</td><td class=\"chart_data\">$html_duration_avg</td>";
+			echo '</tr>';
+			
+			$tot_duration += $row[3];
+			$tot_calls += $row[1];
+		}
+	}
+	catch (PDOException $e) {
+		print $e->getMessage();
+	}
+	$sth = NULL;
+	
+	$html_duration = sprintf('%02d', intval($tot_duration/60)).':'.sprintf('%02d', intval($tot_duration%60));
+	$html_duration_avg = sprintf('%02d', intval(($tot_duration/$tot_calls)/60)).':'.sprintf('%02d', intval(($tot_duration/$tot_calls)%60));
+
+	echo '<tr>';
+	echo "<th class=\"chart_data\">Всего</th><th class=\"chart_data\">$tot_calls</th><th class=\"chart_data\">$html_duration</th><th class=\"chart_data\">$html_duration_avg</th>";
+	echo '</tr>';
+	echo '</table>';
+}
+
 if ( isset($_REQUEST['need_chart_cc']) && $_REQUEST['need_chart_cc'] == 'true' ) {
 	$date_range = "( (calldate BETWEEN $startdate AND $enddate) or (calldate + interval duration second  BETWEEN $startdate AND $enddate) or ( calldate + interval duration second >= $enddate AND calldate <= $startdate ) )";
-	$where = "$channel $dstchannel $src $clid $dst $userfield $accountcode $disposition $duration $cdr_user_name ";
+	$where = "$channel $dstchannel $src $clid $dst $userfield $accountcode $disposition $duration $cdr_user_name";
 	if ( strlen($where) > 9 ) {
 		$where = "WHERE $date_range AND ( $where )";
 	} else {
@@ -573,8 +610,8 @@ if ( isset($_REQUEST['need_chart_cc']) && $_REQUEST['need_chart_cc'] == 'true' )
 
 	if ( strpos($group_by_field,'DATE_FORMAT') === false ) {
 		/* not date time fields */
-		$query3 = "SELECT $group_by_field AS group_by_field, count(*) AS total_calls, unix_timestamp(calldate) AS ts, duration FROM $db_name.$db_table_name $where GROUP BY group_by_field, unix_timestamp(calldate) ORDER BY group_by_field ASC LIMIT $result_limit";
-
+		$query3 = "SELECT $group_by_field AS group_by_field, count(*) AS total_calls, unix_timestamp(calldate) AS ts, duration FROM $db_table_name $where GROUP BY group_by_field, unix_timestamp(calldate) ORDER BY group_by_field ASC LIMIT $result_limit";
+		
 		try {
 			$sth = $dbh->query($query3);
 			if (!$sth) {
@@ -610,7 +647,7 @@ if ( isset($_REQUEST['need_chart_cc']) && $_REQUEST['need_chart_cc'] == 'true' )
 		$sth = NULL;
 	} else {
 		/* data fields */
-		$query3 = "SELECT unix_timestamp(calldate) AS ts, duration FROM $db_name.$db_table_name $where ORDER BY unix_timestamp(calldate) ASC LIMIT $result_limit";
+		$query3 = "SELECT unix_timestamp(calldate) AS ts, duration FROM $db_table_name $where ORDER BY unix_timestamp(calldate) ASC LIMIT $result_limit";
 		$group_by_str = '';
 		
 		try {
@@ -660,11 +697,11 @@ if ( isset($_REQUEST['need_chart_cc']) && $_REQUEST['need_chart_cc'] == 'true' )
 		}
 	}
 	if ( $tot_calls ) {
-		echo '<p class="center title">Детализация звонков - Параллельных звонков по '.$graph_col_title.'</p><table class="cdr">
+		echo '<p class="center title">Детализация звонков - Параллельные звонки по '.$graph_col_title.'</p><table class="cdr">
 		<tr>
 			<th class="end_col">'. $graph_col_title . '</th>
-			<th class="center_col">Всего звонков: '. $tot_calls .' / Максимум звонков: '. $max_calls .'</th>
-			<th class="end_col">Time</th>
+			<th class="center_col">Всего звонков: '. $tot_calls .' | Максимум звонков: '. $max_calls .'</th>
+			<th class="end_col">Дата звонка</th>
 		</tr>';
 	
 		ksort($result_array_cc);
@@ -673,75 +710,29 @@ if ( isset($_REQUEST['need_chart_cc']) && $_REQUEST['need_chart_cc'] == 'true' )
 			$full_time = strftime( '%Y-%m-%d %H:%M:%S', $result_array_cc[ "$group_by_key" ][0] );
 			$group_by_cur = $result_array_cc[ "$group_by_key" ][1];
 			$bar_calls = $group_by_cur/$max_calls*100;
-			echo "  <tr>\n";
-			echo "    <td class=\"end_col\">$group_by_key</td><td class=\"center_col\"><div class=\"bar_calls\" style=\"width : $bar_calls%\">&nbsp;$group_by_cur</div></td><td>$full_time</td>\n";
-			echo "  </tr>\n";
+			echo '<tr>';
+			echo "<td class=\"end_col\">$group_by_key</td><td class=\"center_col\"><div class=\"bar_calls\" style=\"width : $bar_calls%\">&nbsp;$group_by_cur</div></td><td class=\"end_col\">$full_time</td>";
+			echo '</tr>';
 		}
 
-		echo "</table>";
+		echo '</table>';
 	}
-}
-
-if ( isset($_REQUEST['need_minutes_report']) && $_REQUEST['need_minutes_report'] == 'true' ) {
-	$query2 = "SELECT $group_by_field AS group_by_field, count(*) AS total_calls, sum(duration), sum(billsec) AS total_duration FROM $db_name.$db_table_name $where GROUP BY group_by_field ORDER BY group_by_field ASC LIMIT $result_limit";
-
-	$tot_calls = 0;
-	$tot_duration = 0;
-
-	echo '<p class="center title">Детализация звонков - Расход минут по '.$graph_col_title.'</p><table class="cdr">
-		<tr>
-			<th class="end_col">'. $graph_col_title . '</th>
-			<th class="end_col">Кол-во звонков</th>
-			<th class="end_col">Минут по биллингу</th>
-			<th class="end_col">Ср. время звонка</th>
-		</tr>';
-
-	try {
-		$sth = $dbh->query($query2);
-		if (!$sth) {
-			echo "\nPDO::errorInfo():\n";
-			print_r($dbh->errorInfo());
-		}
-		while ($row = $sth->fetch(PDO::FETCH_NUM)) {
-			$html_duration = sprintf('%02d', intval($row[3]/60)).':'.sprintf('%02d', intval($row[3]%60));
-			$html_duration_avg	= sprintf('%02d', intval(($row[3]/$row[1])/60)).':'.sprintf('%02d', intval(($row[3]/$row[1])%60));
-
-			echo "  <tr  class=\"record\">\n";
-			echo "    <td class=\"end_col\">$row[0]</td><td class=\"chart_data\">$row[1]</td><td class=\"chart_data\">$html_duration</td><td class=\"chart_data\">$html_duration_avg</td>\n";
-			echo "  </tr>\n";
-			
-			$tot_duration += $row[3];
-			$tot_calls += $row[1];
-		}
-	}
-	catch (PDOException $e) {
-		print $e->getMessage();
-	}
-	$sth = NULL;
-	
-	$html_duration = sprintf('%02d', intval($tot_duration/60)).':'.sprintf('%02d', intval($tot_duration%60));
-	$html_duration_avg = sprintf('%02d', intval(($tot_duration/$tot_calls)/60)).':'.sprintf('%02d', intval(($tot_duration/$tot_calls)%60));
-
-	echo "  <tr>\n";
-	echo "    <th class=\"chart_data\">Всего</th><th class=\"chart_data\">$tot_calls</th><th class=\"chart_data\">$html_duration</th><th class=\"chart_data\">$html_duration_avg</th>\n";
-	echo "  </tr>\n";
-	echo "</table>";
 }
 
 if ( isset($_REQUEST['need_asr_report']) && $_REQUEST['need_asr_report'] == 'true' ) {
-	$query2 = "SELECT $group_by_field AS group_by_field, disposition, count(*) AS total_calls, sum(billsec) AS total_duration FROM $db_name.$db_table_name $where GROUP BY group_by_field,disposition ORDER BY group_by_field ASC LIMIT $result_limit";
+	$query2 = "SELECT $group_by_field AS group_by_field, disposition, count(*) AS total_calls, sum(billsec) AS total_duration FROM $db_table_name $where GROUP BY group_by_field,disposition ORDER BY group_by_field ASC LIMIT $result_limit";
 
 	$tot_calls = 0;
 	$tot_duration = 0;
 
-	echo '<p class="center title">Детализация звонков - ASR / ACD report by '.$graph_col_title.'</p><table class="cdr">
+	echo '<p class="center title">Детализация звонков - ASR и ACD по '.$graph_col_title.'</p><table class="cdr">
 		<tr>
 			<th class="end_col">'. $graph_col_title . '</th>
 			<th class="end_col">ASR</th>
 			<th class="end_col">ACD</th>
-			<th class="end_col">All calls</th>
-			<th class="end_col">Answered calls</th>
-			<th class="end_col">Billable Sec</th>
+			<th class="end_col">Всего звонков</th>
+			<th class="end_col">Отвеченных звонков</th>
+			<th class="end_col">Секунд по биллингу</th>
 		</tr>';
 
 	$asr_cur_key = '';
@@ -761,9 +752,9 @@ if ( isset($_REQUEST['need_asr_report']) && $_REQUEST['need_asr_report'] == 'tru
 		}
 		while ($row = $sth->fetch(PDO::FETCH_NUM)) {
 			if ( $asr_cur_key != '' and $row[0] != $asr_cur_key ) {
-				echo "  <tr  class=\"record\">\n";
-				echo "    <td class=\"end_col\">$asr_cur_key</td></td><td class=\"chart_data\">",intval(($asr_answered_calls/$asr_total_calls)*100),"</td><td class=\"chart_data\">",intval($asr_bill_secs/($asr_answered_calls?$asr_answered_calls:1)),"<td class=\"chart_data\">$asr_total_calls</td><td class=\"chart_data\">$asr_answered_calls</td><td class=\"chart_data\">$asr_bill_secs</td>\n";
-				echo "  </tr>\n";
+				echo '<tr  class="record">';
+				echo "<td class=\"end_col\">$asr_cur_key</td><td class=\"chart_data\">",intval(($asr_answered_calls/$asr_total_calls)*100),"</td><td class=\"chart_data\">",intval($asr_bill_secs/($asr_answered_calls?$asr_answered_calls:1)),"</td><td class=\"chart_data\">$asr_total_calls</td><td class=\"chart_data\">$asr_answered_calls</td><td class=\"chart_data\">$asr_bill_secs</td>";
+				echo '</tr>';
 				$asr_answered_calls = $asr_total_calls = $asr_bill_secs = 0;
 			}
 			$asr_total_calls += $row[2];
@@ -785,15 +776,15 @@ if ( isset($_REQUEST['need_asr_report']) && $_REQUEST['need_asr_report'] == 'tru
 	$sth = NULL;
 
 	if ( $asr_cur_key != '' ) {
-		echo "  <tr  class=\"record\">\n";
-		echo "    <td class=\"end_col\">$asr_cur_key</td></td><td class=\"chart_data\">",intval(($asr_answered_calls/$asr_total_calls)*100),"</td><td class=\"chart_data\">",intval($asr_bill_secs/($asr_answered_calls?$asr_answered_calls:1)),"<td class=\"chart_data\">$asr_total_calls</td><td class=\"chart_data\">$asr_answered_calls</td><td class=\"chart_data\">$asr_bill_secs</td>","\n";
-		echo "  </tr>\n";
+		echo '<tr class="record">';
+		echo "<td class=\"end_col\">$asr_cur_key</td><td class=\"chart_data\">",intval(($asr_answered_calls/$asr_total_calls)*100),"</td><td class=\"chart_data\">",intval($asr_bill_secs/($asr_answered_calls?$asr_answered_calls:1)),"</td><td class=\"chart_data\">$asr_total_calls</td><td class=\"chart_data\">$asr_answered_calls</td><td class=\"chart_data\">$asr_bill_secs</td>";
+		echo '</tr>';
 	}
 
-	echo "  <tr>\n";
-	echo "    <th class=\"chart_data\">Всего</th></th><th class=\"chart_data\">",intval(($all_asr_answered_calls/$all_asr_total_calls)*100),"</th><th class=\"chart_data\">",intval($all_asr_bill_secs/($all_asr_answered_calls?$all_asr_answered_calls:1)),"<th class=\"chart_data\">$all_asr_total_calls</th><th class=\"chart_data\">$all_asr_answered_calls</th><th class=\"chart_data\">$all_asr_bill_secs</th>","\n";
-	echo "  </tr>\n";
-	echo "</table>";
+	echo '<tr>';
+	echo "<th class=\"chart_data\">Всего</th><th class=\"chart_data\">",intval(($all_asr_answered_calls/$all_asr_total_calls)*100),"</th><th class=\"chart_data\">",intval($all_asr_bill_secs/($all_asr_answered_calls?$all_asr_answered_calls:1)),"</th><th class=\"chart_data\">$all_asr_total_calls</th><th class=\"chart_data\">$all_asr_answered_calls</th><th class=\"chart_data\">$all_asr_bill_secs</th>";
+	echo '</tr>';
+	echo '</table>';
 
 }
 
