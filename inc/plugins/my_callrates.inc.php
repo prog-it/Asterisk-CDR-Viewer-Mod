@@ -15,7 +15,7 @@ function my_callrates() {
 	$my_callrates_csv_file = dirname(__FILE__) . '/' . $callrate_csv_fileName;
 
 	/****************************************************************************************/
-	$my_bill_tototal_q = "SELECT $group_by_field AS group_by_field FROM $db_name.$db_table_name $where GROUP BY group_by_field ORDER BY group_by_field ASC LIMIT $result_limit";
+	$my_bill_tototal_q = "SELECT $group_by_field AS group_by_field FROM $db_table_name $where GROUP BY group_by_field ORDER BY group_by_field ASC LIMIT $result_limit";
 	
 
 	$my_callrates_total = array();
@@ -53,7 +53,7 @@ function my_callrates() {
 			echo "<tr class=\"record\">";
 			echo '<td style="text-align:center;">'. $row[0] ."</td>";
 			foreach ( array_keys($my_call_rates) as $key ) {
-				$my_bill_ch_q = "SELECT dst, billsec FROM $db_name.$db_table_name $where and $group_by_field = '". $row[0] ."' and " . $my_call_rates["$key"];
+				$my_bill_ch_q = "SELECT dst, billsec FROM $db_table_name $where and $group_by_field = '". $row[0] ."' and " . $my_call_rates["$key"];
 				$summ_local = 0;
 				
 				$sth2 = $dbh->query($my_bill_ch_q);
