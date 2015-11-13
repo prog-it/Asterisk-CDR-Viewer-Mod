@@ -1,7 +1,7 @@
 
 <div id="footer">
 <div id="footerBox">
-	<a href="https://github.com/prog-it/Asterisk-CDR-Viewer-Mod">Asterisk CDR Viewer Mod v2.0</a>
+	<a href="https://github.com/prog-it/Asterisk-CDR-Viewer-Mod">Asterisk CDR Viewer Mod v2.2.2.1</a>
 </div>
 </div>
 </div>
