@@ -404,7 +404,6 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 }
 ?>
 
-<!-- Display Call Usage GRAPH -->
 <?php
 
 echo '<a id="GRAPH"></a>';

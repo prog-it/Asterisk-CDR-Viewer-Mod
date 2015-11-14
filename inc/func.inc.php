@@ -2,7 +2,7 @@
 
 /* Recorded file */
 function formatFiles($row) {
-	global $system_monitor_dir, $system_fax_archive_dir, $system_audio_format, $system_archive_format, $system_fsize_exists, $system_column_name, $system_storage_format;
+	global $system_monitor_dir, $system_audio_format, $system_archive_format, $system_fsize_exists, $system_column_name, $system_storage_format;
 
 	/* File name formats, please specify: */
 	
