@@ -174,6 +174,12 @@ if ( isset($_REQUEST['disposition_neg']) && $_REQUEST['disposition_neg'] == 'tru
 	$disposition = (empty($_REQUEST['disposition']) || $_REQUEST['disposition'] == 'all') ? NULL : "$search_condition disposition = '$_REQUEST[disposition]'";
 }
 
+if ( isset($_REQUEST['lastapp_neg']) && $_REQUEST['lastapp_neg'] == 'true' ) {
+	$lastapp = (empty($_REQUEST['lastapp']) || $_REQUEST['lastapp'] == 'all') ? NULL : "$search_condition lastapp != '$_REQUEST[lastapp]'";
+} else {
+	$lastapp = (empty($_REQUEST['lastapp']) || $_REQUEST['lastapp'] == 'all') ? NULL : "$search_condition lastapp = '$_REQUEST[lastapp]'";
+}
+
 if ( $search_condition == '' ) {
 	if ( isset($_REQUEST['search_mode']) && $_REQUEST['search_mode'] == 'any' ) {
 		$search_condition = ' OR ';
@@ -182,7 +188,7 @@ if ( $search_condition == '' ) {
 	}
 }
 
-$where = "$channel $src $clid $did $dstchannel $dst $userfield $accountcode $disposition";
+$where = "$channel $src $clid $did $dstchannel $dst $userfield $accountcode $disposition $lastapp";
 
 $duration = (!isset($_REQUEST['dur_min']) || is_blank($_REQUEST['dur_max'])) ? NULL : "duration BETWEEN '$_REQUEST[dur_min]' AND '$_REQUEST[dur_max]'";
 
@@ -596,7 +602,7 @@ if ( isset($_REQUEST['need_minutes_report']) && $_REQUEST['need_minutes_report']
 
 if ( isset($_REQUEST['need_chart_cc']) && $_REQUEST['need_chart_cc'] == 'true' ) {
 	$date_range = "( (calldate BETWEEN $startdate AND $enddate) or (calldate + interval duration second  BETWEEN $startdate AND $enddate) or ( calldate + interval duration second >= $enddate AND calldate <= $startdate ) )";
-	$where = "$channel $dstchannel $src $clid $dst $userfield $accountcode $disposition $duration $cdr_user_name";
+	$where = "$channel $dstchannel $src $clid $dst $userfield $accountcode $disposition $lastapp $duration $cdr_user_name";
 	if ( strlen($where) > 9 ) {
 		$where = "WHERE $date_range AND ( $where )";
 	} else {

@@ -223,19 +223,6 @@ if (isset($_REQUEST['limit']) ) {
 </tr>
 <? } ?>
 
-<? if ($display_search['userfield'] == 1) { ?>
-<tr>
-<td><input <?php if (isset($_REQUEST['order']) && $_REQUEST['order'] == 'userfield') { echo 'checked="checked"'; } ?> type="radio" id="id_order_userfield" name="order" value="userfield">&nbsp;<label for="id_order_userfield">Описание</label></td>
-<td><input class="margin-left0" type="text" name="userfield" id="userfield" value="<?php if (isset($_REQUEST['userfield'])) { echo htmlspecialchars($_REQUEST['userfield']); } ?>">
-<input <?php if ( isset($_REQUEST['userfield_neg'] ) &&  $_REQUEST['userfield_neg'] == 'true' ) { echo 'checked="checked"'; } ?> type="checkbox" name="userfield_neg" value="true" id="id_userfield_neg"> <label for="id_userfield_neg">Не</label> &ensp;
-<input <?php if (empty($_REQUEST['userfield_mod']) || $_REQUEST['userfield_mod'] == 'begins_with') { echo 'checked="checked"'; } ?> type="radio" name="userfield_mod" value="begins_with" id="id_userfield_mod1"> <label for="id_userfield_mod1">Начинается на</label> &ensp;
-<input <?php if (isset($_REQUEST['userfield_mod']) && $_REQUEST['userfield_mod'] == 'contains') { echo 'checked="checked"'; } ?> type="radio" name="userfield_mod" value="contains" id="id_userfield_mod2"> <label for="id_userfield_mod2">Содержит</label> &ensp; 
-<input <?php if (isset($_REQUEST['userfield_mod']) && $_REQUEST['userfield_mod'] == 'ends_with') { echo 'checked="checked"'; } ?> type="radio" name="userfield_mod" value="ends_with" id="id_userfield_mod3"> <label for="id_userfield_mod3">Кончается на</label> &ensp;
-<input <?php if (isset($_REQUEST['userfield_mod']) && $_REQUEST['userfield_mod'] == 'exact') { echo 'checked="checked"'; } ?> type="radio" name="userfield_mod" value="exact" id="id_userfield_mod4"> <label for="id_userfield_mod4">Равно</label> 
-</td>
-</tr>
-<? } ?>
-
 <? if ($display_search['accountcode'] == 1) { ?>
 <tr>
 <td><input <?php if (isset($_REQUEST['order']) && $_REQUEST['order'] == 'accountcode') { echo 'checked="checked"'; } ?> type="radio" id="id_order_accountcode" name="order" value="accountcode">&nbsp;<label for="id_order_accountcode">Код аккаунта</label></td>
@@ -249,6 +236,19 @@ if (isset($_REQUEST['limit']) ) {
 </tr>
 <? } ?>
 
+<? if ($display_search['userfield'] == 1) { ?>
+<tr>
+<td><input <?php if (isset($_REQUEST['order']) && $_REQUEST['order'] == 'userfield') { echo 'checked="checked"'; } ?> type="radio" id="id_order_userfield" name="order" value="userfield">&nbsp;<label for="id_order_userfield">Описание</label></td>
+<td><input class="margin-left0" type="text" name="userfield" id="userfield" value="<?php if (isset($_REQUEST['userfield'])) { echo htmlspecialchars($_REQUEST['userfield']); } ?>">
+<input <?php if ( isset($_REQUEST['userfield_neg'] ) &&  $_REQUEST['userfield_neg'] == 'true' ) { echo 'checked="checked"'; } ?> type="checkbox" name="userfield_neg" value="true" id="id_userfield_neg"> <label for="id_userfield_neg">Не</label> &ensp;
+<input <?php if (empty($_REQUEST['userfield_mod']) || $_REQUEST['userfield_mod'] == 'begins_with') { echo 'checked="checked"'; } ?> type="radio" name="userfield_mod" value="begins_with" id="id_userfield_mod1"> <label for="id_userfield_mod1">Начинается на</label> &ensp;
+<input <?php if (isset($_REQUEST['userfield_mod']) && $_REQUEST['userfield_mod'] == 'contains') { echo 'checked="checked"'; } ?> type="radio" name="userfield_mod" value="contains" id="id_userfield_mod2"> <label for="id_userfield_mod2">Содержит</label> &ensp; 
+<input <?php if (isset($_REQUEST['userfield_mod']) && $_REQUEST['userfield_mod'] == 'ends_with') { echo 'checked="checked"'; } ?> type="radio" name="userfield_mod" value="ends_with" id="id_userfield_mod3"> <label for="id_userfield_mod3">Кончается на</label> &ensp;
+<input <?php if (isset($_REQUEST['userfield_mod']) && $_REQUEST['userfield_mod'] == 'exact') { echo 'checked="checked"'; } ?> type="radio" name="userfield_mod" value="exact" id="id_userfield_mod4"> <label for="id_userfield_mod4">Равно</label> 
+</td>
+</tr>
+<? } ?>
+
 <tr>
 <td><input <?php if (isset($_REQUEST['order']) && $_REQUEST['order'] == 'duration') { echo 'checked="checked"'; } ?> type="radio" id="id_order_duration" name="order" value="duration">&nbsp;<label for="id_order_duration">Продолжительность</label></td>
 <td><label for="id_dur_min">Между</label>&nbsp;
@@ -258,6 +258,24 @@ if (isset($_REQUEST['limit']) ) {
 &nbsp;<label for="id_dur_max">Секунд</label>
 </td>
 </tr>
+
+<? if ($display_search['lastapp'] == 1) { ?>
+<tr>
+<td><input <?php if (isset($_REQUEST['order']) && $_REQUEST['order'] == 'lastapp') { echo 'checked="checked"'; } ?> type="radio" id="id_order_lastapp" name="order" value="lastapp">&nbsp;<label for="id_order_lastapp">Приложение</label></td>
+<td>
+<input <?php if ( isset($_REQUEST['lastapp_neg'] ) && $_REQUEST['lastapp_neg'] == 'true' ) { echo 'checked="checked"'; } ?> class="margin-left0" type="checkbox" name="lastapp_neg" id="id_lastapp_neg" value="true"> <label for="id_lastapp_neg">Не</label>&nbsp;
+<select name="lastapp" id="lastapp">
+<option <?php if (empty($_REQUEST['lastapp']) || $_REQUEST['lastapp'] == 'all') { echo 'selected="selected"'; } ?> value="all">Любое</option>
+<option <?php if (isset($_REQUEST['lastapp']) && $_REQUEST['lastapp'] == 'Dial') { echo 'selected="selected"'; } ?> value="Dial">Набор номера</option>
+<option <?php if (isset($_REQUEST['lastapp']) && $_REQUEST['lastapp'] == 'Hangup') { echo 'selected="selected"'; } ?> value="Hangup">Разъединение</option>
+<option <?php if (isset($_REQUEST['lastapp']) && $_REQUEST['lastapp'] == 'Playback') { echo 'selected="selected"'; } ?> value="Playback">Воспроизведение</option>
+<option <?php if (isset($_REQUEST['lastapp']) && $_REQUEST['lastapp'] == 'RetryDial') { echo 'selected="selected"'; } ?> value="RetryDial">Повторный набор</option>
+<option <?php if (isset($_REQUEST['lastapp']) && $_REQUEST['lastapp'] == 'Queue') { echo 'selected="selected"'; } ?> value="Queue">Очередь</option>
+</select>
+</td>
+</tr>
+<? } ?>
+
 <tr>
 <td><input <?php if (isset($_REQUEST['order']) && $_REQUEST['order'] == 'disposition') { echo 'checked="checked"'; } ?> type="radio" id="id_order_disposition" name="order" value="disposition">&nbsp;<label for="id_order_disposition">Статус звонка</label></td>
 <td>

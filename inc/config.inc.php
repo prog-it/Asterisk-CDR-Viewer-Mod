@@ -89,10 +89,12 @@ $display_search['clid'] = 0;
 $display_search['did'] = 0;
 # Показ условия поиска - Исходящий канал
 $display_search['dstchannel'] = 0;
-# Показ условия поиска - Описание (userfield)
-$display_search['userfield'] = 0;
 # Показ условия поиска - Код аккаунта
 $display_search['accountcode'] = 0;
+# Показ условия поиска - Описание (userfield)
+$display_search['userfield'] = 0;
+# Показ условия поиска - Приложение
+$display_search['lastapp'] = 0;
 
 ### Включение / Отключение показа некоторых колонок
 ## Если 1 - показать, 0 - скрыть
