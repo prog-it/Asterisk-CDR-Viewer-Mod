@@ -174,12 +174,6 @@ if ( isset($_REQUEST['disposition_neg']) && $_REQUEST['disposition_neg'] == 'tru
 	$disposition = (empty($_REQUEST['disposition']) || $_REQUEST['disposition'] == 'all') ? NULL : "$search_condition disposition = '$_REQUEST[disposition]'";
 }
 
-if ( isset($_REQUEST['lastapp_neg']) && $_REQUEST['lastapp_neg'] == 'true' ) {
-	$lastapp = (empty($_REQUEST['lastapp']) || $_REQUEST['lastapp'] == 'all') ? NULL : "$search_condition lastapp != '$_REQUEST[lastapp]'";
-} else {
-	$lastapp = (empty($_REQUEST['lastapp']) || $_REQUEST['lastapp'] == 'all') ? NULL : "$search_condition lastapp = '$_REQUEST[lastapp]'";
-}
-
 if ( $search_condition == '' ) {
 	if ( isset($_REQUEST['search_mode']) && $_REQUEST['search_mode'] == 'any' ) {
 		$search_condition = ' OR ';
@@ -188,7 +182,21 @@ if ( $search_condition == '' ) {
 	}
 }
 
-$where = "$channel $src $clid $did $dstchannel $dst $userfield $accountcode $disposition $lastapp";
+$where = "$channel $src $clid $did $dstchannel $dst $userfield $accountcode $disposition";
+
+if ( isset($_REQUEST['lastapp_neg']) && $_REQUEST['lastapp_neg'] == 'true' ) {
+	$lastapp = (empty($_REQUEST['lastapp']) || $_REQUEST['lastapp'] == 'all') ? NULL : "lastapp != '$_REQUEST[lastapp]'";
+} else {
+	$lastapp = (empty($_REQUEST['lastapp']) || $_REQUEST['lastapp'] == 'all') ? NULL : "lastapp = '$_REQUEST[lastapp]'";
+}
+
+if ( strlen($lastapp) > 0 ) {
+	if ( strlen($where) > 8 ) {
+		$where = "$where $search_condition $lastapp";
+	} else {
+		$where = "$where $lastapp";
+	}
+}
 
 $duration = (!isset($_REQUEST['dur_min']) || is_blank($_REQUEST['dur_max'])) ? NULL : "duration BETWEEN '$_REQUEST[dur_min]' AND '$_REQUEST[dur_max]'";
 
