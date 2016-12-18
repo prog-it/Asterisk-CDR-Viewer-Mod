@@ -1,6 +1,15 @@
 <?php
 
-require_once 'inc/config.inc.php';
+if (isset($_REQUEST['config'])) {
+    if (preg_match("/^[A-Za-z0-9]+$/",$_REQUEST['config'])) {
+        require_once 'inc/config-' . $_REQUEST['config'] . '.inc.php';
+    } else {
+        require_once 'inc/config.inc.php';
+    }
+} else {
+    require_once 'inc/config.inc.php';
+}
+
 require_once 'inc/sendfile.class.php';
 
 if (isset($_REQUEST['f'])) {
