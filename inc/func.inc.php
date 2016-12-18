@@ -124,7 +124,12 @@ function formatFiles($row) {
 	*/
 	
 	# uniq_name.mp3
-	$recorded_file = $row[$system_column_name];
+	/* patch: remove warnings if recorded filename is missing in database */
+	if (isset($row[$system_column_name])) {
+	    $recorded_file = $row[$system_column_name];
+	} else {
+	    $recorded_file = '';
+	}
 	$mycalldate_ymd = substr($row['calldate'], 0, 10); // ymd
 	$mycalldate_ym = substr($row['calldate'], 0, 7); // ym
 	$mycalldate_y = substr($row['calldate'], 0, 4); // y
@@ -292,6 +297,7 @@ function formatDisposition($disposition, $amaflags) {
 			break;
 		default:
 			$dispTxt = $disposition;
+			$img = '';
 	}
 
 	echo '<td class="record_col '.$style.'"><img class="status" src="'.$img.'"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="AMA Flag: '.$amaflags.'">'.$dispTxt.'</abbr></td>' . PHP_EOL;
@@ -343,8 +349,11 @@ function asteriskregexp2sqllike($source_data, $user_num) {
 }
 
 /* empty() wrapper */
-function is_blank($value) {
-	return empty($value) && !is_numeric($value);
+function is_blank(&$value) {
+            if (isset($value)) { /* eliminate warnings */
+		return empty($value) && !is_numeric($value);
+            }
+    	    return true;
 }
 
 /* 
