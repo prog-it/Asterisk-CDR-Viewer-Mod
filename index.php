@@ -1,6 +1,16 @@
 <?php //error_reporting(E_ALL | E_STRICT); ini_set('display_errors', 'On');
 
-require_once 'inc/config.inc.php';
+/* enable custom configs */
+if (isset($_REQUEST['config'])) {
+    if (preg_match("/^[A-Za-z0-9]+$/",$_REQUEST['config'])) {
+	require_once 'inc/config-' . $_REQUEST['config'] . '.inc.php';
+    } else {
+	require_once 'inc/config.inc.php';
+    }
+} else {
+    require_once 'inc/config.inc.php';
+}
+
 require_once 'inc/func.inc.php';
 require_once 'inc/version.inc.php';
 
