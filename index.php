@@ -316,12 +316,6 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 	}
 	if ( $tot_calls_raw ) {
 
-		if ( $tot_calls_raw > $result_limit ) {
-			echo '<p class="center title">Детализация звонков - показаны '. $result_limit .' из '. $tot_calls_raw .' звонков </p><table class="cdr">';
-		} else {
-			echo '<p class="center title">Детализация звонков - найдено '. $tot_calls_raw .' звонков </p><table class="cdr">';
-		}
-
 		$i = $h_step - 1;
 
 		try {
@@ -332,7 +326,35 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 			echo "\nPDO::errorInfo():\n";
 			print_r($dbh->errorInfo());
 		}
-		while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
+		
+		$rawresult = $sth->fetchAll(PDO::FETCH_ASSOC);
+
+		/* proper asterisk 13 patch */
+		if ($display_search['duphide'] == 1) {
+		    foreach($rawresult as $val) {
+			    $superresult[$val['uniqueid']."-".$val['disposition']] = $val;
+		    }
+		    foreach($superresult as $val) {
+			    if ($val['disposition'] == "ANSWERED" &&
+				array_key_exists($val['uniqueid']."-"."NO ANSWER" , $superresult) )
+			    {
+				    unset ($superresult[$val['uniqueid']."-"."NO ANSWER"]);
+			    }
+		    }
+		    $filtered_count = count($rawresult) - count($superresult);
+		} else {
+		    $superresult = $rawresult;
+		    $filtered_count = 0;
+		}
+
+		if ( $tot_calls_raw > $result_limit ) {
+			echo '<p class="center title">Детализация звонков - показаны '. ($result_limit - $filtered_count) .' из '. $tot_calls_raw . '/' . $result_limit . ', отфильтровано ' . $filtered_count . ' записей </p><table class="cdr">';
+		} else {
+			echo '<p class="center title">Детализация звонков - найдено '. $tot_calls_raw . ', отфильтровано ' . $filtered_count . ' записей </p><table class="cdr">';
+		}
+
+
+		foreach ( $superresult as $key=>$row ) {
 			++$i;
 			if ($i == $h_step) {
 			?>
@@ -346,9 +368,9 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 						echo '<th class="record_col">Экстеншен</th>';
 					}
 				?>
-				<th class="record_col">Продолжительность</th>
+				<th class="record_col">Время</th>
 				<?php
-				if ( isset($_REQUEST['use_callrates']) && $_REQUEST['use_callrates'] == 'true' ) {
+				if ( isset($_REQUEST['use_callrates']) && $_REQUEST['use_callrates'] == 'true' && $display_search['callrates'] == 1) {
 					echo '<th class="record_col">Тариф</th>';
 					// Показать Направление
 					if ( isset($display_column['callrates_dst']) and $display_column['callrates_dst'] == 1 ) {
@@ -376,6 +398,7 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 				<?php
 				$i = 0;
 			}
+
 			echo '<tr class="record">';
 			formatCallDate($row['calldate'],$row['uniqueid']);
 			formatDisposition($row['disposition'], $row['amaflags']);
@@ -389,11 +412,11 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 				formatDst($row['dst'], $row['dcontext'] );
 			}
 			formatDuration($row['duration'], $row['billsec']);
-			if ( isset($_REQUEST['use_callrates']) && $_REQUEST['use_callrates'] == 'true' ) {
+			if ( isset($_REQUEST['use_callrates']) && $_REQUEST['use_callrates'] == 'true' && $display_search['callrates'] == 1) {
 				$rates = callrates($row['dst'],$row['billsec'],$callrate_csv_file);
 				formatMoney($rates[4],2,htmlspecialchars($rates[2]));
 				if ( isset($display_column['callrates_dst']) and $display_column['callrates_dst'] == 1 ) {
-					echo '<td>'. htmlspecialchars($rates[2]) .'</td>';
+					echo '<td>'. htmlspecialchars($rates[2]) . '</td>';
 				}
 			}			
 			formatApp($row['lastapp'], $row['lastdata']);
@@ -408,7 +431,9 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 			}
 			formatUserField($row['userfield']);
 			echo '</tr>';
+
 		}
+		
 		}
 		catch (PDOException $e) {
 			print $e->getMessage();

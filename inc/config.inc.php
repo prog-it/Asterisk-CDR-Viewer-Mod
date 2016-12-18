@@ -88,13 +88,17 @@ $display_search['clid'] = 0;
 # Показ условия поиска - DID (Внешний номер)
 $display_search['did'] = 0;
 # Показ условия поиска - Исходящий канал
-$display_search['dstchannel'] = 0;
+$display_search['dstchannel'] = 1;
 # Показ условия поиска - Код аккаунта
 $display_search['accountcode'] = 0;
 # Показ условия поиска - Описание (userfield)
 $display_search['userfield'] = 0;
 # Показ условия поиска - Приложение
 $display_search['lastapp'] = 0;
+# Удаление дублирующихся записей в стиле asterisk 13
+$display_search['duphide'] = 1;
+# Показ цены звонка
+$display_search['callrates'] = 0;
 
 ### Включение / Отключение показа некоторых колонок
 ## Если 1 - показать, 0 - скрыть
