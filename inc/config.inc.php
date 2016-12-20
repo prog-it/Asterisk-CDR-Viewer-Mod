@@ -4,9 +4,9 @@
 $db_type = 'mysql';
 $db_host = 'localhost';
 $db_port = '3306';
-$db_user = 'asterisk';
-$db_pass = 'asterisk';
-$db_name = 'asterisk';
+$db_user = 'asteriskuser';
+$db_pass = '';
+$db_name = 'asteriskcdrdb';
 $db_table_name = 'cdr';
 $db_options = array();
 // $db_options = array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8");
@@ -18,7 +18,7 @@ $db_result_limit = '100';
 $h_step = 30;
 
 ### Название столбца в БД, в котором хранится название записи звонка
-$system_column_name = 'filename';
+$system_column_name = 'recordingfile';
 
 ### Формат хранения файлов записей Asterisk
 ## Если 1, то файлы записей должны распределяться скриптом по папкам в соответствии с датой "/var/calls/2015/2015-01/2015-01-01". 
@@ -34,10 +34,10 @@ $system_column_name = 'filename';
 # Записи за все даты находятся в папках в соответствии с датой "/var/calls/2015/12/01"
 
 ## Если др. значение, то все записи хранятся в одной папке (/var/calls)
-$system_storage_format = 1;
+$system_storage_format = 4;
 
 ### Папка, где находятся записи Asterisk
-$system_monitor_dir = '/var/calls'; // без слеша на конце
+$system_monitor_dir = '/var/spool/asterisk/monitor'; // без слеша на конце
 
 ### Размер файла в Килобайтах, больше которого считается, что файл существует
 $system_fsize_exists = '10';
@@ -46,8 +46,7 @@ $system_fsize_exists = '10';
 $system_tmp_dir = '/tmp';
 
 ### Формат аудио, в котором записываются записи звонков
-# Плеер не воспроизводит WAV формат!
-$system_audio_format = 'mp3';
+$system_audio_format = 'wav';
 
 ### Если записи звонков / факсов через некоторое время архивируются, раскомментировать строку ниже и указать формат архива (zip gz rar bz2 и т.д.)
 # Имя архива должно быть = имя_файла.mp3.$system_archive_format (имя_файла.mp3.zip)
@@ -104,7 +103,9 @@ $display_column['accountcode'] = 0;
 $display_column['extension'] = 0;
 # Показ направления звонка
 $display_column['callrates_dst'] = 0;
-
+# Показывать приложение Queue и Playback
+$display_column['queue'] = 0;
+$display_column['Playback'] = 0;
 ### Показать Исх. / Вх. канал полностью
 # В колонках Исх. канал и Вх. канал, Например, вместо "SIP" будет показано "SIP/123"
 # Если 1 - показать, 0 - скрыть

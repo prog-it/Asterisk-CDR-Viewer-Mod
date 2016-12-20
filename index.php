@@ -227,6 +227,14 @@ if ( strlen($where) > 9 ) {
 $order = empty($_REQUEST['order']) ? 'ORDER BY calldate' : "ORDER BY $_REQUEST[order]";
 $sort = empty($_REQUEST['sort']) ? 'DESC' : $_REQUEST['sort'];
 $group = empty($_REQUEST['group']) ? 'day' : $_REQUEST['group'];
+if (isset($display_column) && $display_column['queue'] == 0)
+	{
+		$where = $where . "AND lastapp NOT LIKE 'Queue'";
+	}
+if (isset($display_column) && $display_column['Playback'] == 0)
+	{
+		$where = $where . "AND lastapp NOT LIKE 'Playback'";
+	}
 
 // CSV - разделители -> ;
 if ( isset($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) {

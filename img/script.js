@@ -1,43 +1,34 @@
 
 // ID элемента с плеером
 var playerId = 'playerBox';
-// Автовоспроизведение
-var playerAutoplay = true;
-// Показ даты записи
+// Показывать ли дату записи
 var playerTitle = true;
-// Символ, который будет добавлен в Title во время воспроизведения
-var playerSymbol = '&#9835;&#9835;&#9835;';
+// Автопроигрывание
+var playerAutoplay = true;
 
 // Показать запись
 function showRecord(link, title) {
 	var elem = document.getElementById(playerId);
-	var autoplay = (playerAutoplay === true) ? '&amp;auto=play' : '';
-	var docTitle = document.title;
+	var autoplay = (playerAutoplay == true) ? 'autoplay="autoplay"' : '';
 	title = (playerTitle === true) ? 'Дата: '+title : '';
-	link = encodeURIComponent(link);
-	var content = 
-			'<div class="objPlayer">' +
-				'<div class="objTitle">'+title+'</div>' +
-				'<object class="obj" type="application/x-shockwave-flash" data="img/player.swf" width="425" height="40">' +
-					'<param movie="img/player.swf">' +
-					'<param name="FlashVars" value="file='+link+'&amp;m=audio&amp;st=img/player_style.txt'+autoplay+'">' +
-				'</object>' +
-			'</div>'
-			;
 	
+	        var content =
+                        '<div class="objPlayer">' +
+				'<div class="objTitle">'+title+'</div>' +
+                                '<td><audio '+autoplay+'src="'+link+'" type=\"audio/wav\" controls=\"controls\"></td>\n'+
+                        '</div>'
+                        ;
+
 	elem.style.opacity = 1;
 	elem.style.visibility = 'visible';
-	document.getElementsByTagName('title')[0].innerHTML = playerSymbol + ' ' + docTitle;
 	elem.innerHTML = content;
 }
 
 // Скрыть запись
 function hideRecord() {
 	var elem = document.getElementById(playerId);
-	var docTitle = document.title;
 	elem.style.visibility = 'hidden';
 	elem.style.opacity = 0;
-	document.title = docTitle.match(/\s(.*?)$/)[1];
 	elem.innerHTML = '';
 }
 
