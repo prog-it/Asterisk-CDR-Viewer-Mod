@@ -1,51 +1,67 @@
 
-// ID элемента с плеером
-var playerId = 'playerBox';
-// Автовоспроизведение
-var playerAutoplay = true;
-// Показ даты записи
-var playerTitle = true;
-// Символ, который будет добавлен в Title во время воспроизведения
-var playerSymbol = '&#9835;&#9835;&#9835;';
+	// ID элемента с фоном плеера
+var playerOverlayId = '#playerOverlay',
+	// ID элемента с плеером
+	playerId = '#playerBox',
+	// Автовоспроизведение
+	playerAutoplay = true,
+	// Показ даты записи
+	playerTitle = true,
+	// Символ, который будет добавлен в Title во время воспроизведения
+	playerSymbol = '&#9835;&#9835;&#9835;';
+	
 
 // Показать запись
 function showRecord(link, title) {
-	var elem = document.getElementById(playerId);
-	var autoplay = (playerAutoplay === true) ? '&amp;auto=play' : '';
-	var docTitle = document.title;
-	title = (playerTitle === true) ? 'Дата: '+title : '';
-	link = encodeURIComponent(link);
-	var content = 
-			'<div class="objPlayer">' +
-				'<div class="objTitle">'+title+'</div>' +
-				'<object class="obj" type="application/x-shockwave-flash" data="img/player.swf" width="425" height="40">' +
-					'<param movie="img/player.swf">' +
-					'<param name="FlashVars" value="file='+link+'&amp;m=audio&amp;st=img/player_style.txt'+autoplay+'">' +
-				'</object>' +
-			'</div>'
-			;
-	
-	elem.style.opacity = 1;
-	elem.style.visibility = 'visible';
-	document.getElementsByTagName('title')[0].innerHTML = playerSymbol + ' ' + docTitle;
-	elem.innerHTML = content;
+	var $player = $(playerId),
+		$overlay = $(playerOverlayId),
+		autoplay = (playerAutoplay === true) ? 'play' : '',
+		docTitle = document.title,
+		title = (playerTitle === true) ? 'Дата: ' + title : '',
+		content = 
+			'<div class="plTitle">'+title+'</div>' +
+			'<div class="plStyle" id="player"></div>'
+	;
+	//link = encodeURIComponent(link);	
+	$overlay.css({
+		'opacity': 1,
+		'visibility': 'visible',
+	});
+	$player.css({
+		'display': 'block',
+	});			
+	$('title').first().html(playerSymbol + ' ' + docTitle);
+	$player.html(content);
+	this.aplayer = new Uppod({
+		m:"audio",
+		st:"uppodaudio",
+		uid:"player",
+		auto:autoplay,
+		file:link,
+	});	
 }
 
 // Скрыть запись
 function hideRecord() {
-	var elem = document.getElementById(playerId);
-	var docTitle = document.title;
-	elem.style.visibility = 'hidden';
-	elem.style.opacity = 0;
+	var $player = $(playerId),
+		$overlay = $(playerOverlayId),
+		docTitle = document.title;
+	$overlay.css({
+		'visibility': 'hidden',
+		'opacity': 0,
+	});
+	$player.css({
+		'display': 'none',
+	});	
 	document.title = docTitle.match(/\s(.*?)$/)[1];
-	elem.innerHTML = '';
+	$player.html('');
 }
 
 // Быстрый выбор периода
 function selectRange(range) {
-	var curr = new Date;
-	var first;
-	var last;
+	var curr = new Date,
+		first,
+		last;
 	
 	switch (range) {
 		case 'td':
@@ -64,9 +80,11 @@ function selectRange(range) {
 			first = new Date(curr.setDate(first));
 			break;
 		case 'tw':
+			// В Воскресенье не работает. Выводится дата на след. неделю
 			first = curr.getDate()-curr.getDay()+1;
-			last = new Date(curr.setDate(first+6));
-			first = new Date(curr.setDate(first));
+			last = first + 6;
+			first = new Date((new Date(curr)).setDate(first));
+			last = new Date((new Date(curr)).setDate(last));
 			break;
 		case 'pw':
 			first = curr.getDate()-7-curr.getDay()+1;
@@ -74,9 +92,12 @@ function selectRange(range) {
 			first = new Date(curr.setDate(first));
 			break;
 		case '3w':
+			// В Воскресенье не работает. Выводится дата на след. неделю
+			first = curr.getDate()-curr.getDay()+1;
+			last = first + 6;
+			last = new Date((new Date(curr)).setDate(last));
 			first = curr.getDate()-14-curr.getDay()+1;
-			last = new Date(curr.setDate(first+20));
-			first = new Date(curr.setDate(first));
+			first = new Date((new Date(curr)).setDate(first));
 			break;
 		case 'tm':
 			first = new Date(curr.getFullYear(), curr.getMonth(), 1);
@@ -96,40 +117,53 @@ function selectRange(range) {
 			first = new Date(curr.setDate(first));
 	}
 	
-
 	if (typeof(first) !== 'undefined') {
-		document.getElementById('startmonth').selectedIndex = first.getMonth();
-		document.getElementById('startday').value = first.getDate();
+		$('#startmonth').prop('selectedIndex', first.getMonth());
+		$('#startday').val(first.getDate());
 		
-		var selector = document.getElementById('startyear');
-		for (i = selector.options.length-1; i>=0; i--) {
-			if (selector.options[i].value == first.getFullYear()) {
-				selector.selectedIndex = i;
-				break;
+		var $selector = $('#startyear');
+		$selector.find('option').each(function(index, element) {
+			if ( element.value == first.getFullYear() ) {
+				$selector.prop('selectedIndex', index);
+				return false;
 			}
-		}
-		document.getElementById('endmonth').selectedIndex = last.getMonth();
-		document.getElementById('endday').value = last.getDate();
+		});
+		$('#endmonth').prop('selectedIndex', last.getMonth());
+		$('#endday').val(last.getDate());
 		
-		selector = document.getElementById('endyear');
-		for (i = selector.options.length-1; i>=0; i--) {
-			if (selector.options[i].value == last.getFullYear()) {
-				selector.selectedIndex = i;
-				break;
+		$selector = $('#endyear');
+		$selector.find('option').each(function(index, element) {
+			if ( element.value == last.getFullYear() ) {
+				$selector.prop('selectedIndex', index);
+				return false;
 			}
-		}
+		});		
 	}
 	
 }
 
 // Показать навигацию
+$(window).load(function() {
+	showScroll();
+	$('#scroll-up').on('click', function() {
+		$('html, body').animate({ scrollTop: 0 }, 100);
+		return false;
+	});
+	$('#scroll-down').on('click', function() {
+		$('html, body').animate({ scrollTop: $(document).height() - $(window).height() }, 100);
+		return false;
+	});
+})
+
 function showScroll() {
-	var bodyHeight = document.body.clientHeight;
-	var docHeight = document.documentElement.clientHeight;
-	var scroll = document.getElementById('scrollBox');
+	var $bodyHeight = $('body').height(),
+		$docHeight = $(window).height(),
+		$scroll = $('#scroll-box');
 	
-	if (bodyHeight > docHeight) {
-		scroll.style.display = 'block';
+	if ($bodyHeight > $docHeight) {
+		$scroll.css({
+			'display': 'block',
+		});
 	}
 }
 

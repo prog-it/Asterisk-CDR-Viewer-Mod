@@ -1,6 +1,15 @@
 <?php
 
-require_once 'inc/config.inc.php';
+$path_config = 'inc/config.inc.php';
+
+# Пользовательский конфиг
+if ( isset($_REQUEST['config']) ) {
+    if ( preg_match('#^[A-Za-z0-9]+$#', $_REQUEST['config']) && file_exists('inc/config-' . $_REQUEST['config'] . '.inc.php') ) {
+        $path_config = 'inc/config-' . $_REQUEST['config'] . '.inc.php';
+    }
+}
+
+require_once $path_config;
 require_once 'inc/sendfile.class.php';
 
 if (isset($_REQUEST['f'])) {

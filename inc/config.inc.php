@@ -40,13 +40,14 @@ $system_storage_format = 1;
 $system_monitor_dir = '/var/calls'; // без слеша на конце
 
 ### Размер файла в Килобайтах, больше которого считается, что файл существует
-$system_fsize_exists = '10';
+$system_fsize_exists = 10;
 
 ### Папка для временных файлов
 $system_tmp_dir = '/tmp';
 
 ### Формат аудио, в котором записываются записи звонков
-# Плеер не воспроизводит WAV формат!
+# Плеер не воспроизводит WAV в Enternet Explorer. В последних версиях Firefox и Chrome все работает
+# Например: mp3, wav
 $system_audio_format = 'mp3';
 
 ### Если записи звонков / факсов через некоторое время архивируются, раскомментировать строку ниже и указать формат архива (zip gz rar bz2 и т.д.)
@@ -94,7 +95,9 @@ $display_search['accountcode'] = 0;
 # Показ условия поиска - Описание (userfield)
 $display_search['userfield'] = 0;
 # Показ условия поиска - Приложение
-$display_search['lastapp'] = 0;
+$display_search['lastapp'] = 1;
+# Удаление дублирующихся записей в Asterisk 13 и выше
+$display_search['duphide'] = 1;
 
 ### Включение / Отключение показа некоторых колонок
 ## Если 1 - показать, 0 - скрыть
@@ -102,6 +105,8 @@ $display_column = array();
 $display_column['clid'] = 0;
 $display_column['accountcode'] = 0;
 $display_column['extension'] = 0;
+# Показ тарифа
+$display_column['callrates'] = 1;
 # Показ направления звонка
 $display_column['callrates_dst'] = 0;
 
@@ -111,9 +116,17 @@ $display_column['callrates_dst'] = 0;
 $display_full_channel = 0;
 
 ### CDN
-# Если CDN не используется, то закомментировать $cdn_addr
-//$cdn_addr = ''; // без слеша на конце
-//$cdn_css_tooltip = $cdn_addr . '/simptip.min.css';
+## Если CDN не используется, то закомментировать все строчки $site_cdn
+# Основной URL CDN
+//$site_cdn['addr'] = ''; // без слеша на конце
+# Tooltips
+//$site_cdn['css_tooltip'] = $site_cdn['addr'] . '/simptip/1.0.4/simptip.min.css';
+# Плеер
+//$site_cdn['js_player'] = $site_cdn['addr'] . '/uppod/0.9.4/uppod.js';
+# Скрин для плеера
+//$site_cdn['js_player_skin'] = $site_cdn['addr'] . '/uppod/skins/audio_myspace.js';
+# jQuery
+//$site_cdn['js_jquery'] = $site_cdn['addr'] . '/jquery/1.12.3/jquery.min.js';
 
 ### Настройки сайта
 # Meta - Title

@@ -124,7 +124,12 @@ function formatFiles($row) {
 	*/
 	
 	# uniq_name.mp3
-	$recorded_file = $row[$system_column_name];
+	$recorded_file = '';
+	# В базе есть колонка с именем записи разговора
+	if (isset($row[$system_column_name])) {
+		$recorded_file = $row[$system_column_name];
+	}
+	
 	$mycalldate_ymd = substr($row['calldate'], 0, 10); // ymd
 	$mycalldate_ym = substr($row['calldate'], 0, 7); // ym
 	$mycalldate_y = substr($row['calldate'], 0, 4); // y
@@ -343,8 +348,11 @@ function asteriskregexp2sqllike($source_data, $user_num) {
 }
 
 /* empty() wrapper */
-function is_blank($value) {
-	return empty($value) && !is_numeric($value);
+function is_blank(&$value) {
+	if ( isset($value) ) {
+		return empty($value) && !is_numeric($value);
+	}
+	return true;
 }
 
 /* 

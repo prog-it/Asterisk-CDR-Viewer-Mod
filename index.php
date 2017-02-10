@@ -1,6 +1,15 @@
 <?php //error_reporting(E_ALL | E_STRICT); ini_set('display_errors', 'On');
 
-require_once 'inc/config.inc.php';
+$path_config = 'inc/config.inc.php';
+
+# Пользовательский конфиг
+if ( isset($_REQUEST['config']) ) {
+    if ( preg_match('#^[A-Za-z0-9]+$#', $_REQUEST['config']) && file_exists('inc/config-' . $_REQUEST['config'] . '.inc.php') ) {
+        $path_config = 'inc/config-' . $_REQUEST['config'] . '.inc.php';
+    }
+}
+
+require_once $path_config;
 require_once 'inc/func.inc.php';
 require_once 'inc/version.inc.php';
 
@@ -218,7 +227,7 @@ if ( strlen($billsec) > 0 ) {
 	}
 }
 
-if ( strlen($where) > 9 ) {
+if ( strlen(trim($where)) > 1 ) {
 	$where = "WHERE $date_range AND ( $where ) $cdr_user_name";
 } else {
 	$where = "WHERE $date_range $cdr_user_name";
@@ -316,104 +325,129 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 	}
 	if ( $tot_calls_raw ) {
 
-		if ( $tot_calls_raw > $result_limit ) {
-			echo '<p class="center title">Детализация звонков - показаны '. $result_limit .' из '. $tot_calls_raw .' звонков </p><table class="cdr">';
-		} else {
-			echo '<p class="center title">Детализация звонков - найдено '. $tot_calls_raw .' звонков </p><table class="cdr">';
-		}
-
 		$i = $h_step - 1;
 
 		try {
-		
-		$query = "SELECT *, unix_timestamp(calldate) as call_timestamp FROM $db_table_name $where $order $sort LIMIT $result_limit";
-		$sth = $dbh->query($query);
-		if (!$sth) {
-			echo "\nPDO::errorInfo():\n";
-			print_r($dbh->errorInfo());
-		}
-		while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
-			++$i;
-			if ($i == $h_step) {
-			?>
-				<tr>
-				<th class="record_col">Дата</th>
-				<th class="record_col">Статус</th>
-				<th class="record_col">Номер звонящего</th>
-				<th class="record_col">Номер назначения</th>
-				<?php
-					if ( isset($display_column['extension']) and $display_column['extension'] == 1 ) {
-						echo '<th class="record_col">Экстеншен</th>';
+			
+			$query = "SELECT *, unix_timestamp(calldate) as call_timestamp FROM $db_table_name $where $order $sort LIMIT $result_limit";
+			$sth = $dbh->query($query);
+			if (!$sth) {
+				echo "\nPDO::errorInfo():\n";
+				print_r($dbh->errorInfo());
+			}
+
+			$rawresult = $sth->fetchAll(PDO::FETCH_ASSOC);
+			# Удаление дублирующихся записей в Asterisk 13	
+			if ( $display_search['duphide'] == 1 ) {
+				foreach($rawresult as $val) {
+					$superresult[$val['uniqueid'].'-'.$val['disposition']] = $val;
+				}
+				foreach($superresult as $val) {
+					if ( $val['disposition'] == 'ANSWERED' &&
+						 array_key_exists($val['uniqueid'].'-'.'NO ANSWER' , $superresult) 
+						 )
+					{
+						unset ($superresult[$val['uniqueid'].'-'.'NO ANSWER']);
 					}
+				}
+				$filtered_count = count($rawresult) - count($superresult);
+			} else {
+				$superresult = $rawresult;
+				$filtered_count = 0;
+			}
+			if ( $tot_calls_raw > $result_limit ) {
+				echo '<p class="center title">Детализация звонков - показаны '. ($result_limit - $filtered_count) .' из '. $tot_calls_raw . ', отфильтровано ' . $filtered_count . ' записей </p><table class="cdr">';
+			} else {
+				echo '<p class="center title">Детализация звонков - найдено '. $tot_calls_raw . ', отфильтровано ' . $filtered_count . ' записей </p><table class="cdr">';
+			}
+			foreach ( $superresult as $key => $row ) {			
+				++$i;
+				if ($i == $h_step) {
 				?>
-				<th class="record_col">Продолжительность</th>
-				<?php
-				if ( isset($_REQUEST['use_callrates']) && $_REQUEST['use_callrates'] == 'true' ) {
-					echo '<th class="record_col">Тариф</th>';
-					// Показать Направление
-					if ( isset($display_column['callrates_dst']) and $display_column['callrates_dst'] == 1 ) {
-						echo '<th class="record_col">Направление</th>';
+					<tr>
+					<th class="record_col">Дата</th>
+					<th class="record_col">Статус</th>
+					<th class="record_col">Номер звонящего</th>
+					<th class="record_col">Номер назначения</th>
+					<?php
+						if ( isset($display_column['extension']) and $display_column['extension'] == 1 ) {
+							echo '<th class="record_col">Экстеншен</th>';
+						}
+					?>
+					<th class="record_col">Продолжительность</th>
+					<?php
+					if ( isset($_REQUEST['use_callrates']) && $_REQUEST['use_callrates'] == 'true' ) {
+						if ( isset($display_column['callrates']) and $display_column['callrates'] == 1 ) {
+							echo '<th class="record_col">Тариф</th>';
+						}
+						// Показать Направление
+						if ( isset($display_column['callrates_dst']) and $display_column['callrates_dst'] == 1 ) {
+							echo '<th class="record_col">Направление</th>';
+						}
 					}
+					
+					?>				
+					<th class="record_col">Приложение</th>
+					<th class="record_col">Вх. канал</th>
+					<?php
+						if ( isset($display_column['clid']) and $display_column['clid'] == 1 ) {
+							echo '<th class="record_col">CallerID</th>';
+						}
+					?>
+					<th class="record_col">Исх. канал</th> 
+					<th class="record_col">Файл</th>
+					<?php
+						if ( isset($display_column['accountcode']) and $display_column['accountcode'] == 1 ) {
+							echo '<th class="record_col">Аккаунт</th>';
+						}
+					?>
+					<th class="record_col">Описание</th>
+					</tr>
+					<?php
+					$i = 0;
 				}
 				
-				?>				
-				<th class="record_col">Приложение</th>
-				<th class="record_col">Вх. канал</th>
-				<?php
-					if ( isset($display_column['clid']) and $display_column['clid'] == 1 ) {
-						echo '<th class="record_col">CallerID</th>';
-					}
-				?>
-				<th class="record_col">Исх. канал</th> 
-				<th class="record_col">Файл</th>
-				<?php
-					if ( isset($display_column['accountcode']) and $display_column['accountcode'] == 1 ) {
-						echo '<th class="record_col">Аккаунт</th>';
-					}
-				?>
-				<th class="record_col">Описание</th>
-				</tr>
-				<?php
-				$i = 0;
-			}
-			echo '<tr class="record">';
-			formatCallDate($row['calldate'],$row['uniqueid']);
-			formatDisposition($row['disposition'], $row['amaflags']);
-			formatSrc($row['src'],$row['clid']);
-			if ( isset($row['did']) and strlen($row['did']) ) {
-				formatDst($row['did'], $row['dcontext'] . ' # ' . $row['dst'] );
-			} else {
-				formatDst($row['dst'], $row['dcontext'] );
-			}
-			if ( isset($display_column['extension']) and $display_column['extension'] == 1 ) {
-				formatDst($row['dst'], $row['dcontext'] );
-			}
-			formatDuration($row['duration'], $row['billsec']);
-			if ( isset($_REQUEST['use_callrates']) && $_REQUEST['use_callrates'] == 'true' ) {
-				$rates = callrates($row['dst'],$row['billsec'],$callrate_csv_file);
-				formatMoney($rates[4],2,htmlspecialchars($rates[2]));
-				if ( isset($display_column['callrates_dst']) and $display_column['callrates_dst'] == 1 ) {
-					echo '<td>'. htmlspecialchars($rates[2]) .'</td>';
+				echo '<tr class="record">';
+				formatCallDate($row['calldate'],$row['uniqueid']);
+				formatDisposition($row['disposition'], $row['amaflags']);
+				formatSrc($row['src'],$row['clid']);
+				if ( isset($row['did']) and strlen($row['did']) ) {
+					formatDst($row['did'], $row['dcontext'] . ' # ' . $row['dst'] );
+				} else {
+					formatDst($row['dst'], $row['dcontext'] );
 				}
-			}			
-			formatApp($row['lastapp'], $row['lastdata']);
-			formatChannel($row['channel']);
-			if ( isset($display_column['clid']) and $display_column['clid'] == 1 ) {
-				formatClid($row['clid']);
+				if ( isset($display_column['extension']) and $display_column['extension'] == 1 ) {
+					formatDst($row['dst'], $row['dcontext'] );
+				}
+				formatDuration($row['duration'], $row['billsec']);
+				if ( isset($_REQUEST['use_callrates']) && $_REQUEST['use_callrates'] == 'true' ) {
+					$rates = callrates($row['dst'],$row['billsec'],$callrate_csv_file);
+					if ( isset($display_column['callrates']) and $display_column['callrates'] == 1 ) {
+						formatMoney($rates[4],2,htmlspecialchars($rates[2]));
+					}
+					if ( isset($display_column['callrates_dst']) and $display_column['callrates_dst'] == 1 ) {
+						echo '<td>'. htmlspecialchars($rates[2]) . '</td>';
+					}
+				}			
+				formatApp($row['lastapp'], $row['lastdata']);
+				formatChannel($row['channel']);
+				if ( isset($display_column['clid']) and $display_column['clid'] == 1 ) {
+					formatClid($row['clid']);
+				}
+				formatChannel($row['dstchannel']);
+				formatFiles($row);
+				if ( isset($display_column['accountcode']) and $display_column['accountcode'] == 1 ) {
+					formatAccountCode($row['accountcode']);
+				}
+				formatUserField($row['userfield']);
+				echo '</tr>';
 			}
-			formatChannel($row['dstchannel']);
-			formatFiles($row);
-			if ( isset($display_column['accountcode']) and $display_column['accountcode'] == 1 ) {
-				formatAccountCode($row['accountcode']);
-			}
-			formatUserField($row['userfield']);
-			echo '</tr>';
-		}
+			
 		}
 		catch (PDOException $e) {
 			print $e->getMessage();
 		}
-		echo "</table>";
+		echo '</table>';
 		$sth = NULL;
 	}
 }
