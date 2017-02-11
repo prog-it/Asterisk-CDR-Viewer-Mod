@@ -139,11 +139,10 @@ function selectRange(range) {
 			}
 		});		
 	}
-	
 }
 
-// Показать навигацию
 $(window).load(function() {
+	// Показать навигацию
 	showScroll();
 	$('#scroll-up').on('click', function() {
 		$('html, body').animate({ scrollTop: 0 }, 100);
@@ -152,6 +151,28 @@ $(window).load(function() {
 	$('#scroll-down').on('click', function() {
 		$('html, body').animate({ scrollTop: $(document).height() - $(window).height() }, 100);
 		return false;
+	});
+	
+	// Проверка обновлений
+	$('#check-updates').on('click', function() {
+		$.ajax ({
+			type: 'post',
+			url: '',
+			data: 'check_updates=1',
+			dataType: 'json',
+			timeout: 7000,
+			cache: false,
+			success: function(data) {
+				if (data['success'] === true) {
+					alert(data['message']);
+				} else {
+					alert('Не удалось проверить обновления!');
+				}
+			},
+			error: function(xhr, str) {
+				alert('Не удалось проверить обновления!');
+			},			
+		});
 	});
 })
 

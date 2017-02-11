@@ -1,4 +1,4 @@
-/* HTML tag styles */
+/* HTML теги */
 body {
 	font-family: Helvetica, Arial, sans-serif;
 	font-size: 14px;
@@ -56,7 +56,8 @@ img {
 	background-image: -moz-linear-gradient(top, #00c8ff, #0386aa);
 	background-image: -ms-linear-gradient(top, #00c8ff, #0386aa);
 	background-image: -o-linear-gradient(top, #00c8ff, #0386aa);
-	background-image: linear-gradient(to bottom, #00c8ff, #0386aa);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#00c8ff, endColorstr=#0386aa);
+	background-image: linear-gradient(to bottom, #00c8ff, #0386aa);
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#00c8ff, endColorstr=#0386aa);
 }
 
 .btn_a_2:hover {
@@ -68,7 +69,7 @@ img {
 	background-image: -ms-linear-gradient(top, #0386aa, #0386aa);
 	background-image: -o-linear-gradient(top, #0386aa, #0386aa);
 	background-image: linear-gradient(to bottom, #0386aa, #0386aa);
-	filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#0386aa, endColorstr=#0386aa);
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#0386aa, endColorstr=#0386aa);
 	text-decoration: none;
 	color: #fff;
 	cursor: pointer;
@@ -122,26 +123,43 @@ img {
 	margin: 0 auto;
 }
 
-#footer, #footer a {
+#footer {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+#footer, 
+#footer a,
+#check-updates {
 	color: #999;
-	text-decoration: none;
+	-webkit-transition: 0.5s ease-in-out;
+	-moz-transition: 0.5s ease-in-out;
+	transition: 0.5s ease-in-out;	
 }
 
 #footer a:hover {
 	color: #555;
 }
 
-#footerBox {
+#check-updates {
+	width: 10px;
+	height: 10px;
+	cursor: pointer;
+	opacity: .3;
+	filter: alpha(opacity=30); /* For IE8 and earlier */
+}
+
+#check-updates:hover {
+	opacity: 1;
+	filter: alpha(opacity=100); /* For IE8 and earlier */
+}
+
+#footer-box {
 	width: 80%;
 	margin: 0 auto;
 	border-top: 1px solid #ccc;
 	padding: 5px;
 	text-align: center;
-}
-
-#footer {
-	margin-top: 20px;
-	margin-bottom: 20px;
 }
 
 /* Class styles */
@@ -151,13 +169,11 @@ img {
 	padding: 0 0 0 2px;
 }
 
-
 .bar_duration {
 	background-color: #FFF285;
 	float: none;
 	padding: 0 0 0 2px;
 }
-
 
 .cdr {
 	margin: 0 auto;
@@ -171,7 +187,6 @@ img {
 	background-color: rgba(184, 240, 255, 0.2);
 	border: 1px solid #B8F0FF;
 }
-
 
 .cdr th,
 .total td {
@@ -192,7 +207,6 @@ img {
 	padding: 2px;
 }
 
-
 .cdr .end_col {
 	width: 11%;
 	padding: 3px;
@@ -205,7 +219,6 @@ img {
 	text-align: center;
 }
 
-
 .cdr .img_col {
 	width: 16px;
 	height: 16px;
@@ -215,14 +228,12 @@ legend.title {
 	color: #20BCE7;
 }
 
-
 .title,
 .title a {
 	color: #777;
 	font-size: 1em;
 	font-weight: 700;
 }
-
 
 .record {
 	background-color: #fff;
@@ -233,7 +244,6 @@ legend.title {
 	text-align: left;
 	padding: 3px 3px 3px 10px;
 }
-
 
 .record:hover {
 	background: #E3FFFE;
@@ -272,6 +282,7 @@ legend.title {
 
 .record_col img.img_notfound {
 	opacity: .5;
+	filter: alpha(opacity=50); /* For IE8 and earlier */
 }
 
 /* Плеер */
@@ -288,6 +299,7 @@ legend.title {
 	bottom: 0;
 	background-color: rgba(0, 0, 0, 0.8);
 	opacity: 0;
+	filter: alpha(opacity=0); /* For IE8 and earlier */
 	visibility: hidden;
 	z-index: 10000;
 	overflow: hidden;
@@ -324,10 +336,6 @@ legend.title {
 }
 
 /* Статус звонка */
-.record_col object.obj {
-
-}
-
 .record_col img.status {
 	margin-right: 1px;
 	vertical-align: bottom;
@@ -348,7 +356,6 @@ td.busy {
 td.failed {
 	color: #888;
 }
-
 
 .center {
 	text-align: center;
@@ -405,7 +412,7 @@ td.failed {
 	text-decoration: none;
 	vertical-align: top;
 	opacity: .22;
-	filter: alpha(opacity=50); /* For IE8 and earlier */
+	filter: alpha(opacity=22); /* For IE8 and earlier */
 	transition: 0.5s;
 	-moz-transition: 0.5s;
 	-webkit-transition: 0.5s;
@@ -421,7 +428,6 @@ td.failed {
 #scroll-box  > #scroll-up {
 	margin-bottom: 5px;
 }
-
 
 /* Период времени */
 #id_range .head {
