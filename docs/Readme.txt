@@ -220,8 +220,6 @@ mv /var/calls/*$ymd* /var/calls/$y/$m/$d/
 
 ===
 
-Также в файле "img/script.js" прописаны настройки воспроизведения записей звонков.
-
 Кратко:
 1. Скачать ZIP архив с GitHub или выполнить git clone git@github.com:prog-it/Asterisk-CDR-Viewer-Mod.git
 2. Распаковать / перенести файлы в нужную папку на сервере

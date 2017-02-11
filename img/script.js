@@ -1,23 +1,11 @@
 
-	// ID элемента с фоном плеера
-var playerOverlayId = '#playerOverlay',
-	// ID элемента с плеером
-	playerId = '#playerBox',
-	// Автовоспроизведение
-	playerAutoplay = true,
-	// Показ даты записи
-	playerTitle = true,
-	// Символ, который будет добавлен в Title во время воспроизведения
-	playerSymbol = '&#9835;&#9835;&#9835;';
-	
-
 // Показать запись
 function showRecord(link, title) {
 	var $player = $(playerId),
 		$overlay = $(playerOverlayId),
 		autoplay = (playerAutoplay === true) ? 'play' : '',
 		docTitle = document.title,
-		title = (playerTitle === true) ? 'Дата: ' + title : '',
+		title = (playerTitle === true) ? title : '',
 		content = 
 			'<div class="plTitle">'+title+'</div>' +
 			'<div class="plStyle" id="player"></div>'

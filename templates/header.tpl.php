@@ -21,6 +21,18 @@
 <script src="<?php echo isset($site_cdn['addr']) ? $site_cdn['js_jquery'] : 'img/jquery.min.js'; ?>"></script>
 <script src="<?php echo isset($site_cdn['addr']) ? $site_cdn['js_player'] : 'img/player.js'; ?>"></script>
 <script src="<?php echo isset($site_cdn['addr']) ? $site_cdn['js_player_skin'] : 'img/player_skin.js'; ?>"></script>
+<script>
+	// ID элемента с фоном плеера
+var playerOverlayId = '#playerOverlay',
+	// ID элемента с плеером
+	playerId = '#playerBox',
+	// Автовоспроизведение
+	playerAutoplay = <?php echo isset($site_js['player_autoplay']) && $site_js['player_autoplay'] == 1 ? 'true' : 'false'; ?>,
+	// Показ даты записи
+	playerTitle = <?php echo isset($site_js['player_title']) && $site_js['player_title'] == 1 ? 'true' : 'false'; ?>,
+	// Символ, который будет добавлен в Title во время воспроизведения
+	playerSymbol = '<?php echo isset($site_js['player_symbol']) ? $site_js['player_symbol'] : ''; ?>';
+</script>
 <script src="img/script.js?<?=filemtime('img/script.js');?>"></script>
 </head>
 <body>
