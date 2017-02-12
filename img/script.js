@@ -129,6 +129,19 @@ function selectRange(range) {
 	}
 }
 
+// Показать навигацию
+function showScroll() {
+	var $bodyHeight = $('body').height(),
+		$docHeight = $(window).height(),
+		$scroll = $('#scroll-box');
+	
+	if ($bodyHeight > $docHeight) {
+		$scroll.css({
+			'display': 'block',
+		});
+	}
+}
+
 $(window).load(function() {
 	// Показать навигацию
 	showScroll();
@@ -140,9 +153,12 @@ $(window).load(function() {
 		$('html, body').animate({ scrollTop: $(document).height() - $(window).height() }, 100);
 		return false;
 	});
-	
+	// Скрыть плеер
+	$('#playerOverlay').on('click', function() {
+		hideRecord();
+	});
 	// Проверка обновлений
-	$('#check-updates').on('click', function() {
+	$('#check-updates').on('dblclick', function() {
 		$.ajax ({
 			type: 'post',
 			url: '',
@@ -163,19 +179,4 @@ $(window).load(function() {
 		});
 	});
 })
-
-function showScroll() {
-	var $bodyHeight = $('body').height(),
-		$docHeight = $(window).height(),
-		$scroll = $('#scroll-box');
-	
-	if ($bodyHeight > $docHeight) {
-		$scroll.css({
-			'display': 'block',
-		});
-	}
-}
-
-
-
 

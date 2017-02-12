@@ -1,10 +1,10 @@
 <!doctype html>
 <html>
 <head>
-<title><?php echo $site_title; ?></title>
+<title><?php echo $site_main['title']; ?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="description" content="<?php echo $site_desc; ?>">
-<meta name="robots" content="<?php echo $site_robots; ?>">
+<meta name="description" content="<?php echo $site_main['desc']; ?>">
+<meta name="robots" content="<?php echo $site_main['robots']; ?>">
 <meta name="format-detection" content="telephone=no">
 <meta name="format-detection" content="address=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -33,7 +33,7 @@ var playerOverlayId = '#playerOverlay',
 	// Символ, который будет добавлен в Title во время воспроизведения
 	playerSymbol = '<?php echo isset($site_js['player_symbol']) ? $site_js['player_symbol'] : ''; ?>';
 </script>
-<script src="img/script.js?<?=filemtime('img/script.js');?>"></script>
+<script src="img/script.js?<?php echo filemtime('img/script.js'); ?>"></script>
 </head>
 <body>
 <div id="container">
@@ -41,12 +41,12 @@ var playerOverlayId = '#playerOverlay',
 		<tr>
 			<td id="header_title" colspan="2">
 				<?php 
-				if ( isset($site_gen_section) && $site_gen_section != '' ) {
-					echo '<span><a title="Перейти в основной раздел" href="'.$site_gen_section.'">&#8592;</a></span>';
+				if ( isset($site_main['main_section']) && $site_main['main_section'] != '' ) {
+					echo '<span><a title="Перейти в основной раздел" href="'.$site_main['main_section'].'">&#8592;</a></span>';
 				}
 				?>
 				
-				<a href="."><?php echo $site_head; ?></a>
+				<a href="."><?php echo $site_main['head']; ?></a>
 			</td>
 		</tr>
 		<tr>
@@ -59,5 +59,5 @@ var playerOverlayId = '#playerOverlay',
 			</td>
 		</tr>
 		</table>
-		<div onclick="hideRecord();" id="playerOverlay"></div>
+		<div id="playerOverlay"></div>
 		<div id="playerBox"></div>

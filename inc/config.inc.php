@@ -1,20 +1,28 @@
 <?php
 
-### Mysql
+### Подключение к базе данных
+# Тип базы, который поддерживается PDO. Например: mysql, pgsql
 $db_type = 'mysql';
+# Хост
 $db_host = 'localhost';
+# Порт
 $db_port = '3306';
+# Пользователь
 $db_user = 'asterisk';
+# Пароль
 $db_pass = 'asterisk';
+# Имя базы
 $db_name = 'asterisk';
+# Название таблицы
 $db_table_name = 'cdr';
-$db_options = array();
+# Доп. опции подключения
 // $db_options = array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8");
+$db_options = array();
 
 ### Максимальное количество записей для вывода ('LIMIT')
 $db_result_limit = '100';
 
-### Количество записей, после которых снова будет показана шапка (дата статус...)
+### Количество записей, после которых снова будет показана шапка (Дата, Статус...)
 $h_step = 30;
 
 ### Название столбца в БД, в котором хранится название записи звонка
@@ -33,11 +41,11 @@ $system_column_name = 'filename';
 ## Если 4, то файлы записей должны распределяться по папкам Asterisk-ом в соответствии с датой "/var/calls/2015/12/01".
 # Записи за все даты находятся в папках в соответствии с датой "/var/calls/2015/12/01"
 
-## Если др. значение, то все записи хранятся в одной папке (/var/calls)
+## Если др. значение, то все записи хранятся в одной папке "/var/calls"
 $system_storage_format = 1;
 
-### Папка, где находятся записи Asterisk
-$system_monitor_dir = '/var/calls'; // без слеша на конце
+### Папка, где находятся записи Asterisk. БЕЗ слеша на конце
+$system_monitor_dir = '/var/calls';
 
 ### Размер файла в Килобайтах, больше которого считается, что файл существует
 $system_fsize_exists = 10;
@@ -117,8 +125,8 @@ $display_full_channel = 0;
 
 ### CDN
 ## Если CDN не используется, то закомментировать все строчки $site_cdn
-# Основной URL CDN
-//$site_cdn['addr'] = ''; // без слеша на конце
+# Основной URL CDN. БЕЗ слеша на конце
+//$site_cdn['addr'] = '';
 # Tooltips
 //$site_cdn['css_tooltip'] = $site_cdn['addr'] . '/simptip/1.0.4/simptip.min.css';
 # Плеер
@@ -130,16 +138,16 @@ $display_full_channel = 0;
 
 ### Настройки сайта
 # Meta - Title
-$site_title = 'Детализация звонков';
+$site_main['title'] = 'Детализация звонков';
 # Meta - Description
-$site_desc = 'Детализация звонков';
+$site_main['desc'] = 'Детализация звонков';
 # Meta - Robots
-$site_robots = 'noindex, nofollow';
+$site_main['robots'] = 'noindex, nofollow';
 # Текст в шапке
-$site_head = 'Детализация звонков';
+$site_main['head'] = 'Детализация звонков';
 # Путь к основному разделу сайта
 # Чтобы стрелка (рядом с текстом в шапке) не показывалась, закомментировать строчку ниже или задать значение ''
-$site_gen_section = '../';
+$site_main['main_section'] = '../';
 # Автовоспроизведение записи звонка
 $site_js['player_autoplay'] = 1;
 # Показ даты записи звонка над плеером
@@ -170,8 +178,8 @@ if ( strlen($cdr_user_name) > 0 ) {
 	}
 }
 
-/* load Plugins */
-if (isset($plugins) && $plugins) {
+// Загрузка плагинов
+if ( isset($plugins) && $plugins ) {
 	foreach ( $plugins as $p_val ) {
 		require_once "inc/plugins/$p_val.inc.php";
 	}
