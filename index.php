@@ -337,15 +337,17 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 			}
 
 			$rawresult = $sth->fetchAll(PDO::FETCH_ASSOC);
+			$filtered_count = 0;
 			# Удаление дублирующихся записей в Asterisk 13	
 			if ( $display_search['duphide'] == 1 ) {
 				foreach($rawresult as $val) {
 					$superresult[$val['uniqueid'].'-'.$val['disposition']] = $val;
 				}
 				foreach($superresult as $val) {
-					if ( $val['disposition'] == 'ANSWERED' &&
-						 array_key_exists($val['uniqueid'].'-'.'NO ANSWER' , $superresult) 
-						 )
+					if ( 
+						$val['disposition'] == 'ANSWERED' &&
+						array_key_exists($val['uniqueid'].'-'.'NO ANSWER' , $superresult) 
+					)
 					{
 						unset ($superresult[$val['uniqueid'].'-'.'NO ANSWER']);
 					}
@@ -353,12 +355,15 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 				$filtered_count = count($rawresult) - count($superresult);
 			} else {
 				$superresult = $rawresult;
-				$filtered_count = 0;
 			}
 			if ( $tot_calls_raw > $result_limit ) {
-				echo '<p class="center title">Детализация звонков - показаны '. ($result_limit - $filtered_count) .' из '. $tot_calls_raw . ', отфильтровано ' . $filtered_count . ' записей </p><table class="cdr">';
+				echo '<p class="center title">Детализация звонков - показаны '. ($result_limit - $filtered_count) .' из '. $tot_calls_raw;
+				echo $display_search['duphide'] == 1 ? ', отфильтровано ' . $filtered_count : '';
+				echo ' записей </p><table class="cdr">';
 			} else {
-				echo '<p class="center title">Детализация звонков - найдено '. $tot_calls_raw . ', отфильтровано ' . $filtered_count . ' записей </p><table class="cdr">';
+				echo '<p class="center title">Детализация звонков - найдено '. $tot_calls_raw;
+				echo $display_search['duphide'] == 1 ? ', отфильтровано ' . $filtered_count : '';
+				echo ' записей </p><table class="cdr">';
 			}
 			foreach ( $superresult as $key => $row ) {			
 				++$i;
