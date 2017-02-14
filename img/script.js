@@ -143,16 +143,18 @@ function showScroll() {
 }
 
 $(window).load(function() {
-	// Показать навигацию
-	showScroll();
-	$('#scroll-up').on('click', function() {
-		$('html, body').animate({ scrollTop: 0 }, 100);
-		return false;
-	});
-	$('#scroll-down').on('click', function() {
-		$('html, body').animate({ scrollTop: $(document).height() - $(window).height() }, 100);
-		return false;
-	});
+	if (scrollShow === true) {
+		// Показать навигацию
+		showScroll();
+		$('#scroll-up').on('click', function() {
+			$('html, body').animate({ scrollTop: 0 }, 100);
+			return false;
+		});
+		$('#scroll-down').on('click', function() {
+			$('html, body').animate({ scrollTop: $(document).height() - $(window).height() }, 100);
+			return false;
+		});
+	}
 	// Скрыть плеер
 	$('#playerOverlay').on('click', function() {
 		hideRecord();

@@ -31,7 +31,9 @@ var playerOverlayId = '#playerOverlay',
 	// Показ даты записи
 	playerTitle = <?php echo isset($site_js['player_title']) && $site_js['player_title'] == 1 ? 'true' : 'false'; ?>,
 	// Символ, который будет добавлен в Title во время воспроизведения
-	playerSymbol = '<?php echo isset($site_js['player_symbol']) ? $site_js['player_symbol'] : ''; ?>';
+	playerSymbol = '<?php echo isset($site_js['player_symbol']) ? $site_js['player_symbol'] : ''; ?>',
+	// Показ стрелок для быстрой навигации справа
+	scrollShow = <?php echo isset($site_js['scroll_show']) && $site_js['scroll_show'] == 1 ? 'true' : 'false'; ?>;
 </script>
 <script src="img/script.js?<?php echo filemtime('img/script.js'); ?>"></script>
 </head>

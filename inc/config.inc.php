@@ -154,6 +154,8 @@ $site_js['player_autoplay'] = 1;
 $site_js['player_title'] = 1;
 # Символ, который будет добавлен в Meta - Title страницы во время воспроизведения записи звонка
 $site_js['player_symbol'] = '&#9835;&#9835;&#9835;';
+# Показ стрелок для быстрой навигации справа
+$site_js['scroll_show'] = 1;
 
 ### Имена пользователей, которым разрешен доступ
 # $admin_user_names = 'admin1,admin2,admin3';
