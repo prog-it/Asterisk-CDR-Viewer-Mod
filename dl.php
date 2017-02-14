@@ -16,8 +16,7 @@ if (isset($_REQUEST['f'])) {
 	$fname = base64_decode($_REQUEST['f']);
 	$file = $system_monitor_dir . '/' . $fname;
 	$send = new Sendfile;
-	$send->Path = $file;
-	$send->send();
+	$send->send($file);
 	exit;
 }
 
@@ -25,9 +24,8 @@ else if (isset($_REQUEST['csv'])) {
 	$fname = base64_decode($_REQUEST['csv']);
 	$file = $system_tmp_dir . '/' . $fname;
 	$send = new Sendfile;
-	$send->Path = $file;
-	$send->ContentType = 'text/csv';
-	$send->send();	
+	$send->contentType('text/csv');
+	$send->send($file);	
 	exit;
 }
 
