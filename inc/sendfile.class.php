@@ -60,7 +60,7 @@ class Sendfile
      * @param float $sec
      * @param int $bytes
      */
-    public function throttle ($sec = 0.1, $bytes = 40960) {
+    public function throttle ($sec = 0.1, $bytes = 81920) {
         $this->sec = $sec;
         $this->bytes = $bytes;
     }
