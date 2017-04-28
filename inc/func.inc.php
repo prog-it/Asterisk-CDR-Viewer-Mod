@@ -2,7 +2,7 @@
 
 /* Recorded file */
 function formatFiles($row) {
-	global $system_monitor_dir, $system_audio_format, $system_archive_format, $system_fsize_exists, $system_column_name, $system_storage_format;
+	global $system_monitor_dir, $system_audio_format, $system_archive_format, $system_fsize_exists, $system_column_name, $system_storage_format, $system_audio_defconv;
 
 	/* File name formats, please specify: */
 	
@@ -126,69 +126,83 @@ function formatFiles($row) {
 	# uniq_name.mp3
 	$recorded_file = '';
 	# В базе есть колонка с именем записи разговора
-	if (isset($row[$system_column_name])) {
+	if ( isset($row[$system_column_name]) ) {
 		$recorded_file = $row[$system_column_name];
 	}
 	
-	$mycalldate_ymd = substr($row['calldate'], 0, 10); // ymd
-	$mycalldate_ym = substr($row['calldate'], 0, 7); // ym
-	$mycalldate_y = substr($row['calldate'], 0, 4); // y
-	$mycalldate_m = substr($row['calldate'], 5, 2); // m
-	$mycalldate_d = substr($row['calldate'], 8, 2); // d
-	$mydate = date('Y-m-d');
+	$mycalldate_ymd		= substr($row['calldate'], 0, 10); // ymd
+	$mycalldate_ym		= substr($row['calldate'], 0, 7); // ym
+	$mycalldate_y		= substr($row['calldate'], 0, 4); // y
+	$mycalldate_m		= substr($row['calldate'], 5, 2); // m
+	$mycalldate_d		= substr($row['calldate'], 8, 2); // d
+	$mydate				= date('Y-m-d');
 
 	// -----------------------------------------------
 	
 	# Файл не найден
-	$tmpError = '<td class="record_col"><img class="img_notfound" src="img/record_notfound.png"></td>';
+	$tmpError = '
+		<td class="record_col">
+			<img class="img_notfound" src="img/record_notfound.png">
+		</td>
+	';
 
 	# Прослушивание и скачивание
-	$tmpRec = '<td class="record_col">
-					<div class="recordBox">
-						<a onclick="showRecord(\'dl.php?f=[_file]\', \''.$row['calldate'].'\');"><img class="img_play" src="img/record_play.png"></a>
-						<a href="dl.php?f=[_file]"><img class="img_dl" src="img/record_dl.png"></a>
-					</div>
-				</td>
-					';
+	$tmpRec = '
+		<td class="record_col">
+			<div class="recordBox">
+				<a onclick="showRecord(\'dl.php?f=[_file]\', \''.$row['calldate'].'\');"><img class="img_play" src="img/record_play.png"></a>
+				<a href="dl.php?f=[_file]"><img class="img_dl" src="img/record_dl.png"></a>
+			</div>
+		</td>
+	';
 	
 	# Только скачивание
-	$tmpDl = '<td class="record_col">
-					<div class="recordBox">
-						<a href="dl.php?f=[_file]"><img class="img_dl" src="img/record_dl.png"></a>
-					</div>
-				</td>
-					';
+	$tmpDL = '
+		<td class="record_col">
+			<div class="recordBox">
+				<a href="dl.php?f=[_file]"><img class="img_dl" src="img/record_dl.png"></a>
+			</div>
+		</td>
+	';
 					
 	// -----------------------------------------------
+
+	# Имя файла при отложенной конвертации
+	if ( $system_audio_defconv === true && $recorded_file ) {
+		if ( $mycalldate_ymd < $mydate ) {
+			$recorded_file = preg_replace('#(.+)\.(wav|mp3|wma|ogg|aac)$#i', '${1}.'.$system_audio_format, $recorded_file);
+		} else {
+			$system_audio_format = 'wav';
+		}
+	}	
 	
 	# Получение имени файла и пути
-	if ($mycalldate_ymd < $mydate && $system_storage_format === 1) {
+	if ( $mycalldate_ymd < $mydate && $system_storage_format === 1 ) {
 		$rec['filename'] = "$mycalldate_y/$mycalldate_ym/$mycalldate_ymd/$recorded_file";
-	} else if ($mycalldate_ymd < $mydate && $system_storage_format === 2) {
+	} else if ( $mycalldate_ymd < $mydate && $system_storage_format === 2 ) {
 		$rec['filename'] = "$mycalldate_y/$mycalldate_m/$mycalldate_d/$recorded_file";
-	} else if ($system_storage_format === 3) {
+	} else if ( $system_storage_format === 3 ) {
 		$rec['filename'] = "$mycalldate_y/$mycalldate_ym/$mycalldate_ymd/$recorded_file";
-	} else if ($system_storage_format === 4) {
+	} else if ( $system_storage_format === 4 ) {
 		$rec['filename'] = "$mycalldate_y/$mycalldate_m/$mycalldate_d/$recorded_file";
 	} else {
 		$rec['filename'] = $recorded_file;
 	}
 	
 	$rec['path'] = $system_monitor_dir.'/'.$rec['filename'];
-	$rec['filesize'] = file_exists($rec['path']) ? filesize($rec['path'])/1024 : 0;	
 	
-	# аудио
-	if (file_exists($rec['path']) && $recorded_file && $rec['filesize'] >= $system_fsize_exists && preg_match('#(.*)\.'.$system_audio_format.'$#i', $rec['filename'])) {
+	# Аудио
+	if ( file_exists($rec['path']) && $recorded_file && filesize($rec['path'])/1024 >= $system_fsize_exists && preg_match('#(.+)\.'.$system_audio_format.'$#i', $rec['filename']) ) {
 		$tmpRes = str_replace('[_file]', base64_encode($rec['filename']), $tmpRec);
 	}
-	# архив
-	else if (isset($system_archive_format) && $recorded_file && file_exists($rec['path'].'.'.$system_archive_format) && $rec['filesize'] >= $system_fsize_exists) {
-		$tmpRes = str_replace('[_file]', base64_encode($rec['filename'].'.'.$system_archive_format), $tmpDl);
+	# Архив
+	else if ( isset($system_archive_format) && $recorded_file && file_exists($rec['path'].'.'.$system_archive_format) && filesize($rec['path'].'.'.$system_archive_format)/1024 >= $system_fsize_exists ) {
+		$tmpRes = str_replace('[_file]', base64_encode($rec['filename'].'.'.$system_archive_format), $tmpDL);
 	}
-	# факс
+	# Факс
 	//else if (file_exists($rec['path']) && preg_match('#(.*)\.tiff?$#i', $rec['filename']) && $rec['filesize'] >= $system_fsize_exists) {
-	else if (file_exists($rec['path']) && $recorded_file && $rec['filesize'] >= $system_fsize_exists) {
-		$tmpRes = str_replace('[_file]', base64_encode($rec['filename']), $tmpDl);
+	else if ( file_exists($rec['path']) && $recorded_file && filesize($rec['path'])/1024 >= $system_fsize_exists ) {
+		$tmpRes = str_replace('[_file]', base64_encode($rec['filename']), $tmpDL);
 	}
 	
 	else { 
@@ -196,7 +210,6 @@ function formatFiles($row) {
 	}
 
 	echo $tmpRes;
-	
 }
 
 
