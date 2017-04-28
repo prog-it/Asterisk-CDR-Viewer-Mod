@@ -15,7 +15,7 @@ PHP 5.1 и выше
 Используется HTML5 плеер для воспроизведения записей разговоров. 
 Доступные форматы аудио: MP3, WAV, OGG, AAC...
 
-Проверенные форматы аудио. Проверялось в Internet Explorer 11, Chrome 56, Firefox 51:
+Проверенные форматы аудио. Проверялось в Internet Explorer 11, Chrome 56, Firefox 52:
 - MP3. Поддерживаются все браузеры
 - WAV. Не работает в Internet Explorer
 - OGG. Не работает в Internet Explorer
@@ -72,12 +72,19 @@ alias название_столбца => название_столбца
 ==
 
 В "globals" добавим пару переменных:
-
-RECORDING=1;	// 1-вкл / 0-выкл запись разговора
-DIR_RECORDS=/var/calls/;	// папка с записями разговоров
+===
+// Если 0, запись разговоров отключена
+// Если 1, запись разговоров включена с одновременной конвертацией в MP3
+// Если 2, запись разговоров включена и выполняется запись в формат WAV. Преобразование в MP3 формат должно быть выполнено скриптом "proc_records.sh"
+RECORDING=1;
+// Путь к папке с записями разговоров
+DIR_RECORDS=/var/calls/;
+===	
 
 Добавим макрос.
-Сразу уточним, что в этом макросе запись прямо во время разговора конвертируется в MP3.
+Сразу уточним, что в этом макросе, если RECORDING=1 запись прямо во время разговора конвертируется в MP3. т.е. есть существует некоторая нагрузка на сервер.
+Если же RECORDING=2, то нагрузка на сервер минимальная, т.к. запись выполняется в родной формат Asterisk - wav. Конвертирование в MP3 должно быть выполнено
+с помощью скрипта "proc_records.sh", который можно найти в папке docs. В скрипте написаны подробные комментарии по его настройке
 
 ==
  Для extensions.ael
@@ -89,8 +96,11 @@ macro recording(calling,called) {
 		Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${calling}-${called});
 		Set(monopt=nice -n 19 /usr/bin/lame -b 32  --silent "${DIR_RECORDS}${fname}.wav"  "${DIR_RECORDS}${fname}.mp3" && rm -f "${DIR_RECORDS}${fname}.wav" && chmod o+r "${DIR_RECORDS}${fname}.mp3");
 		Set(CDR(filename)=${fname}.mp3);
-		Set(CDR(realdst)=${called});
 		MixMonitor(${DIR_RECORDS}${fname}.wav,b,${monopt});
+   } else if ("${RECORDING}" = "2") {
+ 		Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${calling}-${called});
+		Set(CDR(filename)=${fname}.wav);
+		MixMonitor(${DIR_RECORDS}${fname}.wav,b);  
    }
    return;
 };
@@ -110,12 +120,19 @@ context internal {
 
 ; MixMonitor
 [macro-recording]
-exten => s,1,GoToIf($["${RECORDING}" = "1"]?yes:no)
-exten => s,n(yes),Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${ARG1}-${ARG2});
+exten => s,1,GoToIf($["${RECORDING}" = "1"]?mp3:no)
+exten => s,n,GoToIf($["${RECORDING}" = "2"]?wav:no)
+exten => s,n(mp3),Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${ARG1}-${ARG2});
 exten => s,n,Set(monopt=nice -n 19 /usr/bin/lame -b 32  --silent "${DIR_RECORDS}${fname}.wav"  "${DIR_RECORDS}${fname}.mp3" && rm -f "${DIR_RECORDS}${fname}.wav" && chmod o+r "${DIR_RECORDS}${fname}.mp3");
 exten => s,n,Set(CDR(filename)=${fname}.mp3);
 exten => s,n,Set(CDR(realdst)=${ARG2});
 exten => s,n,MixMonitor(${DIR_RECORDS}${fname}.wav,b,${monopt});
+exten => s,n,Goto(no);
+exten => s,n(wav),Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${ARG1}-${ARG2});
+exten => s,n,Set(CDR(filename)=${fname}.wav);
+exten => s,n,Set(CDR(realdst)=${ARG2});
+exten => s,n,MixMonitor(${DIR_RECORDS}${fname}.wav,b);
+exten => s,n,Goto(no);
 exten => s,n(no),Verbose(Exit record);
 
 Пример вызова макроса:
@@ -160,9 +177,13 @@ exten => s,n,Set(CDR(realdst)=${ARG1});
 
 Есть два варианта хранения файлов записей.
 1. Все записи разговоров хранятся в одной папке.
-2. Записи разговоров должны распределяться по папкам в соответствии с датой. 
+2. Записи разговоров должны распределяться по папкам в соответствии с датой.
 
-Все это можно настроить в конфиге.
+Также есть возможность настройки "отложенной конвертации записей разговоров".
+Когда днем выполняется запись в формат WAV, а ночью необходимо по CRON запустить скрипт для преобразования файлов из WAV в MP3.
+"Отложенную конвертацию записей разговоров" и распределение по папкам в соответствии с датой можно использовать вместе, а можно что-то одно.
+
+За распределение файлов записей по папкам, преобразование файлов из WAV в MP3 отвечает скрипт "proc_records.sh" из папки docs.
 
 ==
  Для 2 варианта
@@ -171,37 +192,41 @@ exten => s,n,Set(CDR(realdst)=${ARG1});
 Каждый день в 00.01 часов записи из папки "/var/calls/" по CRON должны распределяться по дате
 в соответствующие папки.
 
+Для распределения файлов по папкам в соответствии с датой нужно использовать скрипт "proc_records.sh" из папки docs.
+
 Формат хранения записей (пример):
 1. /var/calls/2014/2014-09/2014-09-29
 2. /var/calls/2014/09/29
 
-Примерный скрипт для распределения файлов:
+Настройки скрипта "proc_records.sh" для соответствующего формата:
 1.
 ===
-#!/bin/bash
-y=`date +%Y`
-ym=`date +%Y-%m -d "-1 day"`
-ymd=`date +%Y-%m-%d -d "-1 day"`
-mkdir -p /var/calls/$y/$ym/$ymd/
-mv /var/calls/*$ymd* /var/calls/$y/$ym/$ymd/
+DIR_DST="/var/calls/$Y/$YM/$YMD/"
+MOVE_BY_DATE=true
 ===
 
 2.
 ===
-#!/bin/bash
-y=`date +%Y`
-m=`date +%m -d "-1 day"`
-d=`date +%d -d "-1 day"`
-ymd=`date +%Y-%m-%d -d "-1 day"`
-mkdir -p /var/calls/$y/$m/$d/
-mv /var/calls/*$ymd* /var/calls/$y/$m/$d/
+DIR_DST="/var/calls/$Y/$M/$D/"
+MOVE_BY_DATE=true
 ===
+
+Настройки скрипта "proc_records.sh" для преобразования файлов из WAV в MP3:
+--
+За включение преобразования файлов из WAV в MP3 в скрипте отвечает переменная "CONV_TO_MP3". Необходимо установить ее значение в true или false.
+Также можно настроить уровень вложенности поиска WAV файлов для их преобразования в переменной "DEPTH". Примеры значений для переменной
+1 - это все файлы в папке /var/calls/
+2 - это все файлы в /var/calls/, /var/calls/2017/ ...
+3 - это все файлы в /var/calls/, /var/calls/2017/, /var/calls/2017/04 ...
+...
 
 ==
  Для вариантов, когда Asterisk сам распределяет записи по папкам в соответствии с датой.
 ==
 
 Если у вас Asterisk сам распределяет записи звонков по папкам в соответствии с датой, тогда необходимости запуска скрипта по CRON нет.
+Если только у вас не настроена "отложенная конвертация записей разговоров"
+
 Возможные форматы хранения записей:
 1. /var/calls/2014/2014-09/2014-09-29
 2. /var/calls/2014/09/29
