@@ -12,7 +12,13 @@ if ( isset($_REQUEST['config']) ) {
 require_once $path_config;
 require_once 'inc/sendfile.class.php';
 
-if (isset($_REQUEST['f'])) {
+# Доступ запрещен
+if ( strlen($cdr_user_name) > 0 ) {
+	header('HTTP/1.1 403 Forbidden');
+	exit;
+}
+
+if ( isset($_REQUEST['f']) ) {
 	$fname = base64_decode($_REQUEST['f']);
 	$file = $system_monitor_dir . '/' . $fname;
 	$send = new Sendfile;
@@ -20,7 +26,7 @@ if (isset($_REQUEST['f'])) {
 	exit;
 }
 
-else if (isset($_REQUEST['csv'])) {
+else if ( isset($_REQUEST['csv']) ) {
 	$fname = base64_decode($_REQUEST['csv']);
 	$file = $system_tmp_dir . '/' . $fname;
 	$send = new Sendfile;
@@ -29,5 +35,5 @@ else if (isset($_REQUEST['csv'])) {
 	exit;
 }
 
-header('HTTP/1.1 404 Not Found');
+header('HTTP/1.1 403 Not Found');
 
