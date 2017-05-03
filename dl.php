@@ -35,5 +35,5 @@ else if ( isset($_REQUEST['csv']) ) {
 	exit;
 }
 
-header('HTTP/1.1 403 Not Found');
+header('HTTP/1.1 404 Not Found');
 
