@@ -2,7 +2,15 @@
 
 /* Recorded file */
 function formatFiles($row) {
-	global $system_monitor_dir, $system_audio_format, $system_archive_format, $system_fsize_exists, $system_column_name, $system_storage_format, $system_audio_defconv;
+	global
+	$system_monitor_dir,
+	$system_audio_format,
+	$system_archive_format,
+	$system_fsize_exists,
+	$system_column_name,
+	$system_storage_format,
+	$system_audio_defconv,
+	$display_search;
 
 	/* File name formats, please specify: */
 	
@@ -139,31 +147,62 @@ function formatFiles($row) {
 
 	// -----------------------------------------------
 	
+	# Кнопка прослушать запись
+	$tpl['btn_record'] = '
+		<div class="img_play" data-link="dl.php?f=[_file]" data-title="'.$row['calldate'].'"></div>
+	';
+	
+	# Кнопка скачать запись
+	$tpl['btn_download'] = '
+		<a href="dl.php?f=[_file]"><div class="img_dl"></div></a>
+	';	
+	
+	# Кнопка удалить запись
+	$tpl['btn_delete'] = '
+		<div data-path="[_file]" class="img_delete"></div>
+	';
+	
 	# Файл не найден
-	$tmpError = '
+	$tpl['error'] = '
 		<td class="record_col">
-			<img class="img_notfound" src="img/record_notfound.png">
+			<div class="img_notfound"></div>
 		</td>
 	';
 
-	# Прослушивание и скачивание
-	$tmpRec = '
+	# Прослушивание, скачивание, удаление
+	$tpl['record'] = '
 		<td class="record_col">
 			<div class="recordBox">
-				<a onclick="showRecord(\'dl.php?f=[_file]\', \''.$row['calldate'].'\');"><img class="img_play" src="img/record_play.png"></a>
-				<a href="dl.php?f=[_file]"><img class="img_dl" src="img/record_dl.png"></a>
+				[_btn_record]
+				[_btn_download]
+				[_btn_delete]
 			</div>
 		</td>
 	';
 	
-	# Только скачивание
-	$tmpDL = '
+	# Скачивание, удаление
+	$tpl['download'] = '
 		<td class="record_col">
 			<div class="recordBox">
-				<a href="dl.php?f=[_file]"><img class="img_dl" src="img/record_dl.png"></a>
+				[_btn_download]
 			</div>
 		</td>
 	';
+	
+	$tpl['record'] = str_replace(
+		array(
+			'[_btn_record]',
+			'[_btn_download]',
+			'[_btn_delete]',
+		),
+		array(
+			$tpl['btn_record'],
+			$tpl['btn_download'],
+			$display_search['rec_delete'] == 1 ? $tpl['btn_delete'] : '',
+		),
+		$tpl['record']
+	);
+	$tpl['download'] = str_replace('[_btn_download]', $tpl['btn_download'], $tpl['download']);
 					
 	// -----------------------------------------------
 
@@ -193,20 +232,20 @@ function formatFiles($row) {
 	
 	# Аудио
 	if ( file_exists($rec['path']) && $recorded_file && filesize($rec['path'])/1024 >= $system_fsize_exists && preg_match('#(.+)\.'.$system_audio_format.'$#i', $rec['filename']) ) {
-		$tmpRes = str_replace('[_file]', base64_encode($rec['filename']), $tmpRec);
+		$tmpRes = str_replace('[_file]', base64_encode($rec['filename']), $tpl['record']);
 	}
 	# Архив
 	else if ( isset($system_archive_format) && $recorded_file && file_exists($rec['path'].'.'.$system_archive_format) && filesize($rec['path'].'.'.$system_archive_format)/1024 >= $system_fsize_exists ) {
-		$tmpRes = str_replace('[_file]', base64_encode($rec['filename'].'.'.$system_archive_format), $tmpDL);
+		$tmpRes = str_replace('[_file]', base64_encode($rec['filename'].'.'.$system_archive_format), $tpl['download']);
 	}
 	# Факс
 	//else if (file_exists($rec['path']) && preg_match('#(.*)\.tiff?$#i', $rec['filename']) && $rec['filesize'] >= $system_fsize_exists) {
 	else if ( file_exists($rec['path']) && $recorded_file && filesize($rec['path'])/1024 >= $system_fsize_exists ) {
-		$tmpRes = str_replace('[_file]', base64_encode($rec['filename']), $tmpDL);
+		$tmpRes = str_replace('[_file]', base64_encode($rec['filename']), $tpl['download']);
 	}
 	
 	else { 
-		$tmpRes = $tmpError; 
+		$tmpRes = $tpl['error']; 
 	}
 
 	echo $tmpRes;

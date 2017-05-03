@@ -55,7 +55,7 @@ var playerOverlayId = '#playerOverlay',
 			<td class="sub" align='right'>
 				<?php
 				if ( strlen(getenv('REMOTE_USER')) ) {
-					echo '<a href="index.php?action=logout">выйти: '.getenv('REMOTE_USER').'</a>';
+					echo '<a href="index.php?action=logout">Выйти: '.getenv('REMOTE_USER').'</a>';
 				}
 				?>
 			</td>

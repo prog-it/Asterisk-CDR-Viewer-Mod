@@ -11,7 +11,7 @@ if ( isset($_REQUEST['config']) ) {
 
 require_once $path_config;
 require_once 'inc/func.inc.php';
-require_once 'inc/version.inc.php';
+require_once 'inc/requests.inc.php';
 
 require_once 'templates/header.tpl.php';
 require_once 'templates/form.tpl.php';

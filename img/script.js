@@ -1,48 +1,123 @@
-
-// Показать запись
-function showRecord(link, title) {
-	var $player = $(playerId),
-		$overlay = $(playerOverlayId),
-		autoplay = (playerAutoplay === true) ? 'play' : '',
-		docTitle = document.title,
-		title = (playerTitle === true) ? title : '',
-		content = 
-			'<div class="plTitle">'+title+'</div>' +
-			'<div class="plStyle" id="player"></div>'
-	;
-	//link = encodeURIComponent(link);	
-	$overlay.css({
-		'opacity': 1,
-		'visibility': 'visible',
+$(window).load(function() {
+	if (scrollShow === true) {
+		// Показать навигацию
+		showScroll();
+		$('#scroll-up').on('click', function() {
+			$('html, body').animate({ scrollTop: 0 }, 100);
+			return false;
+		});
+		$('#scroll-down').on('click', function() {
+			$('html, body').animate({ scrollTop: $(document).height() - $(window).height() }, 100);
+			return false;
+		});
+	}
+	
+	// Показать плеер
+	$('.img_play').on('click', function() {
+		var $player = $(playerId),
+			$overlay = $(playerOverlayId),
+			autoplay = (playerAutoplay === true) ? 'play' : '',
+			docTitle = document.title,
+			$title = (playerTitle === true) ? $(this).data('title') : '',
+			content = 
+				'<div class="plTitle">'+$title+'</div>' +
+				'<div class="plStyle" id="player"></div>'
+		;
+		//link = encodeURIComponent(link);	
+		$overlay.css({
+			'opacity': 1,
+			'visibility': 'visible',
+		});
+		$player.css({
+			'display': 'block',
+		});			
+		$('title').first().html(playerSymbol + ' ' + docTitle);
+		$player.html(content);
+		this.aplayer = new Uppod({
+			m:"audio",
+			st:"uppodaudio",
+			uid:"player",
+			auto:autoplay,
+			file:$(this).data('link'),
+		});
 	});
-	$player.css({
-		'display': 'block',
-	});			
-	$('title').first().html(playerSymbol + ' ' + docTitle);
-	$player.html(content);
-	this.aplayer = new Uppod({
-		m:"audio",
-		st:"uppodaudio",
-		uid:"player",
-		auto:autoplay,
-		file:link,
-	});	
-}
-
-// Скрыть запись
-function hideRecord() {
-	var $player = $(playerId),
-		$overlay = $(playerOverlayId),
-		docTitle = document.title;
-	$overlay.css({
-		'visibility': 'hidden',
-		'opacity': 0,
+	
+	// Скрыть плеер
+	$('#playerOverlay').on('click', function() {
+		var $player = $(playerId),
+			$overlay = $(playerOverlayId),
+			docTitle = document.title;
+		$overlay.css({
+			'visibility': 'hidden',
+			'opacity': 0,
+		});
+		$player.css({
+			'display': 'none',
+		});	
+		document.title = docTitle.match(/\s(.*?)$/)[1];
+		$player.html('');
 	});
-	$player.css({
-		'display': 'none',
+	
+	// Проверка обновлений
+	$('#check-updates').on('dblclick', function() {
+		$.ajax ({
+			type: 'post',
+			url: '',
+			data: 'check_updates=1',
+			dataType: 'json',
+			timeout: 7000,
+			cache: false,
+			success: function(data) {
+				if (data['success'] === true) {
+					alert(data['message']);
+				} else {
+					alert('Не удалось проверить обновления!');
+				}
+			},
+			error: function(xhr, str) {
+				alert('Не удалось проверить обновления!');
+			},			
+		});
+	});
+	
+	// Удалить запись
+	$('.img_delete').on('click', function() {
+		$elem = $(this);
+		if ( confirm('Вы действительно хотите удалить эту запись?') ) {
+			$.ajax ({
+				type: 'post',
+				url: '',
+				data: 'delete_record=' + $elem.data('path'),
+				dataType: 'json',
+				timeout: 7000,
+				cache: false,
+				success: function(data) {
+					if (data['success'] === true) {
+						$elem.closest('.record_col').html('<div class="img_notfound"></div>');
+					} else {
+						alert('Ошибка удаления: ' + data['message']);
+					}
+				},
+				error: function(xhr, str) {
+					alert('Не удалось удалить запись!');
+				},			
+			});
+		}
 	});	
-	document.title = docTitle.match(/\s(.*?)$/)[1];
-	$player.html('');
+	
+})
+
+// Показать навигацию
+function showScroll() {
+	var $bodyHeight = $('body').height(),
+		$docHeight = $(window).height(),
+		$scroll = $('#scroll-box');
+	
+	if ($bodyHeight > $docHeight) {
+		$scroll.css({
+			'display': 'block',
+		});
+	}
 }
 
 // Быстрый выбор периода
@@ -128,57 +203,4 @@ function selectRange(range) {
 		});		
 	}
 }
-
-// Показать навигацию
-function showScroll() {
-	var $bodyHeight = $('body').height(),
-		$docHeight = $(window).height(),
-		$scroll = $('#scroll-box');
-	
-	if ($bodyHeight > $docHeight) {
-		$scroll.css({
-			'display': 'block',
-		});
-	}
-}
-
-$(window).load(function() {
-	if (scrollShow === true) {
-		// Показать навигацию
-		showScroll();
-		$('#scroll-up').on('click', function() {
-			$('html, body').animate({ scrollTop: 0 }, 100);
-			return false;
-		});
-		$('#scroll-down').on('click', function() {
-			$('html, body').animate({ scrollTop: $(document).height() - $(window).height() }, 100);
-			return false;
-		});
-	}
-	// Скрыть плеер
-	$('#playerOverlay').on('click', function() {
-		hideRecord();
-	});
-	// Проверка обновлений
-	$('#check-updates').on('dblclick', function() {
-		$.ajax ({
-			type: 'post',
-			url: '',
-			data: 'check_updates=1',
-			dataType: 'json',
-			timeout: 7000,
-			cache: false,
-			success: function(data) {
-				if (data['success'] === true) {
-					alert(data['message']);
-				} else {
-					alert('Не удалось проверить обновления!');
-				}
-			},
-			error: function(xhr, str) {
-				alert('Не удалось проверить обновления!');
-			},			
-		});
-	});
-})
 

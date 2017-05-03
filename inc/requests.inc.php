@@ -1,6 +1,8 @@
 <?php
 
-# Текущая версия
+# Проверка обновлений
+define( 'VERSION', getCurrentVersion() );
+
 function getCurrentVersion() {
 	$ver = '?';
 	$path = 'inc/version.txt';
@@ -13,9 +15,6 @@ function getCurrentVersion() {
 	return $ver;
 }
 
-define( 'VERSION', getCurrentVersion() );
-
-# Проверка обновлений
 function checkUpdates() {
 	$res = false;
 	$url = 'https://github.com/prog-it/Asterisk-CDR-Viewer-Mod/raw/master/inc/version.txt';
@@ -50,6 +49,10 @@ function checkUpdates() {
 }
 
 if ( isset($_POST['check_updates']) ) {
+	if ( strlen($cdr_user_name) > 0 ) {
+		header('HTTP/1.1 403 Forbidden');
+		exit;
+	}
 	$upd = checkUpdates();
 	if ( $upd !== false ) {
 		echo json_encode(array(
@@ -64,3 +67,36 @@ if ( isset($_POST['check_updates']) ) {
 	}
 	exit;
 }
+
+# Удаление записи звонка
+if ( isset($_POST['delete_record']) ) {
+	if ( strlen($cdr_user_name) > 0 || $display_search['rec_delete'] == 0 ) {
+		header('HTTP/1.1 403 Forbidden');
+		exit;
+	}
+	$path = $system_monitor_dir . '/' . base64_decode($_POST['delete_record']);
+	if ( file_exists($path) && is_file($path) ) {
+		if ( @unlink($path) ) {
+			echo json_encode(array(
+				'success' => true,
+				'message' => 'Успешно удалено',
+			));			
+		} else {
+			echo json_encode(array(
+				'success' => false,
+				'message' => 'Нет прав на папку с файлом',
+			));			
+		}
+	} else {
+		echo json_encode(array(
+			'success' => false,
+			'message' => 'Файл не существует',
+		));			
+	}
+	exit;
+}
+	
+	
+	
+	
+	

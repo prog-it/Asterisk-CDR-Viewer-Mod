@@ -272,17 +272,42 @@ legend.title {
 	margin: 0 auto;
 }
 
-.record_col img.img_play {
+.record_col div.img_play,
+.record_col div.img_dl,
+.record_col div.img_delete {
+	cursor:pointer;
+}
+
+.record_col div.img_play {
+	background: url('record_play.png') no-repeat transparent;
+	display: inline-block;
+	width: 24px;	
+	height: 24px;		
 	margin-right: 1px;
 }
 
-.record_col img.img_dl {
-
+.record_col div.img_dl {
+	background: url('record_dl.png') no-repeat transparent;
+	display: inline-block;
+	width: 24px;
+	height: 24px;	
 }
 
-.record_col img.img_notfound {
+.record_col div.img_delete {
+	background: url('record_delete.png') no-repeat transparent;
+	display: inline-block;
+	width: 17px;	
+	height: 24px;
+	margin-left: 1px;
+}
+
+.record_col div.img_notfound {
+	background: url('record_notfound.png') no-repeat transparent;
+	display: inline-block;
+	width: 24px;
+	height: 24px;
 	opacity: .5;
-	filter: alpha(opacity=50); /* For IE8 and earlier */
+	filter: alpha(opacity=50); /* For IE8 and earlier */	
 }
 
 /* Плеер */
@@ -290,9 +315,9 @@ legend.title {
 	position: fixed;
 	height: 100%;
 	width: 100%;
-	-moz-transition: all 0.5s ease 0s;
-	-webkit-transition: all 0.5s ease 0s;
-	transition: all 0.5s ease 0s;
+	-moz-transition: all 0.3s ease 0s;
+	-webkit-transition: all 0.3s ease 0s;
+	transition: all 0.3s ease 0s;
 	top: 0;
 	left: 0;
 	right: 0;

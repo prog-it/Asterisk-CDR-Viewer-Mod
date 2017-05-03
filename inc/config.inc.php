@@ -61,7 +61,7 @@ $system_audio_format = 'mp3';
 ### Отложенная конвертация записей звонков. Полезно для снижения нагрузки на сервер
 # В этом режиме Asterisk должен записывать записи звонков в WAV, затем каждый день в 00.01 часов файлы из WAV должны быть конвертированы в MP3 с помощью скрипта (см. в папке docs + Readme.txt).
 # Файлы за сегодняшний день хранятся в WAV, за прошедшие дни в MP3. В $system_audio_format должно быть задано: mp3. В базу в поле 'filename' будет записано имя файла с расширением wav (имя_файла.wav)
-$system_audio_defconv = true;
+$system_audio_defconv = false;
 
 ### Если записи звонков / факсов через некоторое время архивируются, раскомментировать строку ниже и указать формат архива (zip gz rar bz2 и т.д.)
 # Имя архива должно быть = имя_файла.mp3.$system_archive_format (имя_файла.mp3.zip)
@@ -111,6 +111,8 @@ $display_search['userfield'] = 0;
 $display_search['lastapp'] = 1;
 # Удаление дублирующихся записей в Asterisk 13 и выше
 $display_search['duphide'] = 1;
+# Показ кнопки - Удаление записи звонка
+$display_search['rec_delete'] = 0;
 
 ### Включение / Отключение показа некоторых колонок
 ## Если 1 - показать, 0 - скрыть
@@ -178,7 +180,7 @@ if ( strlen($cdr_user_name) > 0 ) {
 		$cdr_user_name = '';
 	} elseif ( isset($_REQUEST['action']) && $_REQUEST['action'] == 'logout' ) {
 		header('Status: 401 Unauthorized');
-		header('WWW-Authenticate: Basic realm="Asterisk"');
+		header('WWW-Authenticate: Basic realm="CDR Viewer Mod"');
 		exit;
 	} elseif ( $is_admin !== false ) {
 		$cdr_user_name = '';
