@@ -256,7 +256,7 @@ htpasswd -c /path/to/.htpasswd admin
 Пример конфига для Nginx:
 ===
 location /path/to/script {
-	auth_basic "Asterisk";
+	auth_basic "CDR Viewer Mod";
 	auth_basic_user_file /path/to/.htpasswd;
 }
 ===
@@ -264,7 +264,7 @@ location /path/to/script {
 Пример конфига для Apache:
 ===
 <Location "/path/to/script">
-	AuthName "Asterisk"
+	AuthName "CDR Viewer Mod"
 	AuthType Basic
 	AuthUserFile /path/to/.htpasswd
 	AuthGroupFile /dev/null
