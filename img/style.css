@@ -83,7 +83,15 @@ img {
 	margin: 0 auto;
 	max-width: 1400px;
 	min-width: 1024px;
-	width: 98%;	
+	width: 98%;
+}
+
+/* Mobile */
+@media screen and (max-width: 720px) {
+	#container {
+		width: 100%;
+		min-width: 700px;
+	}
 }
 
 #header {
