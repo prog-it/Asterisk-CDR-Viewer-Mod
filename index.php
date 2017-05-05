@@ -227,7 +227,7 @@ if ( strlen($billsec) > 0 ) {
 	}
 }
 
-if ( strlen(trim($where)) > 1 ) {
+if ( strlen($where) > 9 ) {
 	$where = "WHERE $date_range AND ( $where ) $cdr_user_name";
 } else {
 	$where = "WHERE $date_range $cdr_user_name";
@@ -650,12 +650,13 @@ if ( isset($_REQUEST['need_minutes_report']) && $_REQUEST['need_minutes_report']
 if ( isset($_REQUEST['need_chart_cc']) && $_REQUEST['need_chart_cc'] == 'true' ) {
 	$date_range = "( (calldate BETWEEN $startdate AND $enddate) or (calldate + interval duration second  BETWEEN $startdate AND $enddate) or ( calldate + interval duration second >= $enddate AND calldate <= $startdate ) )";
 	$where = "$channel $dstchannel $src $clid $dst $userfield $accountcode $disposition $lastapp $duration $cdr_user_name";
-	if ( strlen($where) > 9 ) {
+	
+	if ( strlen(trim($where)) > 1 ) {
 		$where = "WHERE $date_range AND ( $where )";
 	} else {
 		$where = "WHERE $date_range";
 	}
-	
+
 	$tot_calls = 0;
 	$max_calls = 0;
 	$result_array_cc = array();
