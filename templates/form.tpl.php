@@ -61,7 +61,7 @@ foreach ($months as $i => $month) {
 	?>
 </select>
 :
-<input type="text" name="startmin" id="startmin" list="list_startmin" size="2" maxlength="2" value="<?php if (isset($_REQUEST['startmin'])) { echo htmlspecialchars($_REQUEST['startmin']); } else { echo '00'; } ?>">&ensp;
+<input type="tel" name="startmin" id="startmin" list="list_startmin" pattern="[0-9]{0,2}" maxlength="2" size="2" autocomplete="off" value="<?php if (isset($_REQUEST['startmin'])) { echo htmlspecialchars($_REQUEST['startmin']); } else { echo '00'; } ?>">&ensp;
 <datalist id="list_startmin">
 	<option value="00"></option>
 	<option value="30"></option>
@@ -112,7 +112,7 @@ foreach ($months as $i => $month) {
 	?>
 </select>
 :
-<input type="text" name="endmin" id="endmin" list="list_endmin" size="2" maxlength="2" value="<?php if (isset($_REQUEST['endmin'])) { echo htmlspecialchars($_REQUEST['endmin']); } else { echo '59'; } ?>">
+<input type="tel" name="endmin" id="endmin" list="list_endmin" pattern="[0-9]{0,2}" maxlength="2" size="2" autocomplete="off" value="<?php if (isset($_REQUEST['endmin'])) { echo htmlspecialchars($_REQUEST['endmin']); } else { echo '59'; } ?>">
 <datalist id="list_endmin">
 	<option value="00"></option>
 	<option value="30"></option>
@@ -183,7 +183,7 @@ if ( isset($plugins) && $plugins && count($plugins) > 0 ) {
 			echo htmlspecialchars($_REQUEST['limit']);
 		} else {
 			echo $db_result_limit;
-		} ?>" name="limit" size="6" autocomplete="off">
+		} ?>" name="limit" type="number" min="0" step="1" autocomplete="off">
 		<datalist id="list_result_limit">
 			<option value="10"></option>
 			<option value="50"></option>
@@ -327,9 +327,9 @@ if ( isset($plugins) && $plugins && count($plugins) > 0 ) {
 		<input <?php if (isset($_REQUEST['order']) && $_REQUEST['order'] == 'duration') { echo 'checked="checked"'; } ?> type="radio" id="id_order_duration" name="order" value="duration">&nbsp;<label for="id_order_duration">Длительность</label>
 	</td>
 	<td>
-		<input type="text" name="dur_min" id="id_dur_min" value="<?php if (isset($_REQUEST['dur_min'])) { echo htmlspecialchars($_REQUEST['dur_min']); } ?>" size="3" maxlength="5" placeholder="от">
+		<input type="number" min="0" step="1" name="dur_min" id="id_dur_min" value="<?php if (isset($_REQUEST['dur_min'])) { echo htmlspecialchars($_REQUEST['dur_min']); } ?>" placeholder="от">
 		&ensp;&ndash;&ensp;
-		<input type="text" name="dur_max" id="id_dur_max" value="<?php if (isset($_REQUEST['dur_max'])) { echo htmlspecialchars($_REQUEST['dur_max']); } ?>" size="3" maxlength="5" placeholder="до">
+		<input type="number" min="0" step="1" name="dur_max" id="id_dur_max" value="<?php if (isset($_REQUEST['dur_max'])) { echo htmlspecialchars($_REQUEST['dur_max']); } ?>" placeholder="до">
 		&nbsp;<label for="id_dur_max">сек.</label>
 	</td>
 </tr>
