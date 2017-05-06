@@ -329,29 +329,25 @@ function formatDisposition($disposition, $amaflags) {
 	switch ($disposition) {
 		case 'ANSWERED':
 			$dispTxt = 'Отвечено';
-			$img = 'img/status_answer.png';
 			$style = 'answer';
 			break;
 		case 'NO ANSWER':
-			$dispTxt = 'Не Отвечено';
-			$img = 'img/status_noanswer.png';
+			$dispTxt = 'Не отвечено';
 			$style = 'noanswer';
 			break;
 		case 'BUSY':
 			$dispTxt = 'Занято';
-			$img = 'img/status_busy.png';
 			$style = 'busy';
 			break;
 		case 'FAILED':
 			$dispTxt = 'Ошибка';
-			$img = 'img/status_failed.png';
 			$style = 'failed';
 			break;
 		default:
 			$dispTxt = $disposition;
 	}
 
-	echo '<td class="record_col '.$style.'"><img class="status" src="'.$img.'"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="AMA Flag: '.$amaflags.'">'.$dispTxt.'</abbr></td>' . PHP_EOL;
+	echo '<td class="record_col '.$style.'"><div class="status status-'.$style.'"></div><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="AMA Flag: '.$amaflags.'">'.$dispTxt.'</abbr></td>' . PHP_EOL;
 }
 
 function formatDuration($duration, $billsec) {

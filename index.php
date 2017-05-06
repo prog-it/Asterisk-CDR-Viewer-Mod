@@ -1,11 +1,11 @@
 <?php //error_reporting(E_ALL | E_STRICT); ini_set('display_errors', 'On');
 
-$path_config = 'inc/config.inc.php';
+$path_config = 'inc/config/config.inc.php';
 
 # Пользовательский конфиг
 if ( isset($_REQUEST['config']) ) {
-    if ( preg_match('#^[A-Za-z0-9]+$#', $_REQUEST['config']) && file_exists('inc/config-' . $_REQUEST['config'] . '.inc.php') ) {
-        $path_config = 'inc/config-' . $_REQUEST['config'] . '.inc.php';
+    if ( preg_match('#^[A-Za-z0-9]+$#', $_REQUEST['config']) && file_exists('inc/config/config-' . $_REQUEST['config'] . '.inc.php') ) {
+        $path_config = 'inc/config/config-' . $_REQUEST['config'] . '.inc.php';
     }
 }
 
@@ -372,14 +372,14 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 					<tr>
 					<th class="record_col">Дата</th>
 					<th class="record_col">Статус</th>
-					<th class="record_col">Номер звонящего</th>
-					<th class="record_col">Номер назначения</th>
+					<th class="record_col">Кто звонил</th>
+					<th class="record_col">Куда звонили</th>
 					<?php
 						if ( isset($display_column['extension']) and $display_column['extension'] == 1 ) {
 							echo '<th class="record_col">Экстеншен</th>';
 						}
 					?>
-					<th class="record_col">Продолжительность</th>
+					<th class="record_col">Длительность</th>
 					<?php
 					if ( isset($_REQUEST['use_callrates']) && $_REQUEST['use_callrates'] == 'true' ) {
 						if ( isset($display_column['callrates']) and $display_column['callrates'] == 1 ) {
@@ -392,14 +392,26 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 					}
 					
 					?>				
-					<th class="record_col">Приложение</th>
-					<th class="record_col">Вх. канал</th>
+					<?php
+						if ( isset($display_column['lastapp']) && $display_column['lastapp'] == 1 ) {
+							echo '<th class="record_col">Приложение</th>';
+						}
+					?>					
+					<?php
+						if ( isset($display_column['channel']) && $display_column['channel'] == 1 ) {
+							echo '<th class="record_col">Вх. канал</th>';
+						}
+					?>					
 					<?php
 						if ( isset($display_column['clid']) and $display_column['clid'] == 1 ) {
 							echo '<th class="record_col">CallerID</th>';
 						}
 					?>
-					<th class="record_col">Исх. канал</th> 
+					<?php
+						if ( isset($display_column['dstchannel']) && $display_column['dstchannel'] == 1 ) {
+							echo '<th class="record_col">Исх. канал</th>';
+						}
+					?>					
 					<th class="record_col">Файл</th>
 					<?php
 						if ( isset($display_column['accountcode']) and $display_column['accountcode'] == 1 ) {
@@ -433,13 +445,19 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 					if ( isset($display_column['callrates_dst']) and $display_column['callrates_dst'] == 1 ) {
 						echo '<td>'. htmlspecialchars($rates[2]) . '</td>';
 					}
-				}			
-				formatApp($row['lastapp'], $row['lastdata']);
-				formatChannel($row['channel']);
+				}
+				if ( isset($display_column['lastapp']) && $display_column['lastapp'] == 1 ) {
+					formatApp($row['lastapp'], $row['lastdata']);
+				}
+				if ( isset($display_column['channel']) && $display_column['channel'] == 1 ) {
+					formatChannel($row['channel']);
+				}
 				if ( isset($display_column['clid']) and $display_column['clid'] == 1 ) {
 					formatClid($row['clid']);
 				}
-				formatChannel($row['dstchannel']);
+				if ( isset($display_column['dstchannel']) && $display_column['dstchannel'] == 1 ) {
+					formatChannel($row['dstchannel']);
+				}
 				formatFiles($row);
 				if ( isset($display_column['accountcode']) and $display_column['accountcode'] == 1 ) {
 					formatAccountCode($row['accountcode']);
@@ -488,13 +506,14 @@ switch ($group) {
 		$graph_col_title = 'Код аккаунта';
 	break;
 	case "dst":
-		$graph_col_title = 'Номер назначения';
+		$graph_col_title = 'Куда звонили';
+		$graph_col_title = 'Куда звонили';
 	break;
 	case "did":
 		$graph_col_title = 'DID';
 	break;
 	case "src":
-		$graph_col_title = 'Номер звонящего';
+		$graph_col_title = 'Кто звонил';
 	break;
 	case "clid":
 		$graph_col_title = 'CallerID';
@@ -582,7 +601,7 @@ if ( isset($_REQUEST['need_chart']) && $_REQUEST['need_chart'] == 'true' ) {
 		echo '<p class="center title">Детализация звонков - График по '.$graph_col_title.'</p><table class="cdr">
 		<tr>
 			<th class="end_col">'. $graph_col_title . '</th>
-			<th class="center_col">Всего звонков: '. $tot_calls .' | Максимум звонков: '. $max_calls .' | Общая продолжительность: '. $tot_duration .'</th>
+			<th class="center_col">Всего звонков: '. $tot_calls .' | Максимум звонков: '. $max_calls .' | Общая длительность: '. $tot_duration .'</th>
 			<th class="end_col">Ср. время звонка</th>
 		</tr>';
 	

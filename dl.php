@@ -1,11 +1,11 @@
 <?php
 
-$path_config = 'inc/config.inc.php';
+$path_config = 'inc/config/config.inc.php';
 
 # Пользовательский конфиг
 if ( isset($_REQUEST['config']) ) {
-    if ( preg_match('#^[A-Za-z0-9]+$#', $_REQUEST['config']) && file_exists('inc/config-' . $_REQUEST['config'] . '.inc.php') ) {
-        $path_config = 'inc/config-' . $_REQUEST['config'] . '.inc.php';
+    if ( preg_match('#^[A-Za-z0-9]+$#', $_REQUEST['config']) && file_exists('inc/config/config-' . $_REQUEST['config'] . '.inc.php') ) {
+        $path_config = 'inc/config/config-' . $_REQUEST['config'] . '.inc.php';
     }
 }
 

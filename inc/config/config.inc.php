@@ -77,7 +77,7 @@ $callrate_free_interval = 3;
 # Имя файла с тарифами
 $callrate_csv_fileName = 'gen_callrates.csv';
 # Путь к файлу с тарифами, также этот путь прописан в настройках плагина
-$callrate_csv_file = dirname(__FILE__) . '/plugins/' . $callrate_csv_fileName;
+$callrate_csv_file = dirname(__FILE__) . '/../plugins/' . $callrate_csv_fileName;
 $callrate_currency = '';
 # Массив путей к файлам с тарифами -> array('/var/tarif1.csv', '/var/tarif2.csv', '/var/tarif3.csv');
 $callrate_cache = array();
@@ -117,13 +117,22 @@ $display_search['rec_delete'] = 0;
 ### Включение / Отключение показа некоторых колонок
 ## Если 1 - показать, 0 - скрыть
 $display_column = array();
+# Показ колонки - CallerID
 $display_column['clid'] = 0;
+# Показ колонки - Аккаунт
 $display_column['accountcode'] = 0;
+# Показ колонки - Экстеншен
 $display_column['extension'] = 0;
-# Показ тарифа
+# Показ колонки - Тариф
 $display_column['callrates'] = 1;
-# Показ направления звонка
+# Показ колонки - Направление звонка
 $display_column['callrates_dst'] = 0;
+# Показ колонки - Входящий канал
+$display_column['channel'] = 1;
+# Показ колонки - Исходящий канал
+$display_column['dstchannel'] = 1;
+# Показ колонки - Приложение
+$display_column['lastapp'] = 1;
 
 ### Показать Исх. / Вх. канал полностью
 # В колонках Исх. канал и Вх. канал, Например, вместо "SIP" будет показано "SIP/123"
