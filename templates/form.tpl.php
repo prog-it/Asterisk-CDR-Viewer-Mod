@@ -15,7 +15,17 @@
 <tr>
 <td><input <?php if (empty($_REQUEST['order']) || $_REQUEST['order'] == 'calldate') { echo 'checked="checked"'; } ?> id="id_order_calldate" type="radio" name="order" value="calldate">&nbsp;<label for="id_order_calldate">Дата</label></td>
 <td>С&nbsp;
-<input type="text" name="startday" id="startday" size="2" maxlength="2" value="<?php if (isset($_REQUEST['startday'])) { echo htmlspecialchars($_REQUEST['startday']); } else { echo date('d', time()); /* 01 */ } ?>">
+<select name="startday" id="startday">
+	<?php
+	for ($i = 1; $i <= 31; $i++) {
+		if ( (is_blank($_REQUEST['startday']) && date('d', time()) == $i) || (isset($_REQUEST['startday']) && $i == $_REQUEST['startday']) ) {
+			echo '<option value="'.$i.'" selected="selected">'.$i.'</option>';
+		} else {
+			echo '<option value="'.$i.'">'.$i.'</option>';
+		}
+	}
+	?>
+</select>
 <select name="startmonth" id="startmonth">
 <?php
 $months = array('01' => 'Январь', '02' => 'Февраль', '03' => 'Март', '04' => 'Апрель', '05' => 'Май', '06' => 'Июнь', '07' => 'Июль', '08' => 'Август', '09' => 'Сентябрь', '10' => 'Октябрь', '11' => 'Ноябрь', '12' => 'Декабрь');
@@ -53,7 +63,17 @@ foreach ($months as $i => $month) {
 :
 <input type="text" name="startmin" id="startmin" size="2" maxlength="2" value="<?php if (isset($_REQUEST['startmin'])) { echo htmlspecialchars($_REQUEST['startmin']); } else { echo '00'; } ?>">&ensp;
 По&ensp;
-<input type="text" name="endday" id="endday" size="2" maxlength="2" value="<?php if (isset($_REQUEST['endday'])) { echo htmlspecialchars($_REQUEST['endday']); } else { echo '31'; } ?>">
+<select name="endday" id="endday">
+	<?php
+	for ($i = 1; $i <= 31; $i++) {
+		if ( (is_blank($_REQUEST['endday']) && date('d', time()) == $i) || (isset($_REQUEST['endday']) && $i == $_REQUEST['endday']) ) {
+			echo '<option value="'.$i.'" selected="selected">'.$i.'</option>';
+		} else {
+			echo !isset($_REQUEST['endday']) && $i == 31 ? '<option value="'.$i.'" selected="selected">'.$i.'</option>' : '<option value="'.$i.'">'.$i.'</option>';
+		}
+	}
+	?>
+</select>
 <select name="endmonth" id="endmonth">
 	<?php
 	foreach ($months as $i => $month) {
