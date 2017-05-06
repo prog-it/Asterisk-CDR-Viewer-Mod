@@ -25,9 +25,17 @@ hr {
 	background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0));
 }
 
-input, select {
+input,
+select {
 	border-radius: 3px;
 	border: 1px solid #BBB7B7;
+	padding: 1px 3px;
+	transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+}
+
+input:focus:not([type="submit"]),
+select:focus {
+	border-color: #3c8dbc;
 }
 
 abbr {
@@ -142,7 +150,7 @@ img {
 	color: #999;
 	-webkit-transition: 0.5s ease-in-out;
 	-moz-transition: 0.5s ease-in-out;
-	transition: 0.5s ease-in-out;	
+	transition: 0.5s ease-in-out;
 }
 
 #footer a:hover {
@@ -369,9 +377,38 @@ legend.title {
 }
 
 /* Статус звонка */
-.record_col img.status {
+.record_col .status {
 	margin-right: 1px;
 	vertical-align: bottom;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+}
+
+.record_col .status-answer,
+.record_col .status-noanswer,
+.record_col .status-busy,
+.record_col .status-failed {
+	background: url('statuses.png') no-repeat transparent;
+	overflow: hidden;
+	text-indent: -9999px;
+	text-align: left;
+}
+
+.record_col .status-answer {
+	background-position: 0 -16px;
+}
+
+.record_col .status-noanswer {
+	background-position: 0 -32px;
+}
+
+.record_col .status-busy {
+	background-position: 0 -48px;
+}
+
+.record_col .status-failed {
+	background-position: 0 0;
 }
 
 td.answer {
