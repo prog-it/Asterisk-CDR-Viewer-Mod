@@ -61,7 +61,11 @@ foreach ($months as $i => $month) {
 	?>
 </select>
 :
-<input type="text" name="startmin" id="startmin" size="2" maxlength="2" value="<?php if (isset($_REQUEST['startmin'])) { echo htmlspecialchars($_REQUEST['startmin']); } else { echo '00'; } ?>">&ensp;
+<input type="text" name="startmin" id="startmin" list="list_startmin" size="2" maxlength="2" value="<?php if (isset($_REQUEST['startmin'])) { echo htmlspecialchars($_REQUEST['startmin']); } else { echo '00'; } ?>">&ensp;
+<datalist id="list_startmin">
+	<option value="00"></option>
+	<option value="30"></option>
+</datalist>
 По&ensp;
 <select name="endday" id="endday">
 	<?php
@@ -108,7 +112,11 @@ foreach ($months as $i => $month) {
 	?>
 </select>
 :
-<input type="text" name="endmin" id="endmin" size="2" maxlength="2" value="<?php if (isset($_REQUEST['endmin'])) { echo htmlspecialchars($_REQUEST['endmin']); } else { echo '59'; } ?>">
+<input type="text" name="endmin" id="endmin" list="list_endmin" size="2" maxlength="2" value="<?php if (isset($_REQUEST['endmin'])) { echo htmlspecialchars($_REQUEST['endmin']); } else { echo '59'; } ?>">
+<datalist id="list_endmin">
+	<option value="00"></option>
+	<option value="30"></option>
+</datalist>
 &emsp;
 <select id="id_range" name="range" onchange="selectRange(this.value);">
 	<option class="head" value="">Выбрать период...</option>
