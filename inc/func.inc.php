@@ -138,6 +138,7 @@ function formatFiles($row) {
 		$recorded_file = $row[$system_column_name];
 	}
 	
+	$tmp['system_audio_format'] = $system_audio_format;
 	$mycalldate_ymd		= substr($row['calldate'], 0, 10); // ymd
 	$mycalldate_ym		= substr($row['calldate'], 0, 7); // ym
 	$mycalldate_y		= substr($row['calldate'], 0, 4); // y
@@ -209,9 +210,9 @@ function formatFiles($row) {
 	# Имя файла при отложенной конвертации
 	if ( $system_audio_defconv === true && $recorded_file ) {
 		if ( $mycalldate_ymd < $mydate ) {
-			$recorded_file = preg_replace('#(.+)\.(wav|mp3|wma|ogg|aac)$#i', '${1}.'.$system_audio_format, $recorded_file);
+			$recorded_file = preg_replace('#(.+)\.(wav|mp3|wma|ogg|aac)$#i', '${1}.'.$tmp['system_audio_format'], $recorded_file);
 		} else {
-			$system_audio_format = 'wav';
+			$tmp['system_audio_format'] = 'wav';
 		}
 	}	
 	
@@ -231,24 +232,24 @@ function formatFiles($row) {
 	$rec['path'] = $system_monitor_dir.'/'.$rec['filename'];
 	
 	# Аудио
-	if ( file_exists($rec['path']) && $recorded_file && filesize($rec['path'])/1024 >= $system_fsize_exists && preg_match('#(.+)\.'.$system_audio_format.'$#i', $rec['filename']) ) {
-		$tmpRes = str_replace('[_file]', base64_encode($rec['filename']), $tpl['record']);
+	if ( file_exists($rec['path']) && $recorded_file && filesize($rec['path'])/1024 >= $system_fsize_exists && preg_match('#(.+)\.'.$tmp['system_audio_format'].'$#i', $rec['filename']) ) {
+		$tmp['result'] = str_replace('[_file]', base64_encode($rec['filename']), $tpl['record']);
 	}
 	# Архив
 	else if ( isset($system_archive_format) && $recorded_file && file_exists($rec['path'].'.'.$system_archive_format) && filesize($rec['path'].'.'.$system_archive_format)/1024 >= $system_fsize_exists ) {
-		$tmpRes = str_replace('[_file]', base64_encode($rec['filename'].'.'.$system_archive_format), $tpl['download']);
+		$tmp['result'] = str_replace('[_file]', base64_encode($rec['filename'].'.'.$system_archive_format), $tpl['download']);
 	}
 	# Факс
 	//else if (file_exists($rec['path']) && preg_match('#(.*)\.tiff?$#i', $rec['filename']) && $rec['filesize'] >= $system_fsize_exists) {
 	else if ( file_exists($rec['path']) && $recorded_file && filesize($rec['path'])/1024 >= $system_fsize_exists ) {
-		$tmpRes = str_replace('[_file]', base64_encode($rec['filename']), $tpl['download']);
+		$tmp['result'] = str_replace('[_file]', base64_encode($rec['filename']), $tpl['download']);
 	}
 	
 	else { 
-		$tmpRes = $tpl['error']; 
+		$tmp['result'] = $tpl['error']; 
 	}
 
-	echo $tmpRes;
+	echo $tmp['result'];
 }
 
 
