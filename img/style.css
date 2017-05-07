@@ -35,7 +35,7 @@ select {
 
 input:focus:not([type="submit"]),
 select:focus {
-	border-color: #3c8dbc;
+	border-color: #00a7da;
 }
 
 input[type="number"] {
