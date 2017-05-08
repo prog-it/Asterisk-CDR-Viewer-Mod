@@ -138,7 +138,7 @@ img {
 }
 
 #main {
-	padding-top: 10px;
+	padding-top: 5px;
 	color: #000;
 	margin: 0 auto;
 }
@@ -206,6 +206,7 @@ img {
 	border-radius: 10px;
 	background-color: rgba(184, 240, 255, 0.2);
 	border: 1px solid #B8F0FF;
+	box-shadow: 0 0 2px #e7e7e7;
 }
 
 .cdr th,
@@ -382,37 +383,33 @@ legend.title {
 
 /* Статус звонка */
 .record_col .status {
-	margin-right: 1px;
-	vertical-align: bottom;
+	margin-right: 5px;
+	position: relative;
 	display: inline-block;
-	width: 16px;
-	height: 16px;
-}
-
-.record_col .status-answer,
-.record_col .status-noanswer,
-.record_col .status-busy,
-.record_col .status-failed {
-	background: url('statuses.png') no-repeat transparent;
-	overflow: hidden;
-	text-indent: -9999px;
-	text-align: left;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
 }
 
 .record_col .status-answer {
-	background-position: 0 -16px;
+	background: #2fb740;
 }
 
 .record_col .status-noanswer {
-	background-position: 0 -32px;
+	background: #d74f4f;
 }
 
 .record_col .status-busy {
-	background-position: 0 -48px;
+	background: #ffce31;
+	
 }
 
 .record_col .status-failed {
-	background-position: 0 0;
+	background: #bfbfbf;
+}
+
+.record_col .status-congestion {
+	background: #24bac5;
 }
 
 td.answer {
@@ -429,6 +426,10 @@ td.busy {
 
 td.failed {
 	color: #888;
+}
+
+td.congestion {
+	color: #1A929D;
 }
 
 .center {
