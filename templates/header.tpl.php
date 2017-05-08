@@ -46,9 +46,12 @@ var playerOverlayId = '#playerOverlay',
 				if ( isset($site_main['main_section']) && $site_main['main_section'] != '' ) {
 					echo '<span><a title="Перейти в основной раздел" href="'.$site_main['main_section'].'">&#8592;</a></span>';
 				}
+				if ( isset($site_main['logo_path']) && $site_main['logo_path'] != '' ) {
+					echo '<a href="."><img src="' . $site_main['logo_path'] . '"></a>';
+				} else {
+					echo '<a href=".">' . $site_main['head'] . '</a>';
+				}				
 				?>
-				
-				<a href="."><?php echo $site_main['head']; ?></a>
 			</td>
 		</tr>
 		<tr>
