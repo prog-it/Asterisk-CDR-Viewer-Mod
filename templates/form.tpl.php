@@ -361,6 +361,7 @@ if ( isset($plugins) && $plugins && count($plugins) > 0 ) {
 			<option <?php if (isset($_REQUEST['disposition']) && $_REQUEST['disposition'] == 'NO ANSWER') { echo 'selected="selected"'; } ?> value="NO ANSWER">Не отвечено</option>
 			<option <?php if (isset($_REQUEST['disposition']) && $_REQUEST['disposition'] == 'BUSY') { echo 'selected="selected"'; } ?> value="BUSY">Занято</option>
 			<option <?php if (isset($_REQUEST['disposition']) && $_REQUEST['disposition'] == 'FAILED') { echo 'selected="selected"'; } ?> value="FAILED">Ошибка</option>
+			<option <?php if (isset($_REQUEST['disposition']) && $_REQUEST['disposition'] == 'CONGESTION') { echo 'selected="selected"'; } ?> value="CONGESTION">Перегрузка</option>
 		</select>
 	</td>
 </tr>
