@@ -45,9 +45,19 @@ PHP 5.1 и выше
  Создание таблицы в базе
 ===============================================
 
-Имя файла записи разговора будет храниться в базе MySQL (можно также выбрать, например, PostgreSQL). Как настроить Asterisk для работы с MySQL можно найти в интернете. / http://blog.thecall.ru/page/asterisk-18-cdr-v-mysql-cdr_adaptive_odbc /
+Имя файла записи разговора будет храниться в базе MySQL (можно также выбрать, например, PostgreSQL).
+
+Для MySQL можно использовать файл импорта "mysql_cdr.sql", можно найти в папке docs. Если импортировать этот файл в базу, то в базе будет создана таблица "cdr" со всем необходимыми для Asterisk полями.
+Имя колонки для файла записи звонка будет "filename". Также будут созданы необходимые индексы и триггер, о котором можно прочитать ниже.
+В дополнение ко всему, файл импорта создаст новые колонки в базе для Asterisk 12+.
+Если имя таблицы "cdr" (или имя колонки для файла записи звонка) не устраивает, после импорта сами сможете переименовать. Например, с помощью PHPMYADMIN или ADMINER.
+
+Если НЕ использовали файл импорта в базу
+==
 Допустим мы настроили Asterisk для работы с базой и уже создали таблицу, например "cdr". Теперь нам необходимо добавить с нашу таблицу новую колонку, например "filename", в которой будет
 имя файла с записью, удобнее это сделать через PHPMYADMIN или ADMINER (смотреть здесь: https://www.adminer.org). Название колонки можно задать в конфиге. / `filename` varchar(255) DEFAULT 'none' /
+
+Более подробно о том, как настроить Asterisk для работы с MySQL можно найти в интернете.
 
 
 ===============================================
@@ -57,9 +67,12 @@ PHP 5.1 и выше
 Для того, чтобы Asterisk смог взаимодействовать с новыми столбцами в таблице, необходимо в файле cdr_mysql.conf создать их алиасы.
 Добавим в конец этого файла ( секция [columns] ) строчки:
 alias realdst => realdst
+alias remoteip => remoteip
+alias start => calldate
 alias название_столбца => название_столбца
 
 Вместо "название_столбца" вставьте название столбца, в котором хранится название записи звонка, например "filename".
+Алиас "remoteip" нужен для записи IP адреса клиента Asterisk. Это НЕОБЯЗАТЕЛЬНО.
 
 
 Все изменения производим в extensions.ael, либо в extensions.conf. В зависимости от того, в какой файле у нас написан диалплан.
@@ -82,8 +95,8 @@ DIR_RECORDS=/var/calls/;
 ===	
 
 Добавим макрос.
-Сразу уточним, что в этом макросе, если RECORDING=1 запись прямо во время разговора конвертируется в MP3. т.е. есть существует некоторая нагрузка на сервер.
-Если же RECORDING=2, то нагрузка на сервер минимальная, т.к. запись выполняется в родной формат Asterisk - wav. Конвертирование в MP3 должно быть выполнено
+Сразу уточним, что в этом макросе, если RECORDING=1 запись прямо во время разговора конвертируется в MP3. т.е. существует некоторая нагрузка на сервер.
+Если же RECORDING=2, то нагрузка на сервер минимальная, т.к. запись выполняется в родной формат Asterisk - WAV. Конвертирование в MP3 должно быть выполнено
 с помощью скрипта "proc_records.sh", который можно найти в папке docs. В скрипте написаны подробные комментарии по его настройке
 
 ==
@@ -96,10 +109,14 @@ macro recording(calling,called) {
 		Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${calling}-${called});
 		Set(monopt=nice -n 19 /usr/bin/lame -b 32  --silent "${DIR_RECORDS}${fname}.wav"  "${DIR_RECORDS}${fname}.mp3" && rm -f "${DIR_RECORDS}${fname}.wav" && chmod o+r "${DIR_RECORDS}${fname}.mp3");
 		Set(CDR(filename)=${fname}.mp3);
+		Set(CDR(realdst)=${called});
+		Set(CDR(remoteip)=${CHANNEL(recvip)});
 		MixMonitor(${DIR_RECORDS}${fname}.wav,b,${monopt});
    } else if ("${RECORDING}" = "2") {
  		Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${calling}-${called});
 		Set(CDR(filename)=${fname}.wav);
+		Set(CDR(realdst)=${called});
+		Set(CDR(remoteip)=${CHANNEL(recvip)});
 		MixMonitor(${DIR_RECORDS}${fname}.wav,b);  
    }
    return;
@@ -126,6 +143,7 @@ exten => s,n(mp3),Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${
 exten => s,n,Set(monopt=nice -n 19 /usr/bin/lame -b 32  --silent "${DIR_RECORDS}${fname}.wav"  "${DIR_RECORDS}${fname}.mp3" && rm -f "${DIR_RECORDS}${fname}.wav" && chmod o+r "${DIR_RECORDS}${fname}.mp3");
 exten => s,n,Set(CDR(filename)=${fname}.mp3);
 exten => s,n,Set(CDR(realdst)=${ARG2});
+exten => s,n,Set(CDR(remoteip)=${CHANNEL(recvip)});
 exten => s,n,MixMonitor(${DIR_RECORDS}${fname}.wav,b,${monopt});
 exten => s,n,Goto(no);
 exten => s,n(wav),Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${ARG1}-${ARG2});
@@ -142,7 +160,7 @@ exten => _X.,n,Dial(SIP/${EXTEN},60)
 exten => _X.,n,Hangup()
 
 ====
- Дополнительно (необязательно)
+ Дополнительно (необязательно). Если НЕ использовали файл импорта в базу "cdr_mysql.sql"
 ====
 
 В Asterisk если используется макрос, то звонок совершается с экстеншеном s. Чтобы Номер назначения был действительным, а не s или ~~s~~, то сделаем следующее:
