@@ -133,12 +133,12 @@ function formatFiles($row) {
 	
 	# uniq_name.mp3
 	$recorded_file = '';
+	$tmp['system_audio_format'] = $system_audio_format;
 	# В базе есть колонка с именем записи разговора
 	if ( isset($row[$system_column_name]) ) {
 		$recorded_file = $row[$system_column_name];
 	}
 	
-	$tmp['system_audio_format'] = $system_audio_format;
 	$mycalldate_ymd		= substr($row['calldate'], 0, 10); // ymd
 	$mycalldate_ym		= substr($row['calldate'], 0, 7); // ym
 	$mycalldate_y		= substr($row['calldate'], 0, 4); // y
@@ -265,7 +265,7 @@ function formatChannel($channel) {
 	$chan['full'] = preg_replace('#(.*)-[^-]+$#', '$1', $channel);
 	$chan['tooltip'] = 'Канал: '.$chan['full'];
 	$chan['txt'] = $chan['short'];
-	if (isset($display_full_channel) && $display_full_channel == 1) {
+	if ( isset($display_full_channel) && $display_full_channel == 1 ) {
 		$chan['txt'] = $chan['full'];
 	}
 	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="'.$chan['tooltip'].'">'.$chan['txt'].'</abbr></td>' . PHP_EOL;
@@ -279,13 +279,12 @@ function formatClid($clid) {
 
 function formatSrc($src,$clid) {
 	global $rev_lookup_url, $rev_min_number_len ;
-	if (empty($src)) {
+	if ( empty($src) ) {
 		echo '<td class="record_col">Неизвестно</td>' . PHP_EOL;
 	} else {
 		$src = htmlspecialchars($src);
 		$clid = htmlspecialchars($clid);
-		//echo "    <td class=\"record_col\"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip=\"CallerID: $clid\">$src</abbr></td>\n";
-		if (is_numeric($src) && strlen($src) >= $rev_min_number_len  && strlen($rev_lookup_url) > 0) {
+		if ( is_numeric($src) && strlen($src) >= $rev_min_number_len  && strlen($rev_lookup_url) > 0 ) {
 			$rev = str_replace('%n', $src, $rev_lookup_url);
 			echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="CallerID: '.$clid.'"><a href="'.$rev.'" target="reverse">'.$src.'</a></abbr></td>' . PHP_EOL;
 		} else {
@@ -301,7 +300,7 @@ function formatApp($app, $lastdata) {
 function formatDst($dst, $dcontext) {
 	global $rev_lookup_url, $rev_min_number_len ;
 	//strlen($dst) == 11 and strlen($rev_lookup_url) > 0 
-	if (is_numeric($dst) && strlen($dst) >= $rev_min_number_len  && strlen($rev_lookup_url) > 0) {
+	if ( is_numeric($dst) && strlen($dst) >= $rev_min_number_len  && strlen($rev_lookup_url) > 0 ) {
 		$rev = str_replace('%n', $dst, $rev_lookup_url);
 		echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="Контекст назначения: '.$dcontext.'"><a href="'.$rev.'" target="reverse">'.$dst.'</a></abbr></td>' . PHP_EOL;
 	} else {
@@ -324,7 +323,6 @@ function formatDisposition($disposition, $amaflags) {
 		default:
 			$amaflags = 'DEFAULT';
 	}
-	
 	// Стиль текста для вызовов
 	$style = '';
 	switch ($disposition) {
@@ -344,11 +342,14 @@ function formatDisposition($disposition, $amaflags) {
 			$dispTxt = 'Ошибка';
 			$style = 'failed';
 			break;
+		case 'CONGESTION':
+			$dispTxt = 'Перегрузка';
+			$style = 'congestion';
+			break;			
 		default:
 			$dispTxt = $disposition;
 	}
-
-	echo '<td class="record_col '.$style.'"><div class="status status-'.$style.'"></div><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="AMA Flag: '.$amaflags.'">'.$dispTxt.'</abbr></td>' . PHP_EOL;
+	echo '<td class="record_col '.$style.'"><div class="status status-'.$style.'"></div><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="AMA флаг: '.$amaflags.'">'.$dispTxt.'</abbr></td>' . PHP_EOL;
 }
 
 function formatDuration($duration, $billsec) {
@@ -412,18 +413,18 @@ function is_blank(&$value) {
 // title: title to show
 function formatMoney($number, $cents = 2, $title = '') {
 	global $callrate_currency;
-	if (is_numeric($number)) { // a number
-		if (!$number) { // zero
+	if ( is_numeric($number) ) { // a number
+		if ( !$number ) { // zero
 			$money = ($cents == 2 ? '0.00' : '0'); // output zero
 		} else { // value
-			if (floor($number) == $number) { // whole number
+			if ( floor($number) == $number ) { // whole number
 				$money = number_format($number, ($cents == 2 ? 2 : 0)); // format
 			} else { // cents
 				$money = number_format(round($number, 2), ($cents == 0 ? 0 : 2)); // format
 			} // integer or decimal
 		} // value
 		
-		if ($title) {
+		if ( $title ) {
 			$title = ' class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="'.$title.'"';
 		}
 		echo '<td class="chart_data"><span'.$title.'>'.$money.'</span>'.$callrate_currency.'</td>' . PHP_EOL;
@@ -459,8 +460,6 @@ function callrates($dst,$duration,$file) {
 			}
 		}
 		fclose($fr);
-		
-		
 	}
 
 	for ($i = strlen($dst); $i > 0; $i--) {
@@ -479,7 +478,7 @@ function callrates($dst,$duration,$file) {
 			} elseif ($callrate_cache[$file][substr($dst,0,$i)][2] == '1m+s') {
 				// 1 minute + per second
 				if ($duration < $callrate_free_interval) {}
-				else if ( $duration < 60) {
+				else if ( $duration < 60 ) {
 					$call_rate = $callrate_cache[$file][substr($dst,0,$i)][0];
 				} else {
 					// указан доп тариф
@@ -523,7 +522,6 @@ function callrates($dst,$duration,$file) {
 			return array(substr($dst,0,$i),$callrate_cache[$file][substr($dst,0,$i)][0],$callrate_cache[$file][substr($dst,0,$i)][1],$callrate_cache[$file][substr($dst,0,$i)][2],$call_rate);
 		}
 	}
-
 	return array (0, 0, 'Неизвестно', 'Неизвестно', 0);
 }
 

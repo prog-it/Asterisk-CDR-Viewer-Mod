@@ -240,10 +240,10 @@ $group = empty($_REQUEST['group']) ? 'day' : $_REQUEST['group'];
 // CSV - разделители -> ;
 if ( isset($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) {
 	$csv_date = time();
-	$csv_file = 'report_' . date('Y-m-d_H-i-s', $csv_date) . '_' . md5($csv_date.'-'.$where) . '.csv';
-	//$csv_file = md5(time().'-'.$where).'.csv';
-	if (!file_exists("$system_tmp_dir/$csv_file")) {
-		$handle = fopen("$system_tmp_dir/$csv_file", "w");
+	$csv_fname = 'report__' . date('Y-m-d_H-i-s', $csv_date) . '_' . md5($csv_date.'-'.$where) . '.csv';
+	//$csv_fname = md5(time().'-'.$where).'.csv';
+	if ( !file_exists("$system_tmp_dir/$csv_fname") ) {
+		$handle = fopen("$system_tmp_dir/$csv_fname", "w");
 		$query = "SELECT * FROM $db_table_name $where $order $sort LIMIT $result_limit";
 		try {
 			$sth = $dbh->query($query);
@@ -256,14 +256,34 @@ if ( isset($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) {
 			print_r($dbh->errorInfo());
 		}
 
-		fwrite($handle,"calldate;clid;src;did;dst;dcontext;channel;dstchannel;lastapp;lastdata;duration;billsec;disposition;amaflags;accountcode;uniqueid;userfield");
+		fwrite($handle, implode($system_csv_delim,
+			array(
+				'calldate',
+				'clid',
+				'src',
+				'did',
+				'dst',
+				'dcontext',
+				'channel',
+				'dstchannel',
+				'lastapp',
+				'lastdata',
+				'duration',
+				'billsec',
+				'disposition',
+				'amaflags',
+				'accountcode',
+				'uniqueid',
+				'userfield',
+			))
+		);
 		
 		if ( isset($_REQUEST['use_callrates']) && $_REQUEST['use_callrates'] == 'true' ) {
-			fwrite($handle,";callrate;callrate_dst");
+			fwrite($handle, $system_csv_delim.'callrate'.$system_csv_delim.'callrate_dst');
 		}
-		fwrite($handle,"\n");
+		fwrite($handle, "\n");
 		
-		while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
+		while ( $row = $sth->fetch(PDO::FETCH_ASSOC) ) {
 			$csv_line[0] 	= $row['calldate'];
 			$csv_line[1] 	= $row['clid'];
 			$csv_line[2] 	= $row['src'];
@@ -290,22 +310,22 @@ if ( isset($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) {
 			for ($i = 0; $i < count($csv_line); $i++) {
 				$csv_line[$i] = str_replace( array( "\n", "\r" ), '', $csv_line[$i]);
 				/* If the string contains a comma, enclose it in double-quotes. */
-				if (strpos($csv_line[$i], ";") !== FALSE) { 	// ,
+				if (strpos($csv_line[$i], $system_csv_delim) !== FALSE) { 	// ,
 					$csv_line[$i] = "\"" . $csv_line[$i] . "\"";
 				}
 				if ($i != count($csv_line) - 1) {
-					$data = $data . $csv_line[$i] . ";";
+					$data = $data . $csv_line[$i] . $system_csv_delim;
 				} else {
 					$data = $data . $csv_line[$i];
 				}
 			}
 			unset($csv_line);
-			fwrite($handle,"$data\n");
+			fwrite($handle, "$data\n");
 		}
 		fclose($handle);
 		$sth = NULL;
 	}
-	echo '<p class="dl_csv"><a class="btn_a_2" href="dl.php?csv='.base64_encode($csv_file).'">Скачать CSV файл</a></p>';
+	echo '<p class="dl_csv"><a class="btn_a_2" href="dl.php?csv='.base64_encode($csv_fname).'">Скачать CSV файл</a></p>';
 }
 
 if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
