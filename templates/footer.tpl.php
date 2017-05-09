@@ -1,8 +1,8 @@
 
 <div id="footer">
 	<div id="footer-box">
-		<a target="_blank" href="https://github.com/prog-it/Asterisk-CDR-Viewer-Mod">Asterisk CDR Viewer Mod v<?php echo VERSION; ?></a> &nbsp;
-		<img title="Для проверки обновлений, ДВАЖДЫ щелкните" id="check-updates" src="img/check_updates.svg">
+		<a target="_blank" href="https://github.com/prog-it/Asterisk-CDR-Viewer-Mod">Asterisk CDR Viewer Mod v<?php echo VERSION; ?></a>
+		<div title="Проверить обновления" id="check-updates"></div>
 	</div>
 </div>
 </div>
