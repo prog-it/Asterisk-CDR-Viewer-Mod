@@ -59,7 +59,7 @@ $(window).load(function() {
 	});
 	
 	// Проверка обновлений
-	$('#check-updates').on('dblclick', function() {
+	$('#check-updates').on('click', function() {
 		$.ajax ({
 			type: 'post',
 			url: '',
