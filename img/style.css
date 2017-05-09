@@ -323,12 +323,15 @@ legend.title {
 }
 
 .record_col div.img_notfound {
-	background: url('record_notfound.png') no-repeat transparent;
+	background: url('record_notfound.svg') no-repeat transparent;
 	display: inline-block;
 	width: 24px;
 	height: 24px;
 	opacity: .5;
 	filter: alpha(opacity=50); /* For IE8 and earlier */	
+	transform: rotate(90deg);
+	-moz-transform: rotate(90deg);
+	-webkit-transform: rotate(90deg);
 }
 
 /* Плеер */
