@@ -162,8 +162,8 @@ img {
 }
 
 #check-updates {
-	width: 13px;
-	height: 13px;
+	width: 12px;
+	height: 12px;
 	display: inline-block;
 	background: url('check_updates.svg') no-repeat transparent;
 	cursor: pointer;
@@ -304,7 +304,7 @@ legend.title {
 }
 
 .record_col div.img_play {
-	background: url('record_play.png') no-repeat transparent;
+	background: url('record_play.svg') no-repeat transparent;
 	display: inline-block;
 	width: 24px;	
 	height: 24px;		
@@ -312,10 +312,12 @@ legend.title {
 }
 
 .record_col div.img_dl {
-	background: url('record_dl.png') no-repeat transparent;
+	background: url('record_dl.svg') no-repeat transparent;
 	display: inline-block;
 	width: 24px;
-	height: 24px;	
+	height: 24px;
+	opacity: .9;
+	filter: alpha(opacity=90); /* For IE8 and earlier */
 }
 
 .record_col div.img_delete {
@@ -324,6 +326,8 @@ legend.title {
 	width: 24px;	
 	height: 24px;
 	margin-left: 1px;
+	opacity: .8;
+	filter: alpha(opacity=80); /* For IE8 and earlier */
 }
 
 .record_col div.img_notfound {
@@ -332,7 +336,7 @@ legend.title {
 	width: 24px;
 	height: 24px;
 	opacity: .5;
-	filter: alpha(opacity=50); /* For IE8 and earlier */	
+	filter: alpha(opacity=50); /* For IE8 and earlier */
 	transform: rotate(90deg);
 	-moz-transform: rotate(90deg);
 	-webkit-transform: rotate(90deg);
