@@ -162,8 +162,8 @@ img {
 }
 
 #check-updates {
-	width: 12px;
-	height: 12px;
+	width: 13px;
+	height: 13px;
 	display: inline-block;
 	background: url('check_updates.svg') no-repeat transparent;
 	cursor: pointer;
