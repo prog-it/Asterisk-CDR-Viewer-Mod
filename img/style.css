@@ -316,8 +316,6 @@ legend.title {
 	display: inline-block;
 	width: 24px;
 	height: 24px;
-	opacity: .9;
-	filter: alpha(opacity=90); /* For IE8 and earlier */
 }
 
 .record_col div.img_delete {
