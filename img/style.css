@@ -333,7 +333,7 @@ legend.title {
 	display: inline-block;
 	width: 24px;
 	height: 24px;
-	opacity: .5;
+	opacity: .3;
 	filter: alpha(opacity=50); /* For IE8 and earlier */
 	transform: rotate(90deg);
 	-moz-transform: rotate(90deg);
