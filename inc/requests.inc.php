@@ -17,10 +17,9 @@ function getCurrentVersion() {
 
 function checkUpdates() {
 	$res = false;
-	$url = 'https://github.com/prog-it/Asterisk-CDR-Viewer-Mod/raw/master/inc/version.txt';
+	$url  = 'https://api.github.com/repos/prog-it/Asterisk-CDR-Viewer-Mod/releases/latest';
 	if ( VERSION != '?' ) {
 		$ch = curl_init($url);
-		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 		curl_setopt($ch, CURLOPT_ENCODING, '');
@@ -37,11 +36,7 @@ function checkUpdates() {
 		if ( !$err && !$errmsg && in_array($hc, array(200)) ) {
 			$content = trim($content);
 			if ($content) {
-				if ( $content > VERSION ) {
-					$res = 'Доступна новая версия: ' . $content . PHP_EOL . 'Текущая версия: ' . VERSION;
-				} else {
-					$res = 'Нет обновлений';
-				}
+				$res = json_decode($content);
 			}
 		}
 	}
@@ -55,9 +50,16 @@ if ( isset($_POST['check_updates']) ) {
 	}
 	$upd = checkUpdates();
 	if ( $upd !== false ) {
+		$msg = 'Нет обновлений';
+		if ( $upd->name > VERSION ) {
+			$msg = 'Доступна новая версия: ' . $upd->name . PHP_EOL .
+					'Текущая версия: ' . VERSION . PHP_EOL . PHP_EOL .
+					'В этом релизе:' . PHP_EOL .
+					$upd->body;
+		}
 		echo json_encode(array(
 			'success' => true,
-			'message' => $upd,
+			'message' => $msg,
 		));
 	} else {
 		echo json_encode(array(
