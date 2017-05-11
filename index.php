@@ -354,7 +354,7 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 		$tot_calls_raw = $sth->fetchColumn();
 		$sth = NULL;
 	}
-	if ( $tot_calls_raw ) {
+	if ( isset($tot_calls_raw) && $tot_calls_raw ) {
 
 		$i = $h_step - 1;
 
@@ -687,7 +687,7 @@ if ( isset($_REQUEST['need_minutes_report']) && $_REQUEST['need_minutes_report']
 	$sth = NULL;
 	
 	$html_duration = sprintf('%02d', intval($tot_duration/60)).':'.sprintf('%02d', intval($tot_duration%60));
-	$html_duration_avg = sprintf('%02d', intval(($tot_duration/$tot_calls)/60)).':'.sprintf('%02d', intval(($tot_duration/$tot_calls)%60));
+	$html_duration_avg = sprintf( '%02d', ($tot_calls ? intval(($tot_duration/$tot_calls)/60) : 0) ).':'.sprintf( '%02d', ($tot_calls ? intval(($tot_duration/$tot_calls)%60) : 0) );
 
 	echo '<tr>';
 	echo "<th class=\"chart_data\">Всего</th><th class=\"chart_data\">$tot_calls</th><th class=\"chart_data\">$html_duration</th><th class=\"chart_data\">$html_duration_avg</th>";
@@ -879,12 +879,12 @@ if ( isset($_REQUEST['need_asr_report']) && $_REQUEST['need_asr_report'] == 'tru
 
 	if ( $asr_cur_key != '' ) {
 		echo '<tr class="record">';
-		echo "<td class=\"end_col\">$asr_cur_key</td><td class=\"chart_data\">",intval(($asr_answered_calls/$asr_total_calls)*100),"</td><td class=\"chart_data\">",intval($asr_bill_secs/($asr_answered_calls?$asr_answered_calls:1)),"</td><td class=\"chart_data\">$asr_total_calls</td><td class=\"chart_data\">$asr_answered_calls</td><td class=\"chart_data\">$asr_bill_secs</td>";
+		echo "<td class=\"end_col\">$asr_cur_key</td><td class=\"chart_data\">",($asr_total_calls ? intval(($asr_answered_calls/$asr_total_calls)*100) : 0),"</td><td class=\"chart_data\">",intval($asr_bill_secs/($asr_answered_calls?$asr_answered_calls:1)),"</td><td class=\"chart_data\">$asr_total_calls</td><td class=\"chart_data\">$asr_answered_calls</td><td class=\"chart_data\">$asr_bill_secs</td>";
 		echo '</tr>';
 	}
 
 	echo '<tr>';
-	echo "<th class=\"chart_data\">Всего</th><th class=\"chart_data\">",intval(($all_asr_answered_calls/$all_asr_total_calls)*100),"</th><th class=\"chart_data\">",intval($all_asr_bill_secs/($all_asr_answered_calls?$all_asr_answered_calls:1)),"</th><th class=\"chart_data\">$all_asr_total_calls</th><th class=\"chart_data\">$all_asr_answered_calls</th><th class=\"chart_data\">$all_asr_bill_secs</th>";
+	echo "<th class=\"chart_data\">Всего</th><th class=\"chart_data\">",($all_asr_total_calls ? intval(($all_asr_answered_calls/$all_asr_total_calls)*100) : 0),"</th><th class=\"chart_data\">",intval($all_asr_bill_secs/($all_asr_answered_calls?$all_asr_answered_calls:1)),"</th><th class=\"chart_data\">$all_asr_total_calls</th><th class=\"chart_data\">$all_asr_answered_calls</th><th class=\"chart_data\">$all_asr_bill_secs</th>";
 	echo '</tr>';
 	echo '</table>';
 
