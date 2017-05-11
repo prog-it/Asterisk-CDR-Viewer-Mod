@@ -1,19 +1,22 @@
-$(window).load(function() {
-	if (scrollShow === true) {
-		// Показать навигацию
-		showScroll();
-		$('#scroll-up').on('click', function() {
-			$('html, body').animate({ scrollTop: 0 }, 100);
-			return false;
-		});
-		$('#scroll-down').on('click', function() {
-			$('html, body').animate({ scrollTop: $(document).height() - $(window).height() }, 100);
-			return false;
-		});
-	}
+
+$(document).on('ready', function() {
+	// Стрелки навигации
+	$('#scroll-box').on('click', '#scroll-up', function() {
+		$('html, body').animate({ scrollTop: 0 }, 100);
+		return false;
+	});
+	$('#scroll-box').on('click', '#scroll-down', function() {
+		$('html, body').animate({ scrollTop: $(document).height() - $(window).height() }, 100);
+		return false;
+	});
+	
+	// Быстрый выбор периода
+	$('#id_range').on('change', function() {
+		 selectRange( $(this).val() );
+	});	
 	
 	// Показать плеер
-	$('.img_play').on('click', function() {
+	$('body').on('click', '.img_play', function() {
 		var $player = $(playerId),
 			$overlay = $(playerOverlayId),
 			autoplay = (playerAutoplay === true) ? 'play' : '',
@@ -43,7 +46,7 @@ $(window).load(function() {
 	});
 	
 	// Скрыть плеер
-	$('#playerOverlay').on('click', function() {
+	$('body').on('click', '#playerOverlay', function() {
 		var $player = $(playerId),
 			$overlay = $(playerOverlayId),
 			docTitle = document.title;
@@ -81,7 +84,7 @@ $(window).load(function() {
 	});
 	
 	// Удалить запись
-	$('.img_delete').on('click', function() {
+	$('body').on('click', '.img_delete', function() {
 		$elem = $(this);
 		if ( confirm('Вы действительно хотите удалить эту запись?') ) {
 			$.ajax ({
@@ -103,7 +106,40 @@ $(window).load(function() {
 				},			
 			});
 		}
-	});	
+	});
+	
+	// Отправка формы
+	$('#form_submit').on('click', function() {
+		$form = $('form');
+		$config = $.query.get('config');
+		$config = $config != false ? '?config=' + $config : '';
+		$.ajax ({
+			type: 'post',
+			url: '' + $config,
+			data: $form.serialize(),
+			cache: false,
+			beforeSend: function(data) {
+				$('#form-loader').css('display', 'block');
+			},
+			success: function(data) {
+				if ( data.trim() != '' ) {
+					$('#content').html(data);
+				} else {
+					$('#content').html('<div id="content-msg">Нет данных с выбранными параметрами</div>');
+				}
+				if (scrollShow === true) {
+					showScroll();
+				}				
+			},
+			error: function(xhr, str) {
+				$('#content').html('<div id="content-msg">Не удалось получить данные</div>');
+			},
+			complete: function(data) {
+				$('#form-loader').css('display', 'none');
+			}
+		});
+		return false;
+	});
 	
 })
 
@@ -117,6 +153,10 @@ function showScroll() {
 		$scroll.css({
 			'display': 'block',
 		});
+	} else {
+		$scroll.css({
+			'display': 'none',
+		});		
 	}
 }
 

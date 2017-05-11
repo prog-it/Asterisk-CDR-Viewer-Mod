@@ -1,3 +1,6 @@
+<div id="content"></div>
+
+</div>
 
 <div id="footer">
 	<div id="footer-box">

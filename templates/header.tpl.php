@@ -19,6 +19,7 @@
 <link rel="stylesheet" type="text/css" href="img/style.css?<?php echo filemtime('img/style.css'); ?>">
 <link rel="stylesheet" type="text/css" href="<?php echo isset($site_cdn['addr']) ? $site_cdn['css_tooltip'] : 'img/simptip.min.css'; ?>">
 <script src="<?php echo isset($site_cdn['addr']) ? $site_cdn['js_jquery'] : 'img/jquery.min.js'; ?>"></script>
+<script src="<?php echo isset($site_cdn['addr']) ? $site_cdn['js_jquery_object'] : 'img/jquery.query-object.min.js'; ?>"></script>
 <script src="<?php echo isset($site_cdn['addr']) ? $site_cdn['js_player'] : 'img/player.js'; ?>"></script>
 <script src="<?php echo isset($site_cdn['addr']) ? $site_cdn['js_player_skin'] : 'img/player_skin.js'; ?>"></script>
 <script>
@@ -46,11 +47,16 @@ var playerOverlayId = '#playerOverlay',
 				if ( isset($site_main['main_section']) && $site_main['main_section'] != '' ) {
 					echo '<span><a title="Перейти в основной раздел" href="'.$site_main['main_section'].'">&#8592;</a></span>';
 				}
-				if ( isset($site_main['logo_path']) && $site_main['logo_path'] != '' ) {
-					echo '<a href="."><img src="' . $site_main['logo_path'] . '"></a>';
+				if ( empty($_SERVER['REQUEST_URI']) ){
+					$url_cdr = $_SERVER['PHP_SELF'] . ( empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'] );
 				} else {
-					echo '<a href=".">' . $site_main['head'] . '</a>';
+					$url_cdr = $_SERVER['REQUEST_URI'];
 				}				
+				if ( isset($site_main['logo_path']) && $site_main['logo_path'] != '' ) {
+					echo '<a href="' . $url_cdr . '"><img src="' . $site_main['logo_path'] . '"></a>';
+				} else {
+					echo '<a href="' . $url_cdr . '">' . $site_main['head'] . '</a>';
+				}
 				?>
 			</td>
 		</tr>

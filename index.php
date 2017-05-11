@@ -13,9 +13,10 @@ require_once $path_config;
 require_once 'inc/func.inc.php';
 require_once 'inc/requests.inc.php';
 
-require_once 'templates/header.tpl.php';
-require_once 'templates/form.tpl.php';
-
+if ( !isset($_POST['form_sended']) ) {
+	require_once 'templates/header.tpl.php';
+	require_once 'templates/form.tpl.php';
+}
 
 try {
 	$dbh = new PDO("$db_type:host=$db_host;port=$db_port;dbname=$db_name", $db_user, $db_pass, $db_options);
@@ -233,15 +234,19 @@ if ( strlen($where) > 9 ) {
 	$where = "WHERE $date_range $cdr_user_name";
 }
 
+$use_callrates = false;
+if ( isset($callrate_csv_file) && strlen($callrate_csv_file) > 0 && file_exists($callrate_csv_file) ) {
+	$use_callrates = true;	
+}
+
 $order = empty($_REQUEST['order']) ? 'ORDER BY calldate' : "ORDER BY $_REQUEST[order]";
 $sort = empty($_REQUEST['sort']) ? 'DESC' : $_REQUEST['sort'];
 $group = empty($_REQUEST['group']) ? 'day' : $_REQUEST['group'];
 
-// CSV - разделители -> ;
+// CSV отчет
 if ( isset($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) {
 	$csv_date = time();
 	$csv_fname = 'report__' . date('Y-m-d_H-i-s', $csv_date) . '_' . md5($csv_date.'-'.$where) . '.csv';
-	//$csv_fname = md5(time().'-'.$where).'.csv';
 	if ( !file_exists("$system_tmp_dir/$csv_fname") ) {
 		$handle = fopen("$system_tmp_dir/$csv_fname", "w");
 		$query = "SELECT * FROM $db_table_name $where $order $sort LIMIT $result_limit";
@@ -273,12 +278,15 @@ if ( isset($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) {
 				'disposition',
 				'amaflags',
 				'accountcode',
+				'peeraccount',
 				'uniqueid',
 				'userfield',
+				'linkedid',
+				'sequence',
 			))
 		);
 		
-		if ( isset($_REQUEST['use_callrates']) && $_REQUEST['use_callrates'] == 'true' ) {
+		if ( $use_callrates === true ) {
 			fwrite($handle, $system_csv_delim.'callrate'.$system_csv_delim.'callrate_dst');
 		}
 		fwrite($handle, "\n");
@@ -287,7 +295,7 @@ if ( isset($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) {
 			$csv_line[0] 	= $row['calldate'];
 			$csv_line[1] 	= $row['clid'];
 			$csv_line[2] 	= $row['src'];
-			$csv_line[3] 	= $row['did'];
+			$csv_line[3] 	= isset($row['did']) ? $row['did'] : '';
 			$csv_line[4] 	= $row['dst'];
 			$csv_line[5] 	= $row['dcontext'];
 			$csv_line[6]	= $row['channel'];
@@ -299,13 +307,16 @@ if ( isset($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) {
 			$csv_line[12]	= $row['disposition'];
 			$csv_line[13]	= $row['amaflags'];
 			$csv_line[14]	= $row['accountcode'];
-			$csv_line[15]	= $row['uniqueid'];
-			$csv_line[16]	= $row['userfield'];
+			$csv_line[15]	= isset($row['peeraccount']) ? $row['peeraccount'] : '';
+			$csv_line[16]	= $row['uniqueid'];
+			$csv_line[17]	= $row['userfield'];
+			$csv_line[18]	= isset($row['linkedid']) ? $row['linkedid'] : '';
+			$csv_line[19]	= isset($row['sequence']) ? $row['sequence'] : '';
 			$data = '';
-			if ( isset($_REQUEST['use_callrates']) && $_REQUEST['use_callrates'] == 'true' ) {
+			if ( $use_callrates === true ) {
 				$rates = callrates($row['dst'],$row['billsec'],$callrate_csv_file);
-				$csv_line[17] = $rates[4];
-				$csv_line[18] = $rates[2];
+				$csv_line[20] = $rates[4];
+				$csv_line[21] = $rates[2];
 			}
 			for ($i = 0; $i < count($csv_line); $i++) {
 				$csv_line[$i] = str_replace( array( "\n", "\r" ), '', $csv_line[$i]);
@@ -395,18 +406,18 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 					<th class="record_col">Кто звонил</th>
 					<th class="record_col">Куда звонили</th>
 					<?php
-						if ( isset($display_column['extension']) and $display_column['extension'] == 1 ) {
+						if ( isset($display_column['extension']) && $display_column['extension'] == 1 ) {
 							echo '<th class="record_col">Экстеншен</th>';
 						}
 					?>
 					<th class="record_col">Длительность</th>
 					<?php
-					if ( isset($_REQUEST['use_callrates']) && $_REQUEST['use_callrates'] == 'true' ) {
-						if ( isset($display_column['callrates']) and $display_column['callrates'] == 1 ) {
+					if ( $use_callrates === true ) {
+						if ( isset($display_column['callrates']) && $display_column['callrates'] == 1 ) {
 							echo '<th class="record_col">Тариф</th>';
 						}
 						// Показать Направление
-						if ( isset($display_column['callrates_dst']) and $display_column['callrates_dst'] == 1 ) {
+						if ( isset($display_column['callrates_dst']) && $display_column['callrates_dst'] == 1 ) {
 							echo '<th class="record_col">Направление</th>';
 						}
 					}
@@ -423,7 +434,7 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 						}
 					?>					
 					<?php
-						if ( isset($display_column['clid']) and $display_column['clid'] == 1 ) {
+						if ( isset($display_column['clid']) && $display_column['clid'] == 1 ) {
 							echo '<th class="record_col">CallerID</th>';
 						}
 					?>
@@ -434,7 +445,7 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 					?>					
 					<th class="record_col">Файл</th>
 					<?php
-						if ( isset($display_column['accountcode']) and $display_column['accountcode'] == 1 ) {
+						if ( isset($display_column['accountcode']) && $display_column['accountcode'] == 1 ) {
 							echo '<th class="record_col">Аккаунт</th>';
 						}
 					?>
@@ -448,21 +459,21 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 				formatCallDate($row['calldate'],$row['uniqueid']);
 				formatDisposition($row['disposition'], $row['amaflags']);
 				formatSrc($row['src'],$row['clid']);
-				if ( isset($row['did']) and strlen($row['did']) ) {
+				if ( isset($row['did']) && strlen($row['did']) ) {
 					formatDst($row['did'], $row['dcontext'] . ' # ' . $row['dst'] );
 				} else {
 					formatDst($row['dst'], $row['dcontext'] );
 				}
-				if ( isset($display_column['extension']) and $display_column['extension'] == 1 ) {
+				if ( isset($display_column['extension']) && $display_column['extension'] == 1 ) {
 					formatDst($row['dst'], $row['dcontext'] );
 				}
 				formatDuration($row['duration'], $row['billsec']);
-				if ( isset($_REQUEST['use_callrates']) && $_REQUEST['use_callrates'] == 'true' ) {
+				if ( $use_callrates === true ) {
 					$rates = callrates($row['dst'],$row['billsec'],$callrate_csv_file);
-					if ( isset($display_column['callrates']) and $display_column['callrates'] == 1 ) {
+					if ( isset($display_column['callrates']) && $display_column['callrates'] == 1 ) {
 						formatMoney($rates[4],2,htmlspecialchars($rates[2]));
 					}
-					if ( isset($display_column['callrates_dst']) and $display_column['callrates_dst'] == 1 ) {
+					if ( isset($display_column['callrates_dst']) && $display_column['callrates_dst'] == 1 ) {
 						echo '<td>'. htmlspecialchars($rates[2]) . '</td>';
 					}
 				}
@@ -472,14 +483,14 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 				if ( isset($display_column['channel']) && $display_column['channel'] == 1 ) {
 					formatChannel($row['channel']);
 				}
-				if ( isset($display_column['clid']) and $display_column['clid'] == 1 ) {
+				if ( isset($display_column['clid']) && $display_column['clid'] == 1 ) {
 					formatClid($row['clid']);
 				}
 				if ( isset($display_column['dstchannel']) && $display_column['dstchannel'] == 1 ) {
 					formatChannel($row['dstchannel']);
 				}
 				formatFiles($row);
-				if ( isset($display_column['accountcode']) and $display_column['accountcode'] == 1 ) {
+				if ( isset($display_column['accountcode']) && $display_column['accountcode'] == 1 ) {
 					formatAccountCode($row['accountcode']);
 				}
 				formatUserField($row['userfield']);
@@ -497,8 +508,6 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 ?>
 
 <?php
-
-echo '<a id="GRAPH"></a>';
 
 //NEW GRAPHS
 $group_by_field = $group;
@@ -890,13 +899,9 @@ if (isset($plugins) && $plugins) {
 	}
 }
 
-?>
-
-</div>
-
-<?php
-
 $dbh = NULL;
 
-require_once 'templates/footer.tpl.php';
+if ( !isset($_POST['form_sended']) ) {
+	require_once 'templates/footer.tpl.php';
+}
 

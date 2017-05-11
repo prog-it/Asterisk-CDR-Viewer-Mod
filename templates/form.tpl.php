@@ -1,4 +1,13 @@
 <div id="main">
+
+<div id="form-container">
+	<div id="form-loader">
+		<div class="cssload-loader">
+			<div class="cssload-inner cssload-one"></div>
+			<div class="cssload-inner cssload-two"></div>
+			<div class="cssload-inner cssload-three"></div>
+		</div>				
+	</div>
 <table class="cdr cdr-main">
 <tr>
 <td>
@@ -118,7 +127,7 @@ foreach ($months as $i => $month) {
 	<option value="30"></option>
 </datalist>
 &emsp;
-<select id="id_range" name="range" onchange="selectRange(this.value);">
+<select id="id_range" name="range">
 	<option class="head" value="">Выбрать период...</option>
 	<option value="td">Сегодня</option>
 	<option value="yd">Вчера</option>
@@ -139,16 +148,7 @@ foreach ($months as $i => $month) {
 	<td>Тип отчета&ensp;</td>
 	<td>
 	<input <?php if ( (empty($_REQUEST['need_html']) && empty($_REQUEST['need_chart']) && empty($_REQUEST['need_chart_cc']) && empty($_REQUEST['need_minutes_report']) && empty($_REQUEST['need_asr_report']) && empty($_REQUEST['need_csv'])) || ( !empty($_REQUEST['need_html']) &&  $_REQUEST['need_html'] == 'true' ) ) { echo 'checked="checked"'; } ?> type="checkbox" id="id_need_html" name="need_html" value="true">&ensp;<label for="id_need_html">Поиск в базе</label><br>
-	<?php
-	if ( strlen($callrate_csv_file) > 0 ) {
-		//echo '&emsp;<input id="id_use_callrates" type="checkbox" name="use_callrates" value="true"';
-		//if ( !empty($_REQUEST['use_callrates']) &&  $_REQUEST['use_callrates'] == 'true' ) { echo 'checked="checked"'; }
-		//if ( (empty($_REQUEST['need_html']) && empty($_REQUEST['need_chart']) && empty($_REQUEST['need_chart_cc']) && empty($_REQUEST['need_minutes_report']) && empty($_REQUEST['need_asr_report']) && empty($_REQUEST['need_csv'])) || ( !empty($_REQUEST['use_callrates']) &&  $_REQUEST['use_callrates'] == 'true' )  ) { echo 'checked="checked"'; }
-		//echo '>&ensp;<label for="id_use_callrates">С тарифами</label><br/>';
-		if ( (empty($_REQUEST['need_html']) && empty($_REQUEST['need_chart']) && empty($_REQUEST['need_chart_cc']) && empty($_REQUEST['need_minutes_report']) && empty($_REQUEST['need_asr_report']) && empty($_REQUEST['need_csv'])) || ( !empty($_REQUEST['need_html']) &&  $_REQUEST['need_html'] == 'true' ) ) { $_REQUEST['use_callrates'] = 'true'; }
-	} 
-	?>
-	<input <?php if ( !empty($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) { echo 'checked="checked"'; } ?> type="checkbox" id="id_need_csv" name="need_csv" value="true">&ensp;<label for="id_need_csv">CSV файл</label><br/>
+	<input <?php if ( !empty($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) { echo 'checked="checked"'; } ?> type="checkbox" id="id_need_csv" name="need_csv" value="true">&ensp;<label for="id_need_csv">CSV файл</label><br>
 	<input <?php if ( !empty($_REQUEST['need_chart']) && $_REQUEST['need_chart'] == 'true' ) { echo 'checked="checked"'; } ?> type="checkbox" id="id_need_chart" name="need_chart" value="true">&ensp;<label for="id_need_chart">График звонков</label><br>
 	<input <?php if ( !empty($_REQUEST['need_minutes_report']) && $_REQUEST['need_minutes_report'] == 'true' ) { echo 'checked="checked"'; } ?> type="checkbox" id="id_need_minutes_report" name="need_minutes_report" value="true">&ensp;<label for="id_need_minutes_report">Расход минут</label><br>
 	<? if ($display_search['chart_cc'] == 1) { ?>
@@ -409,7 +409,8 @@ if ( isset($plugins) && $plugins && count($plugins) > 0 ) {
 	&nbsp;
 	</td>
 	<td>
-		<input class="submit btnSearch margin-left0" type="submit" value="Найти">
+		<input type="hidden" name="form_sended" value="1">
+		<input id="form_submit" class="submit btnSearch margin-left0" type="button" value="Найти">
 		<input <?php if (empty($_REQUEST['search_mode']) || $_REQUEST['search_mode'] == 'all') { echo 'checked="checked"'; } ?> type="radio" id="id_search_mode_all" name="search_mode" value="all"> <label for="id_search_mode_all">По всем условиям</label>&ensp;
 		<input <?php if (isset($_REQUEST['search_mode']) && $_REQUEST['search_mode'] == 'any') { echo 'checked="checked"'; } ?> type="radio" id="id_search_mode_any" name="search_mode" value="any"> <label for="id_search_mode_any">По любому из условий</label>
 	</td>
@@ -420,5 +421,5 @@ if ( isset($plugins) && $plugins && count($plugins) > 0 ) {
 </td>
 </tr>
 </table>
-<a id="CDR"></a>
+</div>
 

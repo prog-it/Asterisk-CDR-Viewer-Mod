@@ -81,6 +81,7 @@ $callrate_free_interval = 3;
 # Имя файла с тарифами
 $callrate_csv_fileName = 'gen_callrates.csv';
 # Путь к файлу с тарифами, также этот путь прописан в настройках плагина
+# Если функционал подсчета тарифов не нужен, закомментировать строчку ниже или задать значение ''. Так будет работать немного быстрее при большом количестве записей в выводе
 $callrate_csv_file = dirname(__FILE__) . '/../plugins/' . $callrate_csv_fileName;
 $callrate_currency = '';
 # Массив путей к файлам с тарифами -> array('/var/tarif1.csv', '/var/tarif2.csv', '/var/tarif3.csv');
@@ -155,6 +156,8 @@ $display_full_channel = 0;
 //$site_cdn['js_player_skin'] = $site_cdn['addr'] . '/uppod/skins/audio_myspace.js';
 # jQuery
 //$site_cdn['js_jquery'] = $site_cdn['addr'] . '/jquery/1.12.3/jquery.min.js';
+# jQuery query object
+//$site_cdn['js_jquery_object'] = $site_cdn['addr'] . '/jquery-query-object/2.2.3/jquery.query-object.min.js';
 
 ### Настройки сайта
 # Meta - Title
