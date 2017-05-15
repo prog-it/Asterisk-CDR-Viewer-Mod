@@ -342,10 +342,11 @@ if ( isset($plugins) && $plugins && count($plugins) > 0 ) {
 		<select name="lastapp" id="lastapp">
 			<option <?php if (empty($_REQUEST['lastapp']) || $_REQUEST['lastapp'] == 'all') { echo 'selected="selected"'; } ?> value="all">Любое</option>
 			<option <?php if (isset($_REQUEST['lastapp']) && $_REQUEST['lastapp'] == 'Dial') { echo 'selected="selected"'; } ?> value="Dial">Набор номера</option>
-			<option <?php if (isset($_REQUEST['lastapp']) && $_REQUEST['lastapp'] == 'Hangup') { echo 'selected="selected"'; } ?> value="Hangup">Разъединение</option>
-			<option <?php if (isset($_REQUEST['lastapp']) && $_REQUEST['lastapp'] == 'Playback') { echo 'selected="selected"'; } ?> value="Playback">Воспроизведение</option>
 			<option <?php if (isset($_REQUEST['lastapp']) && $_REQUEST['lastapp'] == 'RetryDial') { echo 'selected="selected"'; } ?> value="RetryDial">Повторный набор</option>
 			<option <?php if (isset($_REQUEST['lastapp']) && $_REQUEST['lastapp'] == 'Queue') { echo 'selected="selected"'; } ?> value="Queue">Очередь</option>
+			<option <?php if (isset($_REQUEST['lastapp']) && $_REQUEST['lastapp'] == 'Hangup') { echo 'selected="selected"'; } ?> value="Hangup">Разъединение</option>
+			<option <?php if (isset($_REQUEST['lastapp']) && $_REQUEST['lastapp'] == 'Playback') { echo 'selected="selected"'; } ?> value="Playback">Воспроизведение</option>
+			<option <?php if (isset($_REQUEST['lastapp']) && $_REQUEST['lastapp'] == 'VoiceMail') { echo 'selected="selected"'; } ?> value="VoiceMail">Голосовая почта</option>
 		</select>
 	</td>
 </tr>
