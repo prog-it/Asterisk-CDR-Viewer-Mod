@@ -414,15 +414,11 @@ function is_blank(&$value) {
 function formatMoney($number, $cents = 2, $title = '') {
 	global $callrate_currency;
 	if ( is_numeric($number) ) { // a number
-		if ( !$number ) { // zero
-			$money = ($cents == 2 ? '0.00' : '0'); // output zero
-		} else { // value
-			if ( floor($number) == $number ) { // whole number
-				$money = number_format($number, ($cents == 2 ? 2 : 0)); // format
-			} else { // cents
-				$money = number_format(round($number, 2), ($cents == 0 ? 0 : 2)); // format
-			} // integer or decimal
-		} // value
+		if ( floor($number) == $number ) { // whole number
+			$money = number_format($number, ($cents == 2 ? 2 : 0)); // format
+		} else { // cents
+			$money = number_format(round($number, 2), ($cents == 0 ? 0 : 2)); // format
+		} // integer or decimal
 		
 		if ( $title ) {
 			$title = ' class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="'.$title.'"';
