@@ -12,125 +12,6 @@ function formatFiles($row) {
 	$system_audio_defconv,
 	$display_search;
 
-	/* File name formats, please specify: */
-	
-	/* 
-		caller-called-timestamp.wav 
-	*/
-	/* 
-	$recorded_file = $row['src'] .'-'. $row['dst'] .'-'. $row['call_timestamp']
-	*/
-	/* ============================================================================ */	
-
-	/* 
-		ends at the uniqueid.wav, for example: 
-												date-time-uniqueid.wav 
-	
-		thanks to Beto Reyes
-	*/
-	/*
-	$recorded_file = glob($system_monitor_dir . '/*' . $row['uniqueid'] . '.' . $system_audio_format);
-	if (count($recorded_file)>0) {
-		$recorded_file = basename($recorded_file[0],".$system_audio_format");
-	} else {
-		$recorded_file = $row['uniqueid'];
-	}
-	*/
-	/* ============================================================================ */
-
-	/*      This example for multi-directory archive without uniqueid, named by format:
-			<date>/<time>_<caller>-<destination>.<filetype>
-
-			example: (tree /var/spool/asterisk/monitor)
-
-		|-- 2012.09.12
-		|   |-- 10-37_4952704601-763245.ogg
-		|   `-- 10-43_106-79236522173.ogg
-		`-- 2012.09.13
-			|-- 11-42_101-79016410692.ogg
-			|-- 12-43_104-671554.ogg
-			`-- 15-49_109-279710.ogg
-
-		Added by BAXMAH (pcm@ritm.omsk.ru)
-	*/
-	/*
-	   $record_datetime = DateTime::createFromFormat('Y-m-d G:i:s', $row['calldate']);
-
-	   $recorded_file = date_format($record_datetime, 'Y.m.d/G-i') .'_'. $row['src'] .'-'. $row['dst'];
-	*/
-	/* ============================================================================ */
-
-	/*
-		This is a multi-dir search script for filenames like "/var/spool/asterisk/monitor/dir1/dir2/dir3/*uniqueid*.*"
-		Doesn't matter, WAV, MP3 or other file format, only UNIQID  is  required at the end of the filename 
-		;---------------------------------------------------------------------------  
-	   example: (tree /var/spool/asterisk/monitor)
-
-    |-- in
-    |   |-- 4951234567
-    |   |   `-- 20120101_234231_4956401234_to_74951234567_1307542950.0.wav
-    |   `-- 4997654321
-    |       `-- 20120202_234231_4956401234_to_74997654321_1303542950.0.wav
-    `-- out
-        |-- msk
-        |   `-- 20120125_211231_4956401234_to_74951234567_1307542950.0.wav
-        `-- region
-            `-- 20120112_211231_4956405570_to_74952210533_1307542950.0.wav
-
-      6 directories, 4 files
-		;----------------------------------------------------------------------------
-	   added by Dein admin@sadmin.ru         
-	*/
-	
-	/*
-	//************ Get a list of subdirectories as array to search by glob function  **************
-	if (!function_exists('get_dir_list')) {
-		function get_dir_list($dir){
-			global $dirlist;			
-			$dirlist=array();
-			if (!function_exists('find_dirs_recursive')) {
-				function find_dirs_recursive($sdir) {
-					global $dirlist;
-					foreach(glob($sdir) as $filename) {
-						//echo $filename;
-						if(is_dir($filename)) {
-							$dirlist[]=$filename;
-							find_dirs_recursive($filename."/*");
-						};//endif
-					};//endforeach
-				}; //endfunc                                                                                               
-			};//endif exists
-			find_dirs_recursive($dir."/*");
-		};//endfunc
-	}
-
-	//*************** Main function  ************
-	if (!function_exists('find_record_by_uniqid')) {
-		function find_record_by_uniqid($path,$uniqid){
-			global $dirlist;
-			if (sizeof($dirlist) == 0 ){
-				get_dir_list($path);
-			};//endif size==0
-
-			if (sizeof($dirlist) == 0 ) {return "SOME ERROR, dirlist is empty";};
-
-			$found = "NOTHING FOUND";
-			foreach ($dirlist as $curdir) {
-				$res=glob($curdir."/*".$uniqid.".*");
-				if ($res) {$found=$res[0]; break;};
-			};//endforeach
-
-			$res=str_replace($path,"",$found);	//cut $path from full filename 
-			
-			return $res;			//to be compartable with func. formatFiles($row)
-
-		};//endfunc
-	}
-	
-	$recorded_file = find_record_by_uniqid($system_monitor_dir,$row['uniqueid']);
-	
-	*/
-	
 	# uniq_name.mp3
 	$recorded_file = '';
 	$tmp['system_audio_format'] = $system_audio_format;
@@ -254,7 +135,7 @@ function formatFiles($row) {
 
 
 /* CDR Table Display Functions */
-function formatCallDate($calldate,$uniqueid) {
+function formatCallDate($calldate, $uniqueid) {
 	//$calldate = date('d.m.Y H:i:s', strtotime($calldate));
 	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="UID: '.$uniqueid.'">'.$calldate.'</abbr></td>' . PHP_EOL;
 }
@@ -277,19 +158,19 @@ function formatClid($clid) {
 	echo '<td class="record_col">'.$clid.'</td>' . PHP_EOL;
 }
 
-function formatSrc($src,$clid) {
+function formatSrc($src, $clid) {
 	global $rev_lookup_url, $rev_min_number_len ;
 	if ( empty($src) ) {
 		echo '<td class="record_col">Неизвестно</td>' . PHP_EOL;
 	} else {
 		$src = htmlspecialchars($src);
 		$clid = htmlspecialchars($clid);
-		if ( is_numeric($src) && strlen($src) >= $rev_min_number_len  && strlen($rev_lookup_url) > 0 ) {
+		$src_show = $src;
+		if ( is_numeric($src) && strlen($src) >= $rev_min_number_len && strlen($rev_lookup_url) > 0 ) {
 			$rev = str_replace('%n', $src, $rev_lookup_url);
-			echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="CallerID: '.$clid.'"><a href="'.$rev.'" target="reverse">'.$src.'</a></abbr></td>' . PHP_EOL;
-		} else {
-			echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="CallerID: '.$clid.'">'.$src.'</abbr></td>' . PHP_EOL;
+			$src_show = '<a href="'.$rev.'" target="reverse">'.$src.'</a>';
 		}
+		echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="CallerID: '.$clid.'">'.$src_show.'</abbr></td>' . PHP_EOL;
 	}
 }
 
@@ -298,14 +179,16 @@ function formatApp($app, $lastdata) {
 }
 
 function formatDst($dst, $dcontext) {
-	global $rev_lookup_url, $rev_min_number_len ;
-	//strlen($dst) == 11 and strlen($rev_lookup_url) > 0 
-	if ( is_numeric($dst) && strlen($dst) >= $rev_min_number_len  && strlen($rev_lookup_url) > 0 ) {
+	global
+	$rev_lookup_url,
+	$rev_min_number_len;
+	
+	$dst_show = $dst;
+	if ( is_numeric($dst) && strlen($dst) >= $rev_min_number_len && strlen($rev_lookup_url) > 0 ) {
 		$rev = str_replace('%n', $dst, $rev_lookup_url);
-		echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="Контекст назначения: '.$dcontext.'"><a href="'.$rev.'" target="reverse">'.$dst.'</a></abbr></td>' . PHP_EOL;
-	} else {
-		echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="Контекст назначения: '.$dcontext.'">'.$dst.'</abbr></td>' . PHP_EOL;
+		$dst_show = '<a href="'.$rev.'" target="reverse">'.$dst.'</a>';
 	}
+	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="Контекст назначения: '.$dcontext.'">'.$dst_show.'</abbr></td>' . PHP_EOL;
 }
 
 function formatDisposition($disposition, $amaflags) {
@@ -353,8 +236,8 @@ function formatDisposition($disposition, $amaflags) {
 }
 
 function formatDuration($duration, $billsec) {
-	$duration = sprintf('%02d', intval($duration/60)).':'.sprintf('%02d', intval($duration%60));
-	$billduration = sprintf('%02d', intval($billsec/60)).':'.sprintf('%02d', intval($billsec%60));
+	$duration = sprintf( '%02d', intval($duration/60) ).':'.sprintf( '%02d', intval($duration%60) );
+	$billduration = sprintf( '%02d', intval($billsec/60) ).':'.sprintf( '%02d', intval($billsec%60) );
 	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="По биллингу: '.$billduration.'">'.$duration.'</abbr></td>' . PHP_EOL;
 }
 
@@ -413,11 +296,12 @@ function is_blank(&$value) {
 // title: title to show
 function formatMoney($number, $cents = 2, $title = '') {
 	global $callrate_currency;
-	if ( is_numeric($number) ) { // a number
-		if ( floor($number) == $number ) { // whole number
-			$money = number_format($number, ($cents == 2 ? 2 : 0)); // format
+	if ( is_numeric($number) ) {
+		// whole number
+		if ( floor($number) == $number ) {
+			$money = number_format( $number, ($cents == 2 ? 2 : 0) ); // format
 		} else { // cents
-			$money = number_format(round($number, 2), ($cents == 0 ? 0 : 2)); // format
+			$money = number_format( round($number, 2), ($cents == 0 ? 0 : 2) ); // format
 		} // integer or decimal
 		
 		if ( $title ) {
@@ -425,7 +309,7 @@ function formatMoney($number, $cents = 2, $title = '') {
 		}
 		echo '<td class="chart_data"><span'.$title.'>'.$money.'</span>'.$callrate_currency.'</td>' . PHP_EOL;
 	} else {
-		echo '<td class="chart_data">&nbsp;</td>\n' . PHP_EOL;
+		echo '<td class="chart_data">&nbsp;</td>' . PHP_EOL;
 	}
 }
 
@@ -433,8 +317,11 @@ function formatMoney($number, $cents = 2, $title = '') {
 	CallRate
 	return callrate array [ areacode, rate, description, bill type, total_rate] 
 */
-function callrates($dst,$duration,$file) {
-	global $callrate_csv_file, $callrate_cache, $callrate_free_interval;
+function callrates($dst, $duration, $file) {
+	global
+	$callrate_csv_file,
+	$callrate_cache,
+	$callrate_free_interval;
 
 	if (strlen($file) == 0) {
 		$file = $callrate_csv_file;
