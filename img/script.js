@@ -31,9 +31,7 @@ $(document).on('ready', function() {
 			'opacity': 1,
 			'visibility': 'visible',
 		});
-		$player.css({
-			'display': 'block',
-		});			
+		$player.show();
 		$('title').first().html(playerSymbol + ' ' + docTitle);
 		$player.html(content);
 		this.aplayer = new Uppod({
@@ -54,9 +52,7 @@ $(document).on('ready', function() {
 			'visibility': 'hidden',
 			'opacity': 0,
 		});
-		$player.css({
-			'display': 'none',
-		});	
+		$player.hide();
 		document.title = docTitle.match(/\s(.*?)$/)[1];
 		$player.html('');
 	});
@@ -96,7 +92,7 @@ $(document).on('ready', function() {
 				cache: false,
 				success: function(data) {
 					if (data['success'] === true) {
-						$elem.closest('.record_col').html('<div class="img_notfound"></div>');
+						$elem.closest('.record_col').hide().html('<div class="img_notfound"></div>').fadeIn('slow');
 					} else {
 						alert('Ошибка удаления: ' + data['message']);
 					}
@@ -119,7 +115,7 @@ $(document).on('ready', function() {
 			data: $form.serialize(),
 			cache: false,
 			beforeSend: function(data) {
-				$('#form-loader').css('display', 'block');
+				$('#form-loader').show();
 			},
 			success: function(data) {
 				if ( data.trim() != '' ) {
@@ -135,7 +131,7 @@ $(document).on('ready', function() {
 				$('#content').html('<div id="content-msg">Не удалось получить данные</div>');
 			},
 			complete: function(data) {
-				$('#form-loader').css('display', 'none');
+				$('#form-loader').hide();
 			}
 		});
 		return false;
@@ -150,13 +146,9 @@ function showScroll() {
 		$scroll = $('#scroll-box');
 	
 	if ($bodyHeight > $docHeight) {
-		$scroll.css({
-			'display': 'block',
-		});
+		$scroll.show('fast');
 	} else {
-		$scroll.css({
-			'display': 'none',
-		});		
+		$scroll.hide('fast');
 	}
 }
 
