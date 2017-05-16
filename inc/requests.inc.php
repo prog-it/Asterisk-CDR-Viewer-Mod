@@ -34,7 +34,6 @@ function checkUpdates() {
 		$errmsg = curl_error($ch);
 		curl_close($ch);	
 		if ( !$err && !$errmsg && in_array($hc, array(200)) ) {
-			$content = trim($content);
 			if ($content) {
 				$res = json_decode($content);
 			}
