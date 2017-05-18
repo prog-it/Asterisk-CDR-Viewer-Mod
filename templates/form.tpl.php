@@ -151,12 +151,12 @@ foreach ($months as $i => $month) {
 	<input <?php if ( !empty($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) { echo 'checked="checked"'; } ?> type="checkbox" id="id_need_csv" name="need_csv" value="true">&ensp;<label for="id_need_csv">CSV файл</label><br>
 	<input <?php if ( !empty($_REQUEST['need_chart']) && $_REQUEST['need_chart'] == 'true' ) { echo 'checked="checked"'; } ?> type="checkbox" id="id_need_chart" name="need_chart" value="true">&ensp;<label for="id_need_chart">График звонков</label><br>
 	<input <?php if ( !empty($_REQUEST['need_minutes_report']) && $_REQUEST['need_minutes_report'] == 'true' ) { echo 'checked="checked"'; } ?> type="checkbox" id="id_need_minutes_report" name="need_minutes_report" value="true">&ensp;<label for="id_need_minutes_report">Расход минут</label><br>
-	<? if ($display_search['chart_cc'] == 1) { ?>
+	<?php if ($display_search['chart_cc'] == 1) { ?>
 	<input <?php if ( !empty($_REQUEST['need_chart_cc']) && $_REQUEST['need_chart_cc'] == 'true' ) { echo 'checked="checked"'; } ?> type="checkbox" id="id_need_chart_cc" name="need_chart_cc" value="true">&ensp;<label for="id_need_chart_cc">Параллельные звонки</label><br>
-	<? } ?>
-	<? if ($display_search['asr_report'] == 1) { ?>
+	<?php } ?>
+	<?php if ($display_search['asr_report'] == 1) { ?>
 	<input <?php if ( !empty($_REQUEST['need_asr_report']) && $_REQUEST['need_asr_report'] == 'true' ) { echo 'checked="checked"'; } ?> type="checkbox" id="id_need_asr_report" name="need_asr_report" value="true">&ensp;<label for="id_need_asr_report">ASR и ACD</label><br> 
-	<? } ?>
+	<?php } ?>
 	</td>
 </tr>
 <?php
@@ -198,7 +198,7 @@ if ( isset($plugins) && $plugins && count($plugins) > 0 ) {
 </td>
 </tr>
 
-<? if ($display_search['channel'] == 1) { ?>
+<?php if ($display_search['channel'] == 1) { ?>
 <tr>
 	<td>
 		<input <?php if (isset($_REQUEST['order']) && $_REQUEST['order'] == 'channel') { echo 'checked="checked"'; } ?> type="radio" id="id_order_channel" name="order" value="channel">&nbsp;<label for="id_order_channel">Входящий канал</label>
@@ -212,7 +212,7 @@ if ( isset($plugins) && $plugins && count($plugins) > 0 ) {
 		<input <?php if (isset($_REQUEST['channel_mod']) && $_REQUEST['channel_mod'] == 'exact') { echo 'checked="checked"'; } ?> type="radio" name="channel_mod" value="exact" id="id_channel_mod4"> <label for="id_channel_mod4">Равно</label>
 	</td>
 </tr>
-<? } ?>
+<?php } ?>
 
 <tr>
 	<td>
@@ -228,7 +228,7 @@ if ( isset($plugins) && $plugins && count($plugins) > 0 ) {
 	</td>
 </tr>
 
-<? if ($display_search['clid'] == 1) { ?>
+<?php if ($display_search['clid'] == 1) { ?>
 <tr>
 	<td>
 		<input <?php if (isset($_REQUEST['order']) && $_REQUEST['order'] == 'clid') { echo 'checked="checked"'; } ?> type="radio" id="id_order_clid" name="order" value="clid">&nbsp;<label for="id_order_clid">Имя звонящего</label>
@@ -242,7 +242,7 @@ if ( isset($plugins) && $plugins && count($plugins) > 0 ) {
 		<input <?php if (isset($_REQUEST['clid_mod']) && $_REQUEST['clid_mod'] == 'exact') { echo 'checked="checked"'; } ?> type="radio" name="clid_mod" value="exact" id="id_clid_mod4"> <label for="id_clid_mod4">Равно</label> 
 	</td>
 </tr>
-<? } ?>
+<?php } ?>
 
 <tr>
 	<td>
@@ -258,7 +258,7 @@ if ( isset($plugins) && $plugins && count($plugins) > 0 ) {
 	</td>
 </tr>
 
-<? if ($display_search['did'] == 1) { ?>
+<?php if ($display_search['did'] == 1) { ?>
 <tr>
 	<td>
 		<input <?php if (isset($_REQUEST['order']) && $_REQUEST['order'] == 'did') { echo 'checked="checked"'; } ?> type="radio" id="id_order_did" name="order" value="did">&nbsp;<label for="id_order_did">DID (если есть)</label>
@@ -272,9 +272,9 @@ if ( isset($plugins) && $plugins && count($plugins) > 0 ) {
 		<input <?php if (isset($_REQUEST['did_mod']) && $_REQUEST['did_mod'] == 'exact') { echo 'checked="checked"'; } ?> type="radio" name="did_mod" value="exact" id="id_did_mod4"> <label for="id_did_mod4">Равно</label> 
 	</td>
 </tr>
-<? } ?>
+<?php } ?>
 
-<? if ($display_search['dstchannel'] == 1) { ?>
+<?php if ($display_search['dstchannel'] == 1) { ?>
 <tr>
 	<td>
 		<input <?php if (isset($_REQUEST['order']) && $_REQUEST['order'] == 'dstchannel') { echo 'checked="checked"'; } ?> type="radio" id="id_order_dstchannel" name="order" value="dstchannel">&nbsp;<label for="id_order_dstchannel">Исходящий канал</label>
@@ -288,9 +288,9 @@ if ( isset($plugins) && $plugins && count($plugins) > 0 ) {
 		<input <?php if (isset($_REQUEST['dstchannel_mod']) && $_REQUEST['dstchannel_mod'] == 'exact') { echo 'checked="checked"'; } ?> type="radio" name="dstchannel_mod" value="exact" id="id_dstchannel_mod4"> <label for="id_dstchannel_mod4">Равно</label> 
 	</td>
 </tr>
-<? } ?>
+<?php } ?>
 
-<? if ($display_search['accountcode'] == 1) { ?>
+<?php if ($display_search['accountcode'] == 1) { ?>
 <tr>
 	<td>
 		<input <?php if (isset($_REQUEST['order']) && $_REQUEST['order'] == 'accountcode') { echo 'checked="checked"'; } ?> type="radio" id="id_order_accountcode" name="order" value="accountcode">&nbsp;<label for="id_order_accountcode">Код аккаунта</label>
@@ -304,9 +304,9 @@ if ( isset($plugins) && $plugins && count($plugins) > 0 ) {
 		<input <?php if (isset($_REQUEST['accountcode_mod']) && $_REQUEST['accountcode_mod'] == 'exact') { echo 'checked="checked"'; } ?> type="radio" name="accountcode_mod" value="exact" id="id_accountcode_mod4"> <label for="id_accountcode_mod4">Равно</label> 
 	</td>
 </tr>
-<? } ?>
+<?php } ?>
 
-<? if ($display_search['userfield'] == 1) { ?>
+<?php if ($display_search['userfield'] == 1) { ?>
 <tr>
 	<td>
 		<input <?php if (isset($_REQUEST['order']) && $_REQUEST['order'] == 'userfield') { echo 'checked="checked"'; } ?> type="radio" id="id_order_userfield" name="order" value="userfield">&nbsp;<label for="id_order_userfield">Описание</label>
@@ -320,7 +320,7 @@ if ( isset($plugins) && $plugins && count($plugins) > 0 ) {
 		<input <?php if (isset($_REQUEST['userfield_mod']) && $_REQUEST['userfield_mod'] == 'exact') { echo 'checked="checked"'; } ?> type="radio" name="userfield_mod" value="exact" id="id_userfield_mod4"> <label for="id_userfield_mod4">Равно</label> 
 	</td>
 </tr>
-<? } ?>
+<?php } ?>
 
 <tr>
 	<td>
@@ -334,7 +334,7 @@ if ( isset($plugins) && $plugins && count($plugins) > 0 ) {
 	</td>
 </tr>
 
-<? if ($display_search['lastapp'] == 1) { ?>
+<?php if ($display_search['lastapp'] == 1) { ?>
 <tr>
 	<td><input <?php if (isset($_REQUEST['order']) && $_REQUEST['order'] == 'lastapp') { echo 'checked="checked"'; } ?> type="radio" id="id_order_lastapp" name="order" value="lastapp">&nbsp;<label for="id_order_lastapp">Приложение</label></td>
 	<td>
@@ -350,7 +350,7 @@ if ( isset($plugins) && $plugins && count($plugins) > 0 ) {
 		</select>
 	</td>
 </tr>
-<? } ?>
+<?php } ?>
 
 <tr>
 	<td><input <?php if (isset($_REQUEST['order']) && $_REQUEST['order'] == 'disposition') { echo 'checked="checked"'; } ?> type="radio" id="id_order_disposition" name="order" value="disposition">&nbsp;<label for="id_order_disposition">Статус звонка</label></td>
