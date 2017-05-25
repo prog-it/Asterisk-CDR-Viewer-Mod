@@ -6,12 +6,14 @@ body {
 	padding: 0;
 }
 
-a {
+a,
+a:visited {
+	color: #3c8dbc;
 	cursor: pointer;
 	text-decoration: none;
-	-webkit-transition: 0.1s ease-in-out;
-	-moz-transition: 0.1s ease-in-out;
 	transition: 0.1s ease-in-out;
+	-moz-transition: 0.1s ease-in-out;
+	-webkit-transition: 0.1s ease-in-out;
 }
 
 a:hover {
@@ -51,44 +53,82 @@ img {
 }
 
 /* Кнопки */
-.btn_a_2,
-.btn_a_2:visited {
-	border:1px solid #009fe8; 
-	border-radius: 4px;
-	font-size: 1em;
-	padding: 4px 10px;
-	text-decoration:none;
-	display: inline-block;
-	text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
-	font-weight: 700;
-	color: #fff;
-	background-color: #00c8ff; 
-	background-image: -webkit-gradient(linear, left top, left bottom, from(#00c8ff), to(#0386aa));
-	background-image: -webkit-linear-gradient(top, #00c8ff, #0386aa);
-	background-image: -moz-linear-gradient(top, #00c8ff, #0386aa);
-	background-image: -ms-linear-gradient(top, #00c8ff, #0386aa);
-	background-image: -o-linear-gradient(top, #00c8ff, #0386aa);
-	background-image: linear-gradient(to bottom, #00c8ff, #0386aa);
-	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#00c8ff, endColorstr=#0386aa);
-}
-
-.btn_a_2:hover {
-	border: 1px solid #077cba;
-	background-color: #0386aa; 
-	background-image: -webkit-gradient(linear, left top, left bottom, from(#0386aa), to(#0386aa));
-	background-image: -webkit-linear-gradient(top, #0386aa, #0386aa);
-	background-image: -moz-linear-gradient(top, #0386aa, #0386aa);
-	background-image: -ms-linear-gradient(top, #0386aa, #0386aa);
-	background-image: -o-linear-gradient(top, #0386aa, #0386aa);
-	background-image: linear-gradient(to bottom, #0386aa, #0386aa);
-	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#0386aa, endColorstr=#0386aa);
-	text-decoration: none;
-	color: #fff;
+.btn {
 	cursor: pointer;
+	font-family: inherit;
+	font-size: 1em;
+	font-weight: 400;
+	border-radius: 3px;
+	padding: 2px 12px;
+	transition: 0.3s;
+	-moz-transition: 0.3s;
+	-webkit-transition: 0.3s;
+	line-height: 16px;
+	text-decoration: none;
+	text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
+	white-space: nowrap;
+	border-style: solid;
+	border-width: 1px;
+	vertical-align: middle;
+	box-shadow: none;
+	text-align: center;
 }
 
-.btnSearch {
+.btn-info,
+.btn-info:visited {
+	background: #5bc0de;
+	border-color: #46b8da;
+	color: #fff;
+}
+
+.btn-info:hover {
+	background: #31b0d5;
+	border-color: #269abc;
+	color: #fff;
+}
+
+.btn-default,
+.btn-default:visited {
+	background: #f4f4f4;
+	border-color: #ddd;
+	color: #444;
+}
+
+.btn-default:hover {
+	background: #e7e7e7;
+	border-color: #adadad;
+	color: #333;
+}
+
+.btn-danger,
+.btn-danger:visited {
+	background: #dd4b39;
+	border-color: #d73925;
+	color: #fff;
+}
+
+.btn-danger:hover {
+	background: #d73925;
+	border-color: #ac2925;
+	color: #fff;
+}
+
+.btn-success,
+.btn-success:visited {
+	background: #00a65a;
+	border-color: #008d4c;
+	color: #fff;
+}
+
+.btn-success:hover {
+	background: #008d4c;
+	border-color: #398439;
+	color: #fff;
+}
+
+.submit {
 	margin-right: 10px;
+	vertical-align: top;
 }
 
 #container {
@@ -98,20 +138,12 @@ img {
 	width: 98%;
 }
 
-/* Mobile */
-@media screen and (max-width: 720px) {
-	#container {
-		width: 100%;
-		min-width: 700px;
-	}
-}
-
 #header {
 	margin: 0 auto;
 }
 
 #header .sub {
-	font-size: .8em;
+	font-size: .9em;
 }
 
 #header_title {
@@ -267,18 +299,16 @@ legend.title {
 
 .record {
 	background-color: #fff;
-	empty-cells: hide;
 }
 
 .record  td {
 	text-align: left;
-	padding: 3px 3px 3px 10px;
+	padding: 3px 3px 3px 8px;
 }
 
 .record:hover {
 	background: #E3FFFE;
 	color: #000;
-	empty-cells: hide;
 }
 
 .record_col {
@@ -343,6 +373,38 @@ legend.title {
 	transform: rotate(90deg);
 	-moz-transform: rotate(90deg);
 	-webkit-transform: rotate(90deg);
+}
+
+/* Комментарий (userfield) */
+.record_col .userfield-box input {
+	width: 90%;
+}
+
+.record_col .userfield-box button {
+	margin: 5px 5px 0 0;
+	font-size: 1.2em;
+	padding: 0 12px;
+}
+
+/* Спойлеры */
+.spoilers {
+	display: none;
+}
+
+#show_spoilers {
+	margin: 3px 0;
+}
+
+#show_spoilers span {
+	color: #3c8dbc;
+	cursor: pointer;
+	transition: 0.1s;
+	-moz-transition: 0.1;
+	-webkit-transition: 0.1s;
+}
+
+#show_spoilers span:hover {
+	color: #2672a0;
 }
 
 /* Плеер */
@@ -461,23 +523,10 @@ td.congestion {
 	font-size: .9em;
 }
 
-.submit {
-	background-color: rgba(184, 240, 255, 0.7);
-	cursor: pointer;
-	border: 1px solid;
-	border-color: #78cde4 #6BB7CC #6BB7CC #78cde4;
-	color: #007191;
-	border-radius: 3px;
-	padding: 1px 10px;
-	transition: 0.2s;
-	-moz-transition: 0.2s;
-	-webkit-transition: 0.2s;
-}
-
-.submit:hover {
-	box-shadow: 0 0 1px #6BB7CC inset;
-	border-color: #999 #ccc #ccc #999;
-	background-color: #B8F0FF;
+/* Уведомление при копировании в буфер */
+.copied {
+	color: #000;
+	font-weight: 700;
 }
 
 #content-msg {
@@ -549,6 +598,17 @@ td.congestion {
 
 #id_result_limit {
 	margin-left: 4px;
+}
+
+/* Mobile */
+@media screen and (max-width: 720px) {
+	#container {
+		width: 100%;
+		min-width: 700px;
+	}
+	.record  td {
+		padding: 3px;
+	}	
 }
 
 /* ************************************** Прогресс бар *********************************************************/
@@ -749,5 +809,4 @@ td.congestion {
 	}
 }
 /* **************************************************************************************************** */
-
 

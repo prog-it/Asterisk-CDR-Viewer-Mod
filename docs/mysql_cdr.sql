@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS `cdr` (
   `peeraccount` varchar(20) NOT NULL DEFAULT '',
   `uniqueid` varchar(32) NOT NULL DEFAULT '',
   `userfield` varchar(255) NOT NULL DEFAULT '',
+  `did` varchar(50) NOT NULL DEFAULT '',
   `linkedid` varchar(32) NOT NULL DEFAULT '',
   `sequence` int(11) NOT NULL DEFAULT '0',  
   `filename` varchar(255) DEFAULT 'none',
@@ -43,7 +44,8 @@ CREATE TABLE IF NOT EXISTS `cdr` (
   KEY `accountcode` (`accountcode`),
   KEY `uniqueid` (`uniqueid`),
   KEY `dcontext` (`dcontext`),
-  KEY `clid` (`clid`)
+  KEY `clid` (`clid`),
+  KEY `did` (`did`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --

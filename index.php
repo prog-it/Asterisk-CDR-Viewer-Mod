@@ -1,30 +1,15 @@
-<?php //error_reporting(E_ALL | E_STRICT); ini_set('display_errors', 'On');
+<?php 
+//error_reporting(E_ALL | E_STRICT); ini_set('display_errors', 'On');
+//$start_timer = microtime(true);
 
-$path_config = 'inc/config/config.inc.php';
+require_once 'inc/load.php';
 
-# Пользовательский конфиг
-if ( isset($_REQUEST['config']) ) {
-    if ( preg_match('#^[A-Za-z0-9]+$#', $_REQUEST['config']) && file_exists('inc/config/config-' . $_REQUEST['config'] . '.inc.php') ) {
-        $path_config = 'inc/config/config-' . $_REQUEST['config'] . '.inc.php';
-    }
+if ( !isset($_POST['form_submitted']) ) {
+	require_once 'templates/header.php';
+	require_once 'templates/form.php';
 }
 
-require_once $path_config;
-require_once 'inc/func.inc.php';
-require_once 'inc/requests.inc.php';
-
-if ( !isset($_POST['form_sended']) ) {
-	require_once 'templates/header.tpl.php';
-	require_once 'templates/form.tpl.php';
-}
-
-try {
-	$dbh = new PDO("$db_type:host=$db_host;port=$db_port;dbname=$db_name", $db_user, $db_pass, $db_options);
-}
-catch (PDOException $e) {
-	echo "\nPDO::errorInfo():\n";
-	print $e->getMessage();
-}
+$dbh = dbConnect();
 
 // Connecting, selecting database
 foreach ( array_keys($_REQUEST) as $key ) {
@@ -62,71 +47,71 @@ $endmin = is_blank($_REQUEST['endmin']) ? '59' : sprintf('%02d',$_REQUEST['endmi
 $enddate = "'$endyear-$endmonth-$endday $endhour:$endmin:59'";
 $end_timestamp = mktime( $endhour, $endmin, 59, $endmonth, $endday, $endyear );
 
-#
-# asterisk regexp2sqllike
-#
+
+# Asterisk regexp2sqllike
 if ( is_blank($_REQUEST['src']) ) {
-	$src_number = NULL;
+	$src_number = null;
 } else {
 	$src_number = asteriskregexp2sqllike( 'src', '' );
 }
 
 if ( is_blank($_REQUEST['dst']) ) {
-	$dst_number = NULL;
+	$dst_number = null;
 } else {
 	$dst_number = asteriskregexp2sqllike( 'dst', '' );
 }
 
 if ( is_blank($_REQUEST['did']) ) {
-	$did_number = NULL;
+	$did_number = null;
 } else {
 	$did_number = asteriskregexp2sqllike( 'did', '' );
 }
 
 $date_range = "calldate BETWEEN $startdate AND $enddate";
-$mod_vars['channel'][] = is_blank($_REQUEST['channel']) ? NULL : $_REQUEST['channel'];
-$mod_vars['channel'][] = empty($_REQUEST['channel_mod']) ? NULL : $_REQUEST['channel_mod'];
-$mod_vars['channel'][] = empty($_REQUEST['channel_neg']) ? NULL : $_REQUEST['channel_neg'];
+$mod_vars['channel'][] = is_blank($_REQUEST['channel']) ? null : $_REQUEST['channel'];
+$mod_vars['channel'][] = empty($_REQUEST['channel_mod']) ? null : $_REQUEST['channel_mod'];
+$mod_vars['channel'][] = empty($_REQUEST['channel_neg']) ? null : $_REQUEST['channel_neg'];
 $mod_vars['src'][] = $src_number;
-$mod_vars['src'][] = empty($_REQUEST['src_mod']) ? NULL : $_REQUEST['src_mod'];
-$mod_vars['src'][] = empty($_REQUEST['src_neg']) ? NULL : $_REQUEST['src_neg'];
-$mod_vars['clid'][] = is_blank($_REQUEST['clid']) ? NULL : $_REQUEST['clid'];
-$mod_vars['clid'][] = empty($_REQUEST['clid_mod']) ? NULL : $_REQUEST['clid_mod'];
-$mod_vars['clid'][] = empty($_REQUEST['clid_neg']) ? NULL : $_REQUEST['clid_neg'];
-$mod_vars['dstchannel'][] = is_blank($_REQUEST['dstchannel']) ? NULL : $_REQUEST['dstchannel'];
-$mod_vars['dstchannel'][] = empty($_REQUEST['dstchannel_mod']) ? NULL : $_REQUEST['dstchannel_mod'];
-$mod_vars['dstchannel'][] = empty($_REQUEST['dstchannel_neg']) ? NULL : $_REQUEST['dstchannel_neg'];
+$mod_vars['src'][] = empty($_REQUEST['src_mod']) ? null : $_REQUEST['src_mod'];
+$mod_vars['src'][] = empty($_REQUEST['src_neg']) ? null : $_REQUEST['src_neg'];
+$mod_vars['clid'][] = is_blank($_REQUEST['clid']) ? null : $_REQUEST['clid'];
+$mod_vars['clid'][] = empty($_REQUEST['clid_mod']) ? null : $_REQUEST['clid_mod'];
+$mod_vars['clid'][] = empty($_REQUEST['clid_neg']) ? null : $_REQUEST['clid_neg'];
+$mod_vars['dstchannel'][] = is_blank($_REQUEST['dstchannel']) ? null : $_REQUEST['dstchannel'];
+$mod_vars['dstchannel'][] = empty($_REQUEST['dstchannel_mod']) ? null : $_REQUEST['dstchannel_mod'];
+$mod_vars['dstchannel'][] = empty($_REQUEST['dstchannel_neg']) ? null : $_REQUEST['dstchannel_neg'];
 $mod_vars['dst'][] = $dst_number;
-$mod_vars['dst'][] = empty($_REQUEST['dst_mod']) ? NULL : $_REQUEST['dst_mod'];
-$mod_vars['dst'][] = empty($_REQUEST['dst_neg']) ? NULL : $_REQUEST['dst_neg'];
+$mod_vars['dst'][] = empty($_REQUEST['dst_mod']) ? null : $_REQUEST['dst_mod'];
+$mod_vars['dst'][] = empty($_REQUEST['dst_neg']) ? null : $_REQUEST['dst_neg'];
 $mod_vars['did'][] = $did_number;
-$mod_vars['did'][] = empty($_REQUEST['did_mod']) ? NULL : $_REQUEST['did_mod'];
-$mod_vars['did'][] = empty($_REQUEST['did_neg']) ? NULL : $_REQUEST['did_neg'];
-$mod_vars['userfield'][] = is_blank($_REQUEST['userfield']) ? NULL : $_REQUEST['userfield'];
-$mod_vars['userfield'][] = empty($_REQUEST['userfield_mod']) ? NULL : $_REQUEST['userfield_mod'];
-$mod_vars['userfield'][] = empty($_REQUEST['userfield_neg']) ? NULL : $_REQUEST['userfield_neg'];
-$mod_vars['accountcode'][] = is_blank($_REQUEST['accountcode']) ? NULL : $_REQUEST['accountcode'];
-$mod_vars['accountcode'][] = empty($_REQUEST['accountcode_mod']) ? NULL : $_REQUEST['accountcode_mod'];
-$mod_vars['accountcode'][] = empty($_REQUEST['accountcode_neg']) ? NULL : $_REQUEST['accountcode_neg'];
-$result_limit = is_blank($_REQUEST['limit']) ? $db_result_limit : intval($_REQUEST['limit']);
+$mod_vars['did'][] = empty($_REQUEST['did_mod']) ? null : $_REQUEST['did_mod'];
+$mod_vars['did'][] = empty($_REQUEST['did_neg']) ? null : $_REQUEST['did_neg'];
+$mod_vars['userfield'][] = is_blank($_REQUEST['userfield']) ? null : $_REQUEST['userfield'];
+$mod_vars['userfield'][] = empty($_REQUEST['userfield_mod']) ? null : $_REQUEST['userfield_mod'];
+$mod_vars['userfield'][] = empty($_REQUEST['userfield_neg']) ? null : $_REQUEST['userfield_neg'];
+$mod_vars['accountcode'][] = is_blank($_REQUEST['accountcode']) ? null : $_REQUEST['accountcode'];
+$mod_vars['accountcode'][] = empty($_REQUEST['accountcode_mod']) ? null : $_REQUEST['accountcode_mod'];
+$mod_vars['accountcode'][] = empty($_REQUEST['accountcode_neg']) ? null : $_REQUEST['accountcode_neg'];
+$result_limit = is_blank($_REQUEST['limit']) ? Config::get('display.main.result_limit') : intval($_REQUEST['limit']);
+$db_table_name = Config::get('db.table');
+$search_condition = '';
+$callrate_cache = array();
 
 if ( strlen($cdr_user_name) > 0 ) {
 	$cdr_user_name = asteriskregexp2sqllike( 'cdr_user_name', substr($dbh->quote($cdr_user_name),1,-1) );
-	if ( isset($mod_vars['cdr_user_name']) and $mod_vars['cdr_user_name'][2] == 'asterisk-regexp' ) {
+	if ( isset($mod_vars['cdr_user_name']) && $mod_vars['cdr_user_name'][2] == 'asterisk-regexp' ) {
 		$cdr_user_name = " AND ( dst RLIKE '$cdr_user_name' or src RLIKE '$cdr_user_name' )";
 	} else {
 		$cdr_user_name = " AND ( dst = '$cdr_user_name' or src = '$cdr_user_name' )";
 	}
 }
 
-$search_condition = '';
-
 // Build the "WHERE" part of the query
 
 foreach ($mod_vars as $key => $val) {
 	if (is_blank($val[0])) {
 		unset($_REQUEST[$key.'_mod']);
-		$$key = NULL;
+		$$key = null;
 	} else {
 		$pre_like = '';
 		if ( $val[2] == 'true' ) {
@@ -179,9 +164,9 @@ foreach ($mod_vars as $key => $val) {
 }
 
 if ( isset($_REQUEST['disposition_neg']) && $_REQUEST['disposition_neg'] == 'true' ) {
-	$disposition = (empty($_REQUEST['disposition']) || $_REQUEST['disposition'] == 'all') ? NULL : "$search_condition disposition != '$_REQUEST[disposition]'";
+	$disposition = (empty($_REQUEST['disposition']) || $_REQUEST['disposition'] == 'all') ? null : "$search_condition disposition != '$_REQUEST[disposition]'";
 } else {
-	$disposition = (empty($_REQUEST['disposition']) || $_REQUEST['disposition'] == 'all') ? NULL : "$search_condition disposition = '$_REQUEST[disposition]'";
+	$disposition = (empty($_REQUEST['disposition']) || $_REQUEST['disposition'] == 'all') ? null : "$search_condition disposition = '$_REQUEST[disposition]'";
 }
 
 if ( $search_condition == '' ) {
@@ -195,9 +180,9 @@ if ( $search_condition == '' ) {
 $where = "$channel $src $clid $did $dstchannel $dst $userfield $accountcode $disposition";
 
 if ( isset($_REQUEST['lastapp_neg']) && $_REQUEST['lastapp_neg'] == 'true' ) {
-	$lastapp = (empty($_REQUEST['lastapp']) || $_REQUEST['lastapp'] == 'all') ? NULL : "lastapp != '$_REQUEST[lastapp]'";
+	$lastapp = (empty($_REQUEST['lastapp']) || $_REQUEST['lastapp'] == 'all') ? null : "lastapp != '$_REQUEST[lastapp]'";
 } else {
-	$lastapp = (empty($_REQUEST['lastapp']) || $_REQUEST['lastapp'] == 'all') ? NULL : "lastapp = '$_REQUEST[lastapp]'";
+	$lastapp = (empty($_REQUEST['lastapp']) || $_REQUEST['lastapp'] == 'all') ? null : "lastapp = '$_REQUEST[lastapp]'";
 }
 
 if ( strlen($lastapp) > 0 ) {
@@ -208,7 +193,7 @@ if ( strlen($lastapp) > 0 ) {
 	}
 }
 
-$duration = (!isset($_REQUEST['dur_min']) || is_blank($_REQUEST['dur_max'])) ? NULL : "duration BETWEEN '$_REQUEST[dur_min]' AND '$_REQUEST[dur_max]'";
+$duration = !isset($_REQUEST['dur_min']) || is_blank($_REQUEST['dur_max']) ? null : "duration BETWEEN '$_REQUEST[dur_min]' AND '$_REQUEST[dur_max]'";
 
 if ( strlen($duration) > 0 ) {
 	if ( strlen($where) > 8 ) {
@@ -218,7 +203,7 @@ if ( strlen($duration) > 0 ) {
 	}
 }
 
-$billsec = (!isset($_REQUEST['bill_min']) || is_blank($_REQUEST['bill_max'])) ? NULL : "billsec BETWEEN '$_REQUEST[bill_min]' AND '$_REQUEST[bill_max]'";
+$billsec = (!isset($_REQUEST['bill_min']) || is_blank($_REQUEST['bill_max'])) ? null : "billsec BETWEEN '$_REQUEST[bill_min]' AND '$_REQUEST[bill_max]'";
 
 if ( strlen($billsec) > 0 ) {
 	if ( strlen($where) > 8 ) {
@@ -235,7 +220,7 @@ if ( strlen($where) > 9 ) {
 }
 
 $use_callrates = false;
-if ( isset($callrate_csv_file) && strlen($callrate_csv_file) > 0 && file_exists($callrate_csv_file) ) {
+if ( Config::get('callrate.enabled') == 1 && file_exists(Config::get('callrate.csv_file')) ) {
 	$use_callrates = true;	
 }
 
@@ -247,8 +232,9 @@ $group = empty($_REQUEST['group']) ? 'day' : $_REQUEST['group'];
 if ( isset($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) {
 	$csv_date = time();
 	$csv_fname = 'report__' . date('Y-m-d_H-i-s', $csv_date) . '_' . md5($csv_date.'-'.$where) . '.csv';
-	if ( !file_exists("$system_tmp_dir/$csv_fname") ) {
-		$handle = fopen("$system_tmp_dir/$csv_fname", "w");
+	$csv_delim = Config::get('system.csv_delim');
+	if ( !file_exists(Config::get('system.tmp_dir').'/'.$csv_fname) ) {
+		$handle = fopen(Config::get('system.tmp_dir').'/'.$csv_fname, "w");
 		$query = "SELECT * FROM $db_table_name $where $order $sort LIMIT $result_limit";
 		try {
 			$sth = $dbh->query($query);
@@ -261,7 +247,7 @@ if ( isset($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) {
 			print_r($dbh->errorInfo());
 		}
 
-		fwrite($handle, implode($system_csv_delim,
+		fwrite($handle, implode($csv_delim,
 			array(
 				'calldate',
 				'clid',
@@ -287,7 +273,7 @@ if ( isset($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) {
 		);
 		
 		if ( $use_callrates === true ) {
-			fwrite($handle, $system_csv_delim.'callrate'.$system_csv_delim.'callrate_dst');
+			fwrite($handle, $csv_delim.'callrate'.$csv_delim.'callrate_dst');
 		}
 		fwrite($handle, "\n");
 		
@@ -314,18 +300,18 @@ if ( isset($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) {
 			$csv_line[19]	= isset($row['sequence']) ? $row['sequence'] : '';
 			$data = '';
 			if ( $use_callrates === true ) {
-				$rates = callrates($row['dst'],$row['billsec'],$callrate_csv_file);
+				$rates = callrates( $row['dst'],$row['billsec'],Config::get('callrate.csv_file') );
 				$csv_line[20] = $rates[4];
 				$csv_line[21] = $rates[2];
 			}
 			for ($i = 0; $i < count($csv_line); $i++) {
 				$csv_line[$i] = str_replace( array( "\n", "\r" ), '', $csv_line[$i]);
 				/* If the string contains a comma, enclose it in double-quotes. */
-				if (strpos($csv_line[$i], $system_csv_delim) !== FALSE) { 	// ,
+				if (strpos($csv_line[$i], $csv_delim) !== FALSE) { 	// ,
 					$csv_line[$i] = "\"" . $csv_line[$i] . "\"";
 				}
 				if ($i != count($csv_line) - 1) {
-					$data = $data . $csv_line[$i] . $system_csv_delim;
+					$data = $data . $csv_line[$i] . $csv_delim;
 				} else {
 					$data = $data . $csv_line[$i];
 				}
@@ -334,9 +320,9 @@ if ( isset($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) {
 			fwrite($handle, "$data\n");
 		}
 		fclose($handle);
-		$sth = NULL;
+		$sth = null;
 	}
-	echo '<p class="dl_csv"><a class="btn_a_2" href="dl.php?csv='.base64_encode($csv_fname).'">Скачать CSV отчет</a></p>';
+	echo '<p class="dl_csv"><a class="btn btn-info" href="dl.php?csv='.base64_encode($csv_fname).'">Скачать CSV отчет</a></p>';
 }
 
 if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
@@ -352,11 +338,11 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 		print_r($dbh->errorInfo());
 	} else {
 		$tot_calls_raw = $sth->fetchColumn();
-		$sth = NULL;
+		$sth = null;
 	}
 	if ( isset($tot_calls_raw) && $tot_calls_raw ) {
 
-		$i = $h_step - 1;
+		$i = Config::get('display.main.header_step') - 1;
 
 		try {
 			
@@ -369,8 +355,8 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 
 			$rawresult = $sth->fetchAll(PDO::FETCH_ASSOC);
 			$filtered_count = 0;
-			# Удаление дублирующихся записей в Asterisk 13	
-			if ( $display_search['duphide'] == 1 ) {
+			# Удаление дублирующихся записей в Asterisk 13
+			if ( Config::get('display.main.duphide') == 1 ) {
 				foreach($rawresult as $val) {
 					$superresult[$val['uniqueid'].'-'.$val['disposition']] = $val;
 				}
@@ -388,17 +374,17 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 				$superresult = $rawresult;
 			}
 			if ( $tot_calls_raw > $result_limit ) {
-				echo '<p class="center title">Детализация звонков - показаны '. ($result_limit - $filtered_count) .' из '. $tot_calls_raw;
-				echo $display_search['duphide'] == 1 ? ', отфильтровано ' . $filtered_count : '';
+				echo '<p class="center title">Показаны '. ($result_limit - $filtered_count) .' из '. $tot_calls_raw;
+				echo Config::get('display.main.duphide') == 1 ? ', отфильтровано ' . $filtered_count : '';
 				echo ' записей </p><table class="cdr">';
 			} else {
-				echo '<p class="center title">Детализация звонков - найдено '. $tot_calls_raw;
-				echo $display_search['duphide'] == 1 ? ', отфильтровано ' . $filtered_count : '';
+				echo '<p class="center title">Найдено '. $tot_calls_raw;
+				echo Config::get('display.main.duphide') == 1 ? ', отфильтровано ' . $filtered_count : '';
 				echo ' записей </p><table class="cdr">';
 			}
 			foreach ( $superresult as $key => $row ) {			
 				++$i;
-				if ($i == $h_step) {
+				if ( $i == Config::get('display.main.header_step') ) {
 				?>
 					<tr>
 					<th class="record_col">Дата</th>
@@ -406,94 +392,91 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 					<th class="record_col">Кто звонил</th>
 					<th class="record_col">Куда звонили</th>
 					<?php
-						if ( isset($display_column['extension']) && $display_column['extension'] == 1 ) {
-							echo '<th class="record_col">Экстеншен</th>';
-						}
-					?>
+					if ( Config::exists('display.column.did') && Config::get('display.column.did') == 1 ) {
+						echo '<th class="record_col">DID</th>';
+					}
+					?>					
 					<th class="record_col">Длительность</th>
 					<?php
 					if ( $use_callrates === true ) {
-						if ( isset($display_column['callrates']) && $display_column['callrates'] == 1 ) {
+						if ( Config::exists('display.column.callrates') && Config::get('display.column.callrates') == 1 ) {
 							echo '<th class="record_col">Тариф</th>';
 						}
 						// Показать Направление
-						if ( isset($display_column['callrates_dst']) && $display_column['callrates_dst'] == 1 ) {
+						if ( Config::exists('display.column.callrates_dst') && Config::get('display.column.callrates_dst') == 1 ) {
 							echo '<th class="record_col">Направление</th>';
 						}
 					}
-					
-					?>				
-					<?php
-						if ( isset($display_column['lastapp']) && $display_column['lastapp'] == 1 ) {
-							echo '<th class="record_col">Приложение</th>';
-						}
-					?>					
-					<?php
-						if ( isset($display_column['channel']) && $display_column['channel'] == 1 ) {
-							echo '<th class="record_col">Вх. канал</th>';
-						}
-					?>					
-					<?php
-						if ( isset($display_column['clid']) && $display_column['clid'] == 1 ) {
-							echo '<th class="record_col">CallerID</th>';
-						}
+					if ( Config::exists('display.column.lastapp') && Config::get('display.column.lastapp') == 1 ) {
+						echo '<th class="record_col">Приложение</th>';
+					}
+					if ( Config::exists('display.column.channel') && Config::get('display.column.channel') == 1 ) {
+						echo '<th class="record_col">Вх. канал</th>';
+					}
+					if ( Config::exists('display.column.clid') && Config::get('display.column.clid') == 1 ) {
+						echo '<th class="record_col">CallerID</th>';
+					}
+					if ( Config::exists('display.column.dstchannel') && Config::get('display.column.dstchannel') == 1 ) {
+						echo '<th class="record_col">Исх. канал</th>';
+					}
+					if ( Config::exists('display.column.file') && Config::get('display.column.file') == 1 ) {
+						echo '<th class="record_col">Файл</th>';
+					}
+					if ( Config::exists('display.column.accountcode') && Config::get('display.column.accountcode') == 1 ) {
+						echo '<th class="record_col">Аккаунт</th>';
+					}
+					if ( Config::exists('display.column.userfield') && Config::get('display.column.userfield') == 1 ) {
+						echo '<th class="record_col">Комментарий</th>';
+					}
 					?>
-					<?php
-						if ( isset($display_column['dstchannel']) && $display_column['dstchannel'] == 1 ) {
-							echo '<th class="record_col">Исх. канал</th>';
-						}
-					?>					
-					<th class="record_col">Файл</th>
-					<?php
-						if ( isset($display_column['accountcode']) && $display_column['accountcode'] == 1 ) {
-							echo '<th class="record_col">Аккаунт</th>';
-						}
-					?>
-					<th class="record_col">Описание</th>
 					</tr>
 					<?php
 					$i = 0;
 				}
 				
-				echo '<tr class="record">';
+				echo '<tr class="record" data-id="'.$row['id'].'">';
 				formatCallDate($row['calldate'],$row['uniqueid']);
 				formatDisposition($row['disposition'], $row['amaflags']);
 				formatSrc($row['src'],$row['clid']);
-				if ( isset($row['did']) && strlen($row['did']) ) {
-					formatDst($row['did'], $row['dcontext'] . ' # ' . $row['dst'] );
-				} else {
-					formatDst($row['dst'], $row['dcontext'] );
-				}
-				if ( isset($display_column['extension']) && $display_column['extension'] == 1 ) {
-					formatDst($row['dst'], $row['dcontext'] );
+				formatDst($row['dst'], $row['dcontext'] );
+				if ( Config::exists('display.column.did') && Config::get('display.column.did') == 1 ) {
+					if ( isset($row['did']) && strlen($row['did']) ) {
+						formatDst($row['did'], $row['dcontext'] . ' # ' . $row['dst']);
+					} else {
+						formatDst('', $row['dcontext']);
+					}					
 				}
 				formatDuration($row['duration'], $row['billsec']);
 				if ( $use_callrates === true ) {
-					$rates = callrates($row['dst'],$row['billsec'],$callrate_csv_file);
-					if ( isset($display_column['callrates']) && $display_column['callrates'] == 1 ) {
+					$rates = callrates( $row['dst'],$row['billsec'],Config::get('callrate.csv_file') );
+					if ( Config::exists('display.column.callrates') && Config::get('display.column.callrates') == 1 ) {
 						formatMoney($rates[4],2,htmlspecialchars($rates[2]));
 					}
-					if ( isset($display_column['callrates_dst']) && $display_column['callrates_dst'] == 1 ) {
+					if ( Config::exists('display.column.callrates_dst') && Config::get('display.column.callrates_dst') == 1 ) {
 						echo '<td>'. htmlspecialchars($rates[2]) . '</td>';
 					}
 				}
-				if ( isset($display_column['lastapp']) && $display_column['lastapp'] == 1 ) {
+				if ( Config::exists('display.column.lastapp') && Config::get('display.column.lastapp') == 1 ) {
 					formatApp($row['lastapp'], $row['lastdata']);
 				}
-				if ( isset($display_column['channel']) && $display_column['channel'] == 1 ) {
+				if ( Config::exists('display.column.channel') && Config::get('display.column.channel') == 1 ) {
 					formatChannel($row['channel']);
 				}
-				if ( isset($display_column['clid']) && $display_column['clid'] == 1 ) {
+				if ( Config::exists('display.column.clid') && Config::get('display.column.clid') == 1 ) {
 					formatClid($row['clid']);
 				}
-				if ( isset($display_column['dstchannel']) && $display_column['dstchannel'] == 1 ) {
+				if ( Config::exists('display.column.dstchannel') && Config::get('display.column.dstchannel') == 1 ) {
 					formatChannel($row['dstchannel']);
 				}
-				formatFiles($row);
-				if ( isset($display_column['accountcode']) && $display_column['accountcode'] == 1 ) {
+				if ( Config::exists('display.column.file') && Config::get('display.column.file') == 1 ) {
+					formatFiles($row);
+				}
+				if ( Config::exists('display.column.accountcode') && Config::get('display.column.accountcode') == 1 ) {
 					formatAccountCode($row['accountcode']);
 				}
-				formatUserField($row['userfield']);
+				if ( Config::exists('display.column.userfield') && Config::get('display.column.userfield') == 1 ) {
+					formatUserField($row['userfield']);
+				}
 				echo '</tr>';
 			}
 			
@@ -502,14 +485,11 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 			print $e->getMessage();
 		}
 		echo '</table>';
-		$sth = NULL;
+		$sth = null;
 	}
 }
-?>
 
-<?php
-
-//NEW GRAPHS
+// NEW GRAPHS
 $group_by_field = $group;
 // ConcurrentCalls
 $group_by_field_php = array( '', 32, '' );
@@ -623,11 +603,11 @@ if ( isset($_REQUEST['need_chart']) && $_REQUEST['need_chart'] == 'true' ) {
 	catch (PDOException $e) {
 		print $e->getMessage();
 	}
-	$sth = NULL;
+	$sth = null;
 	$tot_duration = sprintf('%02d', intval($tot_duration_secs/60)).':'.sprintf('%02d', intval($tot_duration_secs%60));
 
 	if ( $tot_calls ) {
-		echo '<p class="center title">Детализация звонков - График по '.$graph_col_title.'</p><table class="cdr">
+		echo '<p class="center title">График по '.$graph_col_title.'</p><table class="cdr">
 		<tr>
 			<th class="end_col">'. $graph_col_title . '</th>
 			<th class="center_col">Всего звонков: '. $tot_calls .' | Максимум звонков: '. $max_calls .' | Общая длительность: '. $tot_duration .'</th>
@@ -655,7 +635,7 @@ if ( isset($_REQUEST['need_minutes_report']) && $_REQUEST['need_minutes_report']
 	$tot_calls = 0;
 	$tot_duration = 0;
 
-	echo '<p class="center title">Детализация звонков - Расход минут по '.$graph_col_title.'</p><table class="cdr">
+	echo '<p class="center title">Расход минут по '.$graph_col_title.'</p><table class="cdr">
 		<tr>
 			<th class="end_col">'. $graph_col_title . '</th>
 			<th class="end_col">Кол-во звонков</th>
@@ -684,7 +664,7 @@ if ( isset($_REQUEST['need_minutes_report']) && $_REQUEST['need_minutes_report']
 	catch (PDOException $e) {
 		print $e->getMessage();
 	}
-	$sth = NULL;
+	$sth = null;
 	
 	$html_duration = sprintf('%02d', intval($tot_duration/60)).':'.sprintf('%02d', intval($tot_duration%60));
 	$html_duration_avg = sprintf( '%02d', ($tot_calls ? intval(($tot_duration/$tot_calls)/60) : 0) ).':'.sprintf( '%02d', ($tot_calls ? intval(($tot_duration/$tot_calls)%60) : 0) );
@@ -746,7 +726,7 @@ if ( isset($_REQUEST['need_chart_cc']) && $_REQUEST['need_chart_cc'] == 'true' )
 		catch (PDOException $e) {
 			print $e->getMessage();
 		}
-		$sth = NULL;
+		$sth = null;
 	} else {
 		/* data fields */
 		$query3 = "SELECT unix_timestamp(calldate) AS ts, duration FROM $db_table_name $where ORDER BY unix_timestamp(calldate) ASC LIMIT $result_limit";
@@ -789,7 +769,7 @@ if ( isset($_REQUEST['need_chart_cc']) && $_REQUEST['need_chart_cc'] == 'true' )
 		catch (PDOException $e) {
 			print $e->getMessage();
 		}
-		$sth = NULL;
+		$sth = null;
 		for ( $i=$start_timestamp; $i<=$end_timestamp; ++$i ) {
 			$group_by_str = substr(strftime($group_by_field_php[0],$i),0,$group_by_field_php[1]) . $group_by_field_php[2];
 			if ( ! isset($result_array_cc[ "$group_by_str" ]) || ( isset($result_array["$i"]) && $result_array_cc[ "$group_by_str" ][1] < $result_array["$i"] ) ) {
@@ -799,7 +779,7 @@ if ( isset($_REQUEST['need_chart_cc']) && $_REQUEST['need_chart_cc'] == 'true' )
 		}
 	}
 	if ( $tot_calls ) {
-		echo '<p class="center title">Детализация звонков - Параллельные звонки по '.$graph_col_title.'</p><table class="cdr">
+		echo '<p class="center title">Параллельные звонки по '.$graph_col_title.'</p><table class="cdr">
 		<tr>
 			<th class="end_col">'. $graph_col_title . '</th>
 			<th class="center_col">Всего звонков: '. $tot_calls .' | Максимум звонков: '. $max_calls .'</th>
@@ -827,7 +807,7 @@ if ( isset($_REQUEST['need_asr_report']) && $_REQUEST['need_asr_report'] == 'tru
 	$tot_calls = 0;
 	$tot_duration = 0;
 
-	echo '<p class="center title">Детализация звонков - ASR и ACD по '.$graph_col_title.'</p><table class="cdr">
+	echo '<p class="center title">ASR и ACD по '.$graph_col_title.'</p><table class="cdr">
 		<tr>
 			<th class="end_col">'. $graph_col_title . '</th>
 			<th class="end_col">ASR</th>
@@ -853,7 +833,7 @@ if ( isset($_REQUEST['need_asr_report']) && $_REQUEST['need_asr_report'] == 'tru
 			print_r($dbh->errorInfo());
 		}
 		while ($row = $sth->fetch(PDO::FETCH_NUM)) {
-			if ( $asr_cur_key != '' and $row[0] != $asr_cur_key ) {
+			if ( $asr_cur_key != '' && $row[0] != $asr_cur_key ) {
 				echo '<tr  class="record">';
 				echo "<td class=\"end_col\">$asr_cur_key</td><td class=\"chart_data\">",intval(($asr_answered_calls/$asr_total_calls)*100),"</td><td class=\"chart_data\">",intval($asr_bill_secs/($asr_answered_calls?$asr_answered_calls:1)),"</td><td class=\"chart_data\">$asr_total_calls</td><td class=\"chart_data\">$asr_answered_calls</td><td class=\"chart_data\">$asr_bill_secs</td>";
 				echo '</tr>';
@@ -875,7 +855,7 @@ if ( isset($_REQUEST['need_asr_report']) && $_REQUEST['need_asr_report'] == 'tru
 	catch (PDOException $e) {
 		print $e->getMessage();
 	}
-	$sth = NULL;
+	$sth = null;
 
 	if ( $asr_cur_key != '' ) {
 		echo '<tr class="record">';
@@ -890,18 +870,19 @@ if ( isset($_REQUEST['need_asr_report']) && $_REQUEST['need_asr_report'] == 'tru
 
 }
 
-/* run Plugins */
-if (isset($plugins) && $plugins) {
-	foreach ( $plugins as $p_val ) {
-		if ( ! empty($_REQUEST['need_'.$p_val]) && $_REQUEST['need_'.$p_val] == 'true' ) { 
+# Запуск плагинов
+if ( Config::exists('system.plugins') && Config::get('system.plugins') ) {
+	foreach ( Config::get('system.plugins') as $p_val ) {
+		if ( !empty($_REQUEST['need_'.$p_val]) && $_REQUEST['need_'.$p_val] == 'true' ) { 
 			eval( $p_val . '();' );
 		}
 	}
 }
 
-$dbh = NULL;
+$dbh = null;
 
-if ( !isset($_POST['form_sended']) ) {
-	require_once 'templates/footer.tpl.php';
+if ( !isset($_POST['form_submitted']) ) {
+	require_once 'templates/footer.php';
 }
 
+//echo 'Page time: ' . ( microtime(true) - $start_timer ) . ' sec.';

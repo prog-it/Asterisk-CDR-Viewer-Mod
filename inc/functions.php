@@ -2,22 +2,12 @@
 
 /* Recorded file */
 function formatFiles($row) {
-	global
-	$system_monitor_dir,
-	$system_audio_format,
-	$system_archive_format,
-	$system_fsize_exists,
-	$system_column_name,
-	$system_storage_format,
-	$system_audio_defconv,
-	$display_search;
-
 	# uniq_name.mp3
 	$recorded_file = '';
-	$tmp['system_audio_format'] = $system_audio_format;
+	$tmp['system_audio_format'] = Config::get('system.audio_format');
 	# В базе есть колонка с именем записи разговора
-	if ( isset($row[$system_column_name]) ) {
-		$recorded_file = $row[$system_column_name];
+	if ( isset($row[Config::get('system.column_name')]) ) {
+		$recorded_file = $row[Config::get('system.column_name')];
 	}
 	
 	$mycalldate_ymd		= substr($row['calldate'], 0, 10); // ymd
@@ -80,7 +70,7 @@ function formatFiles($row) {
 		array(
 			$tpl['btn_record'],
 			$tpl['btn_download'],
-			$display_search['rec_delete'] == 1 ? $tpl['btn_delete'] : '',
+			Config::get('display.main.rec_delete') == 1 ? $tpl['btn_delete'] : '',
 		),
 		$tpl['record']
 	);
@@ -89,7 +79,7 @@ function formatFiles($row) {
 	// -----------------------------------------------
 
 	# Имя файла при отложенной конвертации
-	if ( $system_audio_defconv === true && $recorded_file ) {
+	if ( Config::get('system.audio_defconv') == 1 && $recorded_file ) {
 		if ( $mycalldate_ymd < $mydate ) {
 			$recorded_file = preg_replace('#(.+)\.(wav|mp3|wma|ogg|aac)$#i', '${1}.'.$tmp['system_audio_format'], $recorded_file);
 		} else {
@@ -98,31 +88,36 @@ function formatFiles($row) {
 	}	
 	
 	# Получение имени файла и пути
-	if ( $mycalldate_ymd < $mydate && $system_storage_format === 1 ) {
+	if ( $mycalldate_ymd < $mydate && Config::get('system.storage_format') === 1 ) {
 		$rec['filename'] = "$mycalldate_y/$mycalldate_ym/$mycalldate_ymd/$recorded_file";
-	} else if ( $mycalldate_ymd < $mydate && $system_storage_format === 2 ) {
+	} else if ( $mycalldate_ymd < $mydate && Config::get('system.storage_format') === 2 ) {
 		$rec['filename'] = "$mycalldate_y/$mycalldate_m/$mycalldate_d/$recorded_file";
-	} else if ( $system_storage_format === 3 ) {
+	} else if ( Config::get('system.storage_format') === 3 ) {
 		$rec['filename'] = "$mycalldate_y/$mycalldate_ym/$mycalldate_ymd/$recorded_file";
-	} else if ( $system_storage_format === 4 ) {
+	} else if ( Config::get('system.storage_format') === 4 ) {
 		$rec['filename'] = "$mycalldate_y/$mycalldate_m/$mycalldate_d/$recorded_file";
 	} else {
 		$rec['filename'] = $recorded_file;
 	}
 	
-	$rec['path'] = $system_monitor_dir.'/'.$rec['filename'];
+	$rec['path'] = Config::get('system.monitor_dir').'/'.$rec['filename'];
 	
 	# Аудио
-	if ( file_exists($rec['path']) && $recorded_file && filesize($rec['path'])/1024 >= $system_fsize_exists && preg_match('#(.+)\.'.$tmp['system_audio_format'].'$#i', $rec['filename']) ) {
+	if ( file_exists($rec['path']) && $recorded_file && filesize($rec['path'])/1024 >= Config::get('system.fsize_exists') && preg_match('#(.+)\.'.$tmp['system_audio_format'].'$#i', $rec['filename']) ) {
 		$tmp['result'] = str_replace('[_file]', base64_encode($rec['filename']), $tpl['record']);
 	}
 	# Архив
-	else if ( isset($system_archive_format) && $recorded_file && file_exists($rec['path'].'.'.$system_archive_format) && filesize($rec['path'].'.'.$system_archive_format)/1024 >= $system_fsize_exists ) {
-		$tmp['result'] = str_replace('[_file]', base64_encode($rec['filename'].'.'.$system_archive_format), $tpl['download']);
+	else if ( 
+			Config::exists('system.archive_format') && 
+			$recorded_file &&
+			file_exists($rec['path'].'.'.Config::get('system.archive_format')) &&
+			filesize($rec['path'].'.'.Config::get('system.archive_format'))/1024 >= Config::get('system.fsize_exists') 
+		) {
+		$tmp['result'] = str_replace('[_file]', base64_encode( $rec['filename'].'.'.Config::get('system.archive_format') ), $tpl['download']);
 	}
 	# Факс
-	//else if (file_exists($rec['path']) && preg_match('#(.*)\.tiff?$#i', $rec['filename']) && $rec['filesize'] >= $system_fsize_exists) {
-	else if ( file_exists($rec['path']) && $recorded_file && filesize($rec['path'])/1024 >= $system_fsize_exists ) {
+	//else if (file_exists($rec['path']) && preg_match('#(.*)\.tiff?$#i', $rec['filename']) && $rec['filesize'] >= Config::get('system.fsize_exists')) {
+	else if ( file_exists($rec['path']) && $recorded_file && filesize($rec['path'])/1024 >= Config::get('system.fsize_exists') ) {
 		$tmp['result'] = str_replace('[_file]', base64_encode($rec['filename']), $tpl['download']);
 	}
 	
@@ -137,58 +132,61 @@ function formatFiles($row) {
 /* CDR Table Display Functions */
 function formatCallDate($calldate, $uniqueid) {
 	//$calldate = date('d.m.Y H:i:s', strtotime($calldate));
-	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="UID: '.$uniqueid.'">'.$calldate.'</abbr></td>' . PHP_EOL;
+	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-clipboard data-clipboard-text="'.$uniqueid.'" data-tooltip="UID: '.$uniqueid.'">'.$calldate.'</abbr></td>' . PHP_EOL;
 }
 
 function formatChannel($channel) {
-	global $display_full_channel;
 	$chan['short'] = preg_replace('#(.*)\/[^\/]+$#', '$1', $channel);
 	$chan['full'] = preg_replace('#(.*)-[^-]+$#', '$1', $channel);
-	$chan['tooltip'] = 'Канал: '.$chan['full'];
+	$chan['tooltip'] = $chan['full'];
 	$chan['txt'] = $chan['short'];
-	if ( isset($display_full_channel) && $display_full_channel == 1 ) {
+	if ( Config::exists('display.main.full_channel_tooltip') && Config::get('display.main.full_channel_tooltip') == 1 ) {
+		$chan['tooltip'] = $channel;
+	}
+	if ( Config::exists('display.main.full_channel') && Config::get('display.main.full_channel') == 1 ) {
 		$chan['txt'] = $chan['full'];
 	}
-	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="'.$chan['tooltip'].'">'.$chan['txt'].'</abbr></td>' . PHP_EOL;
+	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-clipboard data-clipboard-text="'.$chan['tooltip'].'" data-tooltip="Канал: '.$chan['tooltip'].'">'.$chan['txt'].'</abbr></td>' . PHP_EOL;
 }
 
 function formatClid($clid) {
 	$clid_only = explode(' <', $clid, 2);
-	$clid = htmlspecialchars($clid_only[0]);
-	echo '<td class="record_col">'.$clid.'</td>' . PHP_EOL;
+	$clid_only = htmlspecialchars($clid_only[0]);
+	$clid = htmlspecialchars($clid);
+	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-clipboard data-clipboard-text="'.$clid.'" data-tooltip="CallerID: '.$clid.'">'.$clid_only.'</abbr></td>' . PHP_EOL;
 }
 
 function formatSrc($src, $clid) {
-	global $rev_lookup_url, $rev_min_number_len ;
 	if ( empty($src) ) {
 		echo '<td class="record_col">Неизвестно</td>' . PHP_EOL;
 	} else {
 		$src = htmlspecialchars($src);
 		$clid = htmlspecialchars($clid);
 		$src_show = $src;
-		if ( is_numeric($src) && strlen($src) >= $rev_min_number_len && strlen($rev_lookup_url) > 0 ) {
-			$rev = str_replace('%n', $src, $rev_lookup_url);
+		$clipboard = 'data-clipboard data-clipboard-text="'.$clid.'"';
+		if ( is_numeric($src) && strlen($src) >= Config::get('display.lookup.num_length') && strlen(Config::get('display.lookup.url')) > 0 ) {
+			$rev = str_replace( '%n', $src, Config::get('display.lookup.url') );
 			$src_show = '<a href="'.$rev.'" target="reverse">'.$src.'</a>';
+			$clipboard = '';
 		}
-		echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="CallerID: '.$clid.'">'.$src_show.'</abbr></td>' . PHP_EOL;
+		echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" '.$clipboard.' data-tooltip="CallerID: '.$clid.'">'.$src_show.'</abbr></td>' . PHP_EOL;
 	}
 }
 
 function formatApp($app, $lastdata) {
-	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="Приложение: '.$app.'('.$lastdata.')">'.$app.'</abbr></td>' . PHP_EOL;
+	$tooltip = $app . '(' . $lastdata . ')';
+	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-clipboard data-clipboard-text="'.$tooltip.'" data-tooltip="Приложение: '.$tooltip.'">'.$app.'</abbr></td>' . PHP_EOL;
 }
 
 function formatDst($dst, $dcontext) {
-	global
-	$rev_lookup_url,
-	$rev_min_number_len;
-	
 	$dst_show = $dst;
-	if ( is_numeric($dst) && strlen($dst) >= $rev_min_number_len && strlen($rev_lookup_url) > 0 ) {
-		$rev = str_replace('%n', $dst, $rev_lookup_url);
+	$clipboard = 'data-clipboard data-clipboard-text="'.$dcontext.'"';
+	if ( is_numeric($dst) && strlen($dst) >= Config::get('display.lookup.num_length') && strlen(Config::get('display.lookup.url')) > 0 ) {
+		$rev = str_replace( '%n', $dst, Config::get('display.lookup.url') );
 		$dst_show = '<a href="'.$rev.'" target="reverse">'.$dst.'</a>';
+		$clipboard = '';
 	}
-	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="Контекст назначения: '.$dcontext.'">'.$dst_show.'</abbr></td>' . PHP_EOL;
+	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" '.$clipboard.' data-tooltip="Контекст назначения: '.$dcontext.'">'.$dst_show.'</abbr></td>' . PHP_EOL;
 }
 
 function formatDisposition($disposition, $amaflags) {
@@ -232,21 +230,21 @@ function formatDisposition($disposition, $amaflags) {
 		default:
 			$dispTxt = $disposition;
 	}
-	echo '<td class="record_col '.$style.'"><div class="status status-'.$style.'"></div><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="AMA флаг: '.$amaflags.'">'.$dispTxt.'</abbr></td>' . PHP_EOL;
+	echo '<td class="record_col '.$style.'"><div class="status status-'.$style.'"></div><abbr class="simptip-position-top simptip-smooth simptip-fade" data-clipboard data-clipboard-text="'.$amaflags.'" data-tooltip="AMA флаг: '.$amaflags.'">'.$dispTxt.'</abbr></td>' . PHP_EOL;
 }
 
 function formatDuration($duration, $billsec) {
 	$duration = sprintf( '%02d', intval($duration/60) ).':'.sprintf( '%02d', intval($duration%60) );
 	$billduration = sprintf( '%02d', intval($billsec/60) ).':'.sprintf( '%02d', intval($billsec%60) );
-	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="По биллингу: '.$billduration.'">'.$duration.'</abbr></td>' . PHP_EOL;
+	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-clipboard data-clipboard-text="'.$billduration.'" data-tooltip="По биллингу: '.$billduration.'">'.$duration.'</abbr></td>' . PHP_EOL;
 }
 
 function formatUserField($userfield) {
-	echo '<td class="record_col">'.$userfield.'</td>' . PHP_EOL;
+	echo '<td class="record_col userfield">'.$userfield.'</td>' . PHP_EOL;
 }
 
 function formatAccountCode($accountcode) {
-	echo '<td class="record_col">'.$accountcode.'</td>' . PHP_EOL;
+	echo '<td class="record_col"><abbr data-clipboard data-clipboard-text="'.$accountcode.'">'.$accountcode.'</abbr></td>' . PHP_EOL;
 }
 
 /* Asterisk RegExp parser */
@@ -295,7 +293,6 @@ function is_blank(&$value) {
 // cents: 0=never, 1=if needed, 2=always
 // title: title to show
 function formatMoney($number, $cents = 2, $title = '') {
-	global $callrate_currency;
 	if ( is_numeric($number) ) {
 		// whole number
 		if ( floor($number) == $number ) {
@@ -305,11 +302,11 @@ function formatMoney($number, $cents = 2, $title = '') {
 		} // integer or decimal
 		
 		if ( $title ) {
-			$title = ' class="simptip-position-top simptip-smooth simptip-fade" data-tooltip="'.$title.'"';
+			$title = ' class="simptip-position-top simptip-smooth simptip-fade" data-clipboard data-clipboard-text="'.$title.'" data-tooltip="'.$title.'"';
 		}
-		echo '<td class="chart_data"><span'.$title.'>'.$money.'</span>'.$callrate_currency.'</td>' . PHP_EOL;
+		echo '<td class="chart_data"><span'.$title.'>'.$money.'</span>'.Config::get('callrate.currency').'</td>' . PHP_EOL;
 	} else {
-		echo '<td class="chart_data">&nbsp;</td>' . PHP_EOL;
+		echo '<td class="chart_data"></td>' . PHP_EOL;
 	}
 }
 
@@ -318,15 +315,11 @@ function formatMoney($number, $cents = 2, $title = '') {
 	return callrate array [ areacode, rate, description, bill type, total_rate] 
 */
 function callrates($dst, $duration, $file) {
-	global
-	$callrate_csv_file,
-	$callrate_cache,
-	$callrate_free_interval;
-
+	global $callrate_cache;
 	if (strlen($file) == 0) {
-		$file = $callrate_csv_file;
+		$file = Config::get('callrate.csv_file');
 		if (strlen($file) == 0) {
-			return array('','','','','');
+			return array('', '', '', '', '');
 		}
 	}
 	
@@ -336,7 +329,7 @@ function callrates($dst, $duration, $file) {
 		while (($fr_data = fgetcsv($fr, 1000, ',')) !== false) {
 			if ($fr_data[0] !== null) {
 				// Не указан доп. тариф
-				if (!isset($fr_data[4])) {
+				if ( !isset($fr_data[4]) ) {
 					$fr_data[4] = null;
 				}
 				$callrate_cache[$file][$fr_data[0]] = array($fr_data[1], $fr_data[2], $fr_data[3], $fr_data[4]);
@@ -350,17 +343,17 @@ function callrates($dst, $duration, $file) {
 			$call_rate = 0;
 			if ($callrate_cache[$file][substr($dst,0,$i)][2] == 's') {
 				// per second
-				if ($duration >= $callrate_free_interval) {
+				if ( $duration >= Config::get('callrate.free_interval') ) {
 					$call_rate = $duration * ($callrate_cache[$file][substr($dst,0,$i)][0] / 60);
 				}
 			} elseif ($callrate_cache[$file][substr($dst,0,$i)][2] == 'c') {
 				// per call
-				if ($duration >= $callrate_free_interval) {
+				if ( $duration >= Config::get('callrate.free_interval') ) {
 					$call_rate = $callrate_cache[$file][substr($dst,0,$i)][0];
 				}
 			} elseif ($callrate_cache[$file][substr($dst,0,$i)][2] == '1m+s') {
 				// 1 minute + per second
-				if ($duration < $callrate_free_interval) {}
+				if ( $duration < Config::get('callrate.free_interval') ) {}
 				else if ( $duration < 60 ) {
 					$call_rate = $callrate_cache[$file][substr($dst,0,$i)][0];
 				} else {
@@ -391,7 +384,7 @@ function callrates($dst, $duration, $file) {
 			} else {
 				//( $callrate_cache[substr($dst,0,$i)][2] == 'm' ) {
 				// per minute
-				if ($duration >= $callrate_free_interval) {
+				if ( $duration >= Config::get('callrate.free_interval') ) {
 					// всего минут разговор
 					$call_rate = ceil($duration/60);
 					// указан доп тариф
@@ -409,3 +402,28 @@ function callrates($dst, $duration, $file) {
 }
 
 
+/* 
+	Connect to DB. Return PDO object
+	$errors - show connection errors
+*/
+function dbConnect( $errors = true ) {
+	$dbh = null;
+	try {
+		$dbh = new PDO(
+			Config::get('db.type') .
+			':host=' . Config::get('db.host') .
+			';port=' . Config::get('db.port') . 
+			';dbname=' . Config::get('db.name'),
+			Config::get('db.user'),
+			Config::get('db.pass'),
+			Config::get('db.options') 
+		);
+	}
+	catch (PDOException $e) {
+		if ( $errors === true ) {
+			echo "\nPDO::errorInfo():\n";
+			print $e->getMessage();
+		}
+	}
+	return $dbh;
+}

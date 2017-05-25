@@ -72,11 +72,11 @@ if ( isset($_POST['check_updates']) ) {
 
 # Удаление записи звонка
 if ( isset($_POST['delete_record']) ) {
-	if ( strlen($cdr_user_name) > 0 || $display_search['rec_delete'] == 0 ) {
+	if ( strlen($cdr_user_name) > 0 || Config::get('display.main.rec_delete') == 0 ) {
 		header('HTTP/1.1 403 Forbidden');
 		exit;
 	}
-	$path = $system_monitor_dir . '/' . base64_decode($_POST['delete_record']);
+	$path = Config::get('system.monitor_dir') . '/' . base64_decode($_POST['delete_record']);
 	if ( file_exists($path) && is_file($path) ) {
 		if ( @unlink($path) ) {
 			echo json_encode(array(
@@ -98,7 +98,30 @@ if ( isset($_POST['delete_record']) ) {
 	exit;
 }
 	
-	
-	
-	
-	
+# Изменение поля "Комментарий" (userfield)	
+if ( isset($_POST['edit_userfield']) ) {
+	if ( strlen($cdr_user_name) > 0 || Config::get('display.main.userfield_edit') == 0 ) {
+		header('HTTP/1.1 403 Forbidden');
+		exit;
+	}
+	$res = false;
+	if ( $dbh = dbConnect(false) ) {
+		$data = json_decode($_POST['edit_userfield']);
+		$sth = $dbh->prepare('
+			UPDATE '.Config::get('db.table').'
+			SET userfield = :text
+			WHERE id = :id
+		');
+		$sth = $sth->execute(array(
+			'id' => $data->id,
+			'text' => htmlspecialchars($data->text),
+		));
+		if ($sth) {
+			$res = true;
+		}
+	}
+	echo json_encode(array(
+		'success' => $res,
+	));
+	exit;
+}

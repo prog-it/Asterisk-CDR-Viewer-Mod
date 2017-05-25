@@ -1,16 +1,6 @@
 <?php
 
-$path_config = 'inc/config/config.inc.php';
-
-# Пользовательский конфиг
-if ( isset($_REQUEST['config']) ) {
-    if ( preg_match('#^[A-Za-z0-9]+$#', $_REQUEST['config']) && file_exists('inc/config/config-' . $_REQUEST['config'] . '.inc.php') ) {
-        $path_config = 'inc/config/config-' . $_REQUEST['config'] . '.inc.php';
-    }
-}
-
-require_once $path_config;
-require_once 'inc/sendfile.class.php';
+require_once 'inc/load.php';
 
 # Доступ запрещен
 if ( strlen($cdr_user_name) > 0 ) {
@@ -20,7 +10,7 @@ if ( strlen($cdr_user_name) > 0 ) {
 
 if ( isset($_REQUEST['f']) ) {
 	$fname = base64_decode($_REQUEST['f']);
-	$file = $system_monitor_dir . '/' . $fname;
+	$file = Config::get('system.monitor_dir') . '/' . $fname;
 	$send = new Sendfile;
 	$send->send($file);
 	exit;
@@ -28,7 +18,7 @@ if ( isset($_REQUEST['f']) ) {
 
 else if ( isset($_REQUEST['csv']) ) {
 	$fname = base64_decode($_REQUEST['csv']);
-	$file = $system_tmp_dir . '/' . $fname;
+	$file = Config::get('system.tmp_dir') . '/' . $fname;
 	$send = new Sendfile;
 	$send->contentType('text/csv');
 	$send->send($file);	

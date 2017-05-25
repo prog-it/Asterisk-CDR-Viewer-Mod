@@ -1,5 +1,7 @@
 
 $(document).on('ready', function() {
+	initClipboard();
+	
 	// Стрелки навигации
 	$('#scroll-box').on('click', '#scroll-up', function() {
 		$('html, body').animate({ scrollTop: 0 }, 100);
@@ -123,9 +125,7 @@ $(document).on('ready', function() {
 				} else {
 					$('#content').html('<div id="content-msg">Нет данных с выбранными параметрами</div>');
 				}
-				if (scrollShow === true) {
-					showScroll();
-				}				
+				showScroll();
 			},
 			error: function(xhr, str) {
 				$('#content').html('<div id="content-msg">Не удалось получить данные</div>');
@@ -137,18 +137,78 @@ $(document).on('ready', function() {
 		return false;
 	});
 	
-})
+	// Показать спойлеры
+	$('#show_spoilers span').on('click', function() {
+		$('.spoilers').toggle('fast');
+		showScroll();
+		return false;
+	});
+	
+	// Изменение комментария
+	$('body').on('click', '.userfield', function() {
+		if (userfieldEdit === true) {
+			$elem = $(this);
+			$text = $elem.text().trim();
+			$elem.html(
+				'<div class="userfield-box">' +
+					'<input data-oldtext="'+$text+'" value="'+$text+'" type="text">' +
+					'<br>' +
+					'<button class="btn btn-default userfield-save">&#10003;</button>' + 
+					'<button class="btn btn-default userfield-cancel">&#215;</button>' +
+				'</div>'
+			);
+			$elem.removeClass('userfield');
+		}
+	});
+	$('body').on('click', '.userfield-save', function() {
+		$elem = $(this);
+		$userfield = $elem.closest('td');
+		$id = $elem.closest('tr').data('id');
+		$text = $userfield.find('input').val().trim();
+		$params = {
+			'id' : $id,
+			'text' : $text,
+		};
+		$.ajax ({
+			type: 'post',
+			url: '',
+			data: 'edit_userfield=' + JSON.stringify($params),
+			dataType: 'json',
+			timeout: 7000,
+			cache: false,
+			success: function(data) {
+				if (data['success'] === true) {
+					$userfield.find('input').data('oldtext', $text);
+					$userfield.text($text).addClass('userfield');
+				} else {
+					$elem.removeClass('btn-default').addClass('btn-danger');
+				}
+			},
+			error: function(xhr, str) {
+				$elem.removeClass('btn-default').addClass('btn-danger');
+			},
+		});
+	});	
+	$('body').on('click', '.userfield-cancel', function() {
+		$userfield = $(this).closest('td');
+		$text = $userfield.find('input').data('oldtext');
+		$userfield.text($text).addClass('userfield');
+	});
+	
+});
 
 // Показать навигацию
 function showScroll() {
-	var $bodyHeight = $('body').height(),
-		$docHeight = $(window).height(),
-		$scroll = $('#scroll-box');
-	
-	if ($bodyHeight > $docHeight) {
-		$scroll.show('fast');
-	} else {
-		$scroll.hide('fast');
+	if (scrollShow === true) {
+		var $bodyHeight = $('body').height(),
+			$docHeight = $(window).height(),
+			$scroll = $('#scroll-box');
+		
+		if ($bodyHeight > $docHeight) {
+			$scroll.show('fast');
+		} else {
+			$scroll.hide('fast');
+		}
 	}
 }
 
@@ -236,3 +296,30 @@ function selectRange(range) {
 	}
 }
 
+// Копирование в буфер
+function initClipboard() {
+	var clipboard = new Clipboard('[data-clipboard]');
+	clipboard.on('success', function (e) {
+		html_pulse(e.trigger, '<span class="copied">Copied!</span>');
+	});
+}
+
+// Изменить текст элемента на newtext и вернуть обратно с импульсом. elem - ID элемента
+function html_pulse( elem, newtext ) {
+	$oldtext = $(elem).html();
+	$(elem).fadeTo(
+		'normal',
+		0.01,
+		function() {
+			$(elem)
+			.html(newtext)
+			.css('opacity', 1)
+			.fadeTo(
+				'slow', 1,
+				function() {
+					$(elem).fadeTo('normal', 0.01, function() { $(elem).html( $oldtext ).css('opacity', 1); });
+				}
+			);
+		}
+	);
+}

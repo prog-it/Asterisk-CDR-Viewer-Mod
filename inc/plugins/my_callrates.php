@@ -3,13 +3,11 @@
 function my_callrates() {
 	global
 	$dbh,
-	$db_name,
 	$db_table_name,
 	$group_by_field,
 	$where,
 	$result_limit,
-	$graph_col_title,
-	$callrate_csv_fileName;
+	$graph_col_title;
 
 	/**************************** Config ****************************************************/
 	$my_call_rates = array(
@@ -20,7 +18,6 @@ function my_callrates() {
 		"Россия" 			=> "(dst LIKE '8%') and (dst NOT LIKE '89%' and dst NOT LIKE '79%' and dst NOT LIKE '8351%' and dst NOT LIKE '8495%' and dst NOT LIKE '8499%' and dst NOT LIKE '8812%' and dst NOT LIKE '8800%') and (LENGTH(dst)=11)",
 	);
 
-	$my_callrates_csv_file = dirname(__FILE__) . '/' . $callrate_csv_fileName;
 	/****************************************************************************************/
 
 	$my_bill_tototal_q = "SELECT $group_by_field AS group_by_field FROM $db_table_name $where GROUP BY group_by_field ORDER BY group_by_field ASC LIMIT $result_limit";
@@ -32,7 +29,7 @@ function my_callrates() {
 	$my_call_rates_total['summ'] = 0;
 
 	echo '
-		<p class="center title">Детализация звонков - Расход денежных средств</p>
+		<p class="center title">Расход денежных средств</p>
 		<table class="cdr">
 			<tr>
 				<th>'.$graph_col_title.'</th>
@@ -56,7 +53,7 @@ function my_callrates() {
 
 		$result = $sth->fetchAll(PDO::FETCH_NUM);
 
-		$sth = NULL;
+		$sth = null;
 
 		foreach ( $result as $row ) {
 			$summ = 0;
@@ -73,10 +70,10 @@ function my_callrates() {
 				}
 				
 				while ( $bill_row = $sth2->fetch(PDO::FETCH_NUM) ) {
-					$rates = callrates( $bill_row[0], $bill_row[1], $my_callrates_csv_file );
+					$rates = callrates( $bill_row[0], $bill_row[1], Config::get('callrate.csv_file') );
 					$summ_local += $rates[4];
 				}
-				$sth2 = NULL;
+				$sth2 = null;
 
 				$my_call_rates_total[$key] += $summ_local;
 				$summ += $summ_local;
