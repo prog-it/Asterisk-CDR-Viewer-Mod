@@ -10,6 +10,7 @@ if ( strlen($cdr_user_name) > 0 ) {
 
 if ( isset($_REQUEST['f']) ) {
 	$fname = base64_decode($_REQUEST['f']);
+	$fname = preg_replace('#\.\.#', '', $fname);
 	$file = Config::get('system.monitor_dir') . '/' . $fname;
 	$send = new Sendfile;
 	$send->send($file);
@@ -18,6 +19,7 @@ if ( isset($_REQUEST['f']) ) {
 
 else if ( isset($_REQUEST['csv']) ) {
 	$fname = base64_decode($_REQUEST['csv']);
+	$fname = preg_replace('#\.\.#', '', $fname);
 	$file = Config::get('system.tmp_dir') . '/' . $fname;
 	$send = new Sendfile;
 	$send->contentType('text/csv');
