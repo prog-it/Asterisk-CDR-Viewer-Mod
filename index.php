@@ -677,7 +677,7 @@ if ( isset($_REQUEST['need_minutes_report']) && $_REQUEST['need_minutes_report']
 
 if ( isset($_REQUEST['need_chart_cc']) && $_REQUEST['need_chart_cc'] == 'true' ) {
 	$date_range = "( (calldate BETWEEN $startdate AND $enddate) or (calldate + interval duration second  BETWEEN $startdate AND $enddate) or ( calldate + interval duration second >= $enddate AND calldate <= $startdate ) )";
-	$where = "$channel $dstchannel $src $clid $dst $userfield $accountcode $disposition $lastapp $duration $cdr_user_name";
+	$where = "$channel $src $clid $dst $dstchannel $dst $userfield $accountcode $disposition $lastapp $duration $cdr_user_name";
 	
 	if ( strlen(trim($where)) > 1 ) {
 		$where = "WHERE $date_range AND ( $where )";
