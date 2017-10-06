@@ -68,7 +68,7 @@ function formatFiles($row) {
 			'[_btn_delete]',
 		),
 		array(
-			$tpl['btn_record'],
+			Config::get('display.main.rec_play') == 1 ? $tpl['btn_record'] : '',
 			$tpl['btn_download'],
 			Config::get('display.main.rec_delete') == 1 ? $tpl['btn_delete'] : '',
 		),
