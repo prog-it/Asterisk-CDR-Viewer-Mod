@@ -148,6 +148,7 @@ exten => s,n,Goto(no);
 exten => s,n(wav),Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${ARG1}-${ARG2});
 exten => s,n,Set(CDR(filename)=${fname}.wav);
 exten => s,n,Set(CDR(realdst)=${ARG2});
+exten => s,n,Set(CDR(remoteip)=${CHANNEL(recvip)});
 exten => s,n,MixMonitor(${DIR_RECORDS}${fname}.wav,b);
 exten => s,n,Goto(no);
 exten => s,n(no),Verbose(Exit record);
