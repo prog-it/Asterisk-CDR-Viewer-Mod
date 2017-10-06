@@ -110,7 +110,7 @@ return array(
 		'lookup' => array(
 			## URL сервиса информации о номере
 			# Где "%n" будет заменено на номер телефона
-			'url' => 'http://zvonki.octo.net/number.aspx/' . '%n',
+			'url' => 'https://zvonok.octo.net/number.aspx/' . '%n',
 			
 			## Минимальная длина номера, для которого будет подставлен URL с инфо о номере
 			'num_length' => 7,
