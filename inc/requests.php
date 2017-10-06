@@ -76,12 +76,28 @@ if ( isset($_POST['delete_record']) ) {
 		header('HTTP/1.1 403 Forbidden');
 		exit;
 	}
-	$path = Config::get('system.monitor_dir') . '/' . base64_decode($_POST['delete_record']);
+	$res = false;
+	$data = json_decode($_POST['delete_record']);
+	$path = Config::get('system.monitor_dir') . '/' . base64_decode($data->path);
 	if ( file_exists($path) && is_file($path) ) {
 		if ( @unlink($path) ) {
+			// Очистка поля с именем файла записи звонка
+			if ( $dbh = dbConnect(false) ) {
+				$sth = $dbh->prepare('
+					UPDATE '.Config::get('db.table').'
+					SET '.Config::get('system.column_name').' = NULL
+					WHERE id = :id
+				');
+				$sth = $sth->execute(array(
+					'id' => $data->id,
+				));
+				if ($sth) {
+					$res = true;
+				}
+			}
 			echo json_encode(array(
-				'success' => true,
-				'message' => 'Успешно удалено',
+				'success' => $res,
+				'message' => $res === true ? 'Успешно удалено' : 'Файл записи удален, но не удалось удалить имя файла из базы',
 			));			
 		} else {
 			echo json_encode(array(

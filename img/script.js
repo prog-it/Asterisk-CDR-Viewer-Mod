@@ -84,11 +84,16 @@ $(document).on('ready', function() {
 	// Удалить запись
 	$('body').on('click', '.img_delete', function() {
 		$elem = $(this);
+		$id = $elem.closest('tr').data('id');
+		$params = {
+			'id' : $id,
+			'path' : $elem.data('path'),
+		};		
 		if ( confirm('Вы действительно хотите удалить эту запись?') ) {
 			$.ajax ({
 				type: 'post',
 				url: '',
-				data: 'delete_record=' + $elem.data('path'),
+				data: 'delete_record=' + JSON.stringify($params),
 				dataType: 'json',
 				timeout: 7000,
 				cache: false,
