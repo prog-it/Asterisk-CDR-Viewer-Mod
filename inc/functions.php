@@ -26,7 +26,7 @@ function formatFiles($row) {
 	
 	# Кнопка скачать запись
 	$tpl['btn_download'] = '
-		<a href="dl.php?f=[_file]"><div class="img_dl"></div></a>
+		<div class="img_dl" data-link="dl.php?f=[_file]"></div>
 	';	
 	
 	# Кнопка удалить запись

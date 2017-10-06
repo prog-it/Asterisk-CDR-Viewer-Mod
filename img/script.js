@@ -24,6 +24,8 @@ $(document).on('ready', function() {
 			autoplay = (playerAutoplay === true) ? 'play' : '',
 			docTitle = document.title,
 			$title = (playerTitle === true) ? $(this).data('title') : '',
+			$config = $.query.get('config'),
+			$config = $config != false ? '&config=' + $config : '',
 			content = 
 				'<div class="plTitle">'+$title+'</div>' +
 				'<div class="plStyle" id="player"></div>'
@@ -41,7 +43,7 @@ $(document).on('ready', function() {
 			st:"uppodaudio",
 			uid:"player",
 			auto:autoplay,
-			file:$(this).data('link'),
+			file:$(this).data('link') + $config,
 		});
 	});
 	
@@ -57,6 +59,14 @@ $(document).on('ready', function() {
 		$player.hide();
 		document.title = docTitle.match(/\s(.*?)$/)[1];
 		$player.html('');
+	});
+	
+	// Скачать запись
+	// Скачать CSV отчет
+	$('body').on('click', '.img_dl, .dl_csv', function() {
+		$config = $.query.get('config');
+		$config = $config != false ? '&config=' + $config : '';
+		window.location.href = $(this).data('link') + $config;
 	});
 	
 	// Проверка обновлений

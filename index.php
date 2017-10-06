@@ -322,7 +322,7 @@ if ( isset($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) {
 		fclose($handle);
 		$sth = null;
 	}
-	echo '<p class="dl_csv"><a class="btn btn-info" href="dl.php?csv='.base64_encode($csv_fname).'">Скачать CSV отчет</a></p>';
+	echo '<p class="dl_csv_box"><button class="dl_csv btn btn-info" data-link="dl.php?csv='.base64_encode($csv_fname).'">Скачать CSV отчет</button></p>';
 }
 
 if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
