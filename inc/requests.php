@@ -141,3 +141,29 @@ if ( isset($_POST['edit_userfield']) ) {
 	));
 	exit;
 }
+
+# Удаление строки из базы
+if ( isset($_POST['delete_entry']) ) {
+	if ( strlen($cdr_user_name) > 0 || Config::get('display.main.entry_delete') == 0 ) {
+		header('HTTP/1.1 403 Forbidden');
+		exit;
+	}
+	$res = false;
+	if ( $dbh = dbConnect(false) ) {
+		$data = json_decode($_POST['delete_entry']);
+		$sth = $dbh->prepare('
+			DELETE FROM '.Config::get('db.table').'
+			WHERE id = :id
+		');
+		$sth = $sth->execute(array(
+			'id' => $data->id,
+		));
+		if ($sth) {
+			$res = true;
+		}
+	}
+	echo json_encode(array(
+		'success' => $res,
+	));
+	exit;	
+}

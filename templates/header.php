@@ -18,11 +18,15 @@
 <link rel="icon" type="image/png" sizes="192x192" href="img/favicon.png">
 <link rel="stylesheet" type="text/css" href="img/style.css?<?php echo filemtime('img/style.css'); ?>">
 <link rel="stylesheet" type="text/css" href="<?php echo Config::get('cdn.css.tooltips'); ?>">
+<link rel="stylesheet" type="text/css" href="<?php echo Config::get('cdn.css.jquery_contextmenu'); ?>">
 <script src="<?php echo Config::get('cdn.js.jquery'); ?>"></script>
 <script src="<?php echo Config::get('cdn.js.jquery_object'); ?>"></script>
 <script src="<?php echo Config::get('cdn.js.clipboard_js'); ?>"></script>
 <script src="<?php echo Config::get('cdn.js.player'); ?>"></script>
 <script src="<?php echo Config::get('cdn.js.player_skin'); ?>"></script>
+<script src="<?php echo Config::get('cdn.js.jquery_contextmenu'); ?>"></script>
+<script src="<?php echo Config::get('cdn.js.jquery_ui_position'); ?>"></script>
+
 <script>
 	// ID элемента с фоном плеера
 var playerOverlayId = '#playerOverlay',
@@ -37,7 +41,9 @@ var playerOverlayId = '#playerOverlay',
 	// Показ стрелок для быстрой навигации справа
 	scrollShow = <?php echo Config::exists('site.js.scroll_show') && Config::get('site.js.scroll_show') == 1 ? 'true' : 'false'; ?>,
 	// Изменение поля "Комментарий" (userfield)
-	userfieldEdit = <?php echo Config::exists('display.main.userfield_edit') && Config::get('display.main.userfield_edit') == 1 ? 'true' : 'false'; ?>;
+	userfieldEdit = <?php echo Config::exists('display.main.userfield_edit') && Config::get('display.main.userfield_edit') == 1 ? 'true' : 'false'; ?>,
+	// Удаление строки из базы
+	entryDelete = <?php echo Config::exists('display.main.entry_delete') && Config::get('display.main.entry_delete') == 1 ? 'true' : 'false'; ?>;	
 </script>
 <script src="img/script.js?<?php echo filemtime('img/script.js'); ?>"></script>
 </head>

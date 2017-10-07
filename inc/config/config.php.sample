@@ -133,7 +133,10 @@ return array(
 			'rec_delete' => 1,
 			
 			## Возможность редактировать поле "Комментарий" (userfield)
-			'userfield_edit' => 1,			
+			'userfield_edit' => 1,
+			
+			## Показ контекстного пункта меню - Удаление строки из базы
+			'entry_delete' => 1,
 			
 			## Показать Вх. / Исх. канал полностью
 			# В колонках Вх. / Исх. канал, Например, вместо "SIP" будет показано "SIP/123"
@@ -213,6 +216,8 @@ return array(
 		'css' => array(
 			## Tooltips
 			'tooltips' => 'img/simptip.min.css',
+			## jQuery contextMenu
+			'jquery_contextmenu' => 'img/jquery-contextmenu/jquery.contextMenu.min.css',
 		),
 		
 		'js' => array(
@@ -226,6 +231,10 @@ return array(
 			'jquery_object' => 'img/jquery.query-object.min.js',
 			## Clipboard JS
 			'clipboard_js' => 'img/clipboard.min.js',
+			## jQuery contextMenu
+			'jquery_contextmenu' => 'img/jquery-contextmenu/jquery.contextMenu.min.js',
+			## jQuery UI position
+			'jquery_ui_position' => 'img/jquery-contextmenu/jquery.ui.position.min.js',
 		),		
 	),
 

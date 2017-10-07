@@ -210,6 +210,44 @@ $(document).on('ready', function() {
 		$userfield.text($text).addClass('userfield');
 	});
 	
+	// Контекстное меню - Удаление строки из базы
+	if (entryDelete === true) {
+		$.contextMenu({
+			selector: '.record_cdr', 
+			items: {
+				'delete': {
+					name: 'Удалить строку',
+					icon: 'delete',
+					callback: function(key, options) {
+						$elem = $(this);
+						$id = $elem.closest('tr').data('id');
+						$params = {
+							'id' : $id,
+						};
+						$.ajax ({
+							type: 'post',
+							url: '',
+							data: 'delete_entry=' + JSON.stringify($params),
+							dataType: 'json',
+							timeout: 7000,
+							cache: false,
+							success: function(data) {
+								if (data['success'] === true) {
+									$elem.closest('tr').hide();
+								} else {
+									alert('Не удалось удалить строку!');
+								}
+							},
+							error: function(xhr, str) {
+								alert('Не удалось удалить строку!');
+							},			
+						});					
+					},
+				},
+			}
+		});
+	}
+	
 });
 
 // Показать навигацию

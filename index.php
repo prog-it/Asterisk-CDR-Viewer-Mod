@@ -434,7 +434,7 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 					$i = 0;
 				}
 				
-				echo '<tr class="record" data-id="'.$row['id'].'">';
+				echo '<tr class="record record_cdr" data-id="'.$row['id'].'">';
 				formatCallDate($row['calldate'],$row['uniqueid']);
 				formatDisposition($row['disposition'], $row['amaflags']);
 				formatSrc($row['src'],$row['clid']);
