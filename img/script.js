@@ -26,6 +26,7 @@ $(document).on('ready', function() {
 			$title = (playerTitle === true) ? $(this).data('title') : '',
 			$config = $.query.get('config'),
 			$config = $config != false ? '&config=' + $config : '',
+			$link = 'dl.php?f=' + $(this).closest('tr').data('filepath') + $config,
 			content = 
 				'<div class="plTitle">'+$title+'</div>' +
 				'<div class="plStyle" id="player"></div>'
@@ -43,7 +44,7 @@ $(document).on('ready', function() {
 			st:"uppodaudio",
 			uid:"player",
 			auto:autoplay,
-			file:$(this).data('link') + $config,
+			file:$link,
 		});
 	});
 	
@@ -62,11 +63,18 @@ $(document).on('ready', function() {
 	});
 	
 	// Скачать запись
-	// Скачать CSV отчет
-	$('body').on('click', '.img_dl, .dl_csv', function() {
+	$('body').on('click', '.img_dl', function() {
 		$config = $.query.get('config');
 		$config = $config != false ? '&config=' + $config : '';
-		window.location.href = $(this).data('link') + $config;
+		$link = 'dl.php?f=' + $(this).closest('tr').data('filepath') + $config;
+		window.location.href = $link;
+	});	
+	
+	// Скачать CSV отчет
+	$('body').on('click', '.dl_csv', function() {
+		$config = $.query.get('config');
+		$config = $config != false ? '&config=' + $config : '';
+		window.location.href = 'dl.php?csv=' + $(this).data('filepath') + $config;
 	});
 	
 	// Проверка обновлений
@@ -94,10 +102,12 @@ $(document).on('ready', function() {
 	// Удалить запись
 	$('body').on('click', '.img_delete', function() {
 		$elem = $(this);
-		$id = $elem.closest('tr').data('id');
+		$str = $elem.closest('tr');
+		$id = $str.data('id');
+		$path = $str.data('filepath');
 		$params = {
 			'id' : $id,
-			'path' : $elem.data('path'),
+			'path' : $path,
 		};		
 		if ( confirm('Вы действительно хотите удалить эту запись?') ) {
 			$.ajax ({
@@ -220,9 +230,12 @@ $(document).on('ready', function() {
 					icon: 'delete',
 					callback: function(key, options) {
 						$elem = $(this);
-						$id = $elem.closest('tr').data('id');
+						$str = $elem.closest('tr');
+						$id = $str.data('id');
+						$path = $str.data('filepath');
 						$params = {
 							'id' : $id,
+							'path' : $path,
 						};
 						$.ajax ({
 							type: 'post',
@@ -233,7 +246,7 @@ $(document).on('ready', function() {
 							cache: false,
 							success: function(data) {
 								if (data['success'] === true) {
-									$elem.closest('tr').hide();
+									$str.hide();
 								} else {
 									alert('Не удалось удалить строку!');
 								}

@@ -322,7 +322,7 @@ if ( isset($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) {
 		fclose($handle);
 		$sth = null;
 	}
-	echo '<p class="dl_csv_box"><button class="dl_csv btn btn-info" data-link="dl.php?csv='.base64_encode($csv_fname).'">Скачать CSV отчет</button></p>';
+	echo '<p class="dl_csv_box"><button class="dl_csv btn btn-info" data-filepath="'.base64_encode($csv_fname).'">Скачать CSV отчет</button></p>';
 }
 
 if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
@@ -434,7 +434,8 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 					$i = 0;
 				}
 				
-				echo '<tr class="record record_cdr" data-id="'.$row['id'].'">';
+				$file_params = getFileParams($row);
+				echo '<tr class="record record_cdr" data-id="'.$row['id'].'" data-filepath="'.$file_params['path'].'">';
 				formatCallDate($row['calldate'],$row['uniqueid']);
 				formatDisposition($row['disposition'], $row['amaflags']);
 				formatSrc($row['src'],$row['clid']);
@@ -469,7 +470,7 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 					formatChannel($row['dstchannel']);
 				}
 				if ( Config::exists('display.column.file') && Config::get('display.column.file') == 1 ) {
-					formatFiles($row);
+					formatFiles($row, $file_params);
 				}
 				if ( Config::exists('display.column.accountcode') && Config::get('display.column.accountcode') == 1 ) {
 					formatAccountCode($row['accountcode']);

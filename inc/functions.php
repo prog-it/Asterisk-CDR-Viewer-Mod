@@ -1,37 +1,20 @@
 <?php
 
 /* Recorded file */
-function formatFiles($row) {
-	# uniq_name.mp3
-	$recorded_file = '';
-	$tmp['system_audio_format'] = Config::get('system.audio_format');
-	# В базе есть колонка с именем записи разговора
-	if ( isset($row[Config::get('system.column_name')]) ) {
-		$recorded_file = $row[Config::get('system.column_name')];
-	}
-	
-	$mycalldate_ymd		= substr($row['calldate'], 0, 10); // ymd
-	$mycalldate_ym		= substr($row['calldate'], 0, 7); // ym
-	$mycalldate_y		= substr($row['calldate'], 0, 4); // y
-	$mycalldate_m		= substr($row['calldate'], 5, 2); // m
-	$mycalldate_d		= substr($row['calldate'], 8, 2); // d
-	$mydate				= date('Y-m-d');
-
-	// -----------------------------------------------
-	
+function formatFiles($row, $file_params) {
 	# Кнопка прослушать запись
 	$tpl['btn_record'] = '
-		<div class="img_play" data-link="dl.php?f=[_file]" data-title="'.$row['calldate'].'"></div>
+		<div class="img_play" data-title="'.$row['calldate'].'"></div>
 	';
 	
 	# Кнопка скачать запись
 	$tpl['btn_download'] = '
-		<div class="img_dl" data-link="dl.php?f=[_file]"></div>
+		<div class="img_dl"></div>
 	';	
 	
 	# Кнопка удалить запись
 	$tpl['btn_delete'] = '
-		<div data-path="[_file]" class="img_delete"></div>
+		<div class="img_delete"></div>
 	';
 	
 	# Файл не найден
@@ -75,8 +58,47 @@ function formatFiles($row) {
 		$tpl['record']
 	);
 	$tpl['download'] = str_replace('[_btn_download]', $tpl['btn_download'], $tpl['download']);
-					
-	// -----------------------------------------------
+	
+	# Файл не существует
+	$tmp['result'] = $tpl['error'];
+	# Аудио
+	if ( $file_params['type'] == 'audio' ) {
+		$tmp['result'] = $tpl['record'];
+	}
+	# Архив
+	else if ( $file_params['type'] == 'archive' ) {
+		$tmp['result'] = $tpl['download'];
+	}
+	# Факс
+	else if ( $file_params['type'] == 'fax' ) {
+		$tmp['result'] = $tpl['download'];
+	}
+
+	echo $tmp['result'];
+}
+
+# Получить параметры файла записи звонка
+function getFileParams($row) {
+	# uniq_name.mp3
+	$recorded_file = '';
+	$tmp['result'] = array(
+		# Тип файла. false, если файл не существует
+		'type' => false,
+		# Путь к файлу в base64. То, что после dl.php?f=
+		'path' => '',
+	);
+	$tmp['system_audio_format'] = Config::get('system.audio_format');
+	# В базе есть колонка с именем записи разговора
+	if ( isset($row[Config::get('system.column_name')]) ) {
+		$recorded_file = $row[Config::get('system.column_name')];
+	}
+	
+	$mycalldate_ymd		= substr($row['calldate'], 0, 10); // ymd
+	$mycalldate_ym		= substr($row['calldate'], 0, 7); // ym
+	$mycalldate_y		= substr($row['calldate'], 0, 4); // y
+	$mycalldate_m		= substr($row['calldate'], 5, 2); // m
+	$mycalldate_d		= substr($row['calldate'], 8, 2); // d
+	$mydate				= date('Y-m-d');
 
 	# Имя файла при отложенной конвертации
 	if ( Config::get('system.audio_defconv') == 1 && $recorded_file ) {
@@ -104,7 +126,10 @@ function formatFiles($row) {
 	
 	# Аудио
 	if ( file_exists($rec['path']) && $recorded_file && filesize($rec['path'])/1024 >= Config::get('system.fsize_exists') && preg_match('#(.+)\.'.$tmp['system_audio_format'].'$#i', $rec['filename']) ) {
-		$tmp['result'] = str_replace('[_file]', base64_encode($rec['filename']), $tpl['record']);
+		$tmp['result'] = array(
+			'type' => 'audio',
+			'path' => base64_encode($rec['filename']),
+		);
 	}
 	# Архив
 	else if ( 
@@ -113,21 +138,22 @@ function formatFiles($row) {
 			file_exists($rec['path'].'.'.Config::get('system.archive_format')) &&
 			filesize($rec['path'].'.'.Config::get('system.archive_format'))/1024 >= Config::get('system.fsize_exists') 
 		) {
-		$tmp['result'] = str_replace('[_file]', base64_encode( $rec['filename'].'.'.Config::get('system.archive_format') ), $tpl['download']);
+		$tmp['result'] = array(
+			'type' => 'archive',
+			'path' => base64_encode( $rec['filename'].'.'.Config::get('system.archive_format') ),
+		);
 	}
 	# Факс
 	//else if (file_exists($rec['path']) && preg_match('#(.*)\.tiff?$#i', $rec['filename']) && $rec['filesize'] >= Config::get('system.fsize_exists')) {
 	else if ( file_exists($rec['path']) && $recorded_file && filesize($rec['path'])/1024 >= Config::get('system.fsize_exists') ) {
-		$tmp['result'] = str_replace('[_file]', base64_encode($rec['filename']), $tpl['download']);
-	}
-	
-	else { 
-		$tmp['result'] = $tpl['error']; 
+		$tmp['result'] = array(
+			'type' => 'fax',
+			'path' => base64_encode($rec['filename']),
+		);
 	}
 
-	echo $tmp['result'];
+	return $tmp['result'];
 }
-
 
 /* CDR Table Display Functions */
 function formatCallDate($calldate, $uniqueid) {

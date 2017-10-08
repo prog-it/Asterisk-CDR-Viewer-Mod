@@ -159,6 +159,11 @@ if ( isset($_POST['delete_entry']) ) {
 			'id' => $data->id,
 		));
 		if ($sth) {
+			// Удаление файла записи звонка
+			$path = Config::get('system.monitor_dir') . '/' . base64_decode($data->path);
+			if ( file_exists($path) && is_file($path) ) {
+				@unlink($path);
+			}
 			$res = true;
 		}
 	}
