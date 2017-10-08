@@ -295,9 +295,12 @@ CLEAN_OLD_EMPTYDIR=true
 2. Распаковать или Перенести файлы в нужную папку на сервере
 3. Переименовать файл "inc/config/config.php.sample" в "config.php". Т.е. будет файл "inc/config/config.php"
 4. Настроить параметры в "inc/config/config.php"
-5. Почти готово. Если необходим доступ только для определенных пользователей, то необходимо создать файл .htpasswd
+5. Почти готово. Если необходим доступ только для определенных пользователей, то необходимо создать файл .htpasswd.
 
+Создание .htpasswd файла
+===
 htpasswd -c /path/to/.htpasswd admin
+===
 
 Пример конфига для Nginx:
 ===
@@ -313,7 +316,6 @@ location /path/to/script {
 	AuthName "CDR Viewer Mod"
 	AuthType Basic
 	AuthUserFile /path/to/.htpasswd
-	AuthGroupFile /dev/null
 	require valid-user
 </Location>
 ===
