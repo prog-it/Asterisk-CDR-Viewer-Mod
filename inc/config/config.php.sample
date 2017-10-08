@@ -210,34 +210,6 @@ return array(
 		),
 	),
 
-	### CDN
-	# Пути к некоторым CSS и JS файлам. Можно указать URL и загружать, например, jQuery с Google CDN
-	'cdn' => array(
-		'css' => array(
-			## Tooltips
-			'tooltips' => 'img/simptip.min.css',
-			## jQuery contextMenu
-			'jquery_contextmenu' => 'img/jquery-contextmenu/jquery.contextMenu.min.css',
-		),
-		
-		'js' => array(
-			## Плеер
-			'player' => 'img/player.js',
-			## Скин для плеера
-			'player_skin' => 'img/player_skin.js',
-			## jQuery
-			'jquery' => 'img/jquery.min.js',
-			## jQuery query object
-			'jquery_object' => 'img/jquery.query-object.min.js',
-			## Clipboard JS
-			'clipboard_js' => 'img/clipboard.min.js',
-			## jQuery contextMenu
-			'jquery_contextmenu' => 'img/jquery-contextmenu/jquery.contextMenu.min.js',
-			## jQuery UI position
-			'jquery_ui_position' => 'img/jquery-contextmenu/jquery.ui.position.min.js',
-		),		
-	),
-
 	### Параметры сайта
 	'site' => array(
 		'main' => array(
@@ -276,6 +248,34 @@ return array(
 			'scroll_show' => 1,
 		),		
 	),
+	
+	### CDN
+	# Пути к некоторым CSS и JS файлам. Можно указать URL и загружать, например, jQuery с Google CDN
+	'cdn' => array(
+		'css' => array(
+			## Tooltips
+			'tooltips' => 'img/simptip.min.css',
+			## jQuery contextMenu
+			'jquery_contextmenu' => 'img/jquery-contextmenu/jquery.contextMenu.min.css',
+		),
+		
+		'js' => array(
+			## Плеер
+			'player' => 'img/player.js',
+			## Скин для плеера
+			'player_skin' => 'img/player_skin.js',
+			## jQuery
+			'jquery' => 'img/jquery.min.js',
+			## jQuery query object
+			'jquery_object' => 'img/jquery.query-object.min.js',
+			## Clipboard JS
+			'clipboard_js' => 'img/clipboard.min.js',
+			## jQuery contextMenu
+			'jquery_contextmenu' => 'img/jquery-contextmenu/jquery.contextMenu.min.js',
+			## jQuery UI position
+			'jquery_ui_position' => 'img/jquery-contextmenu/jquery.ui.position.min.js',
+		),		
+	),	
 	
 
 );
