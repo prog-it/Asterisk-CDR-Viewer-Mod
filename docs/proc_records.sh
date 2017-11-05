@@ -59,24 +59,36 @@ CONV_TO_MP3=true
 # Например: "user:group". Лучше всего установить имя и группу от которых запускается Asterisk
 USER_GROUP="asterisk:asterisk"
 
-## Уровень вложенности папок для поиска файлов записей звонков при конвертировании и удалении старых -> целое число
+## Уровень вложенности папок для поиска файлов записей звонков при конвертировании -> целое число
 # Например: Если 1 - поиск файлов только в папке /var/calls/, 2 - поиск файлов в /var/calls/ и в /var/calls/[Любая_папка]/
-# Можно указать, например: 9999. Это полезно, если настроено только конвертирование (и/или удаление старых) записей звонков, БЕЗ перемещения файлов.
-# Тогда все файлы в /var/calls/ и во всех вложенных папках будут преобразованы в MP3. А также будут удалены старые файлы, если CLEAN_OLD=true
+# Можно указать, например: 9999. Это полезно, если настроено только конвертирование записей звонков, БЕЗ перемещения файлов.
+# Тогда все файлы в /var/calls/ и во всех вложенных папках будут преобразованы в MP3
 DEPTH=1
 
 ## Бетрейт MP3 файлов, при конвертировании из WAV в MP3. Указывается в Кбит/с -> целое число
 BITRATE=32
 
+## Не конвертировать файлы, размер которых, меньше заданного. Размер задается в КилоБайтах
+# Файлы, размер которых меньше "REMOVE_MIN_SIZE" будут удалены перед конвертированием
+# Если задано "0", то отключено
+# Работает, если задано CONV_TO_MP3=true
+REMOVE_MIN_SIZE=0
+
 ## Удалять старые записи звонков. -> true, false
-# Файлы удаляются из папки, заданной в DIR_SOURCE
+# Файлы удаляются из папки, заданной в DIR_SOURCE, а также из всех вложенных папок
 CLEAN_OLD=false
 
 ## Количество дней хранения записей звонков, после которых файлы записей будут удалены с диска
 # Работает, если задано CLEAN_OLD=true
 CLEAN_OLD_AFTER=365
 
-## Удалять пустые папки из папки, заданной в DIR_SOURCE. Работает, если задано CLEAN_OLD=true.
+## Удалять файлы, размер которых, меньше заданного. Размер задается в КилоБайтах
+# Если задано "0", то отключено
+# Работает, если задано CLEAN_OLD=true
+CLEAN_OLD_MIN_SIZE=0
+
+## Удалять "пустые папки" из папки, заданной в DIR_SOURCE, а также из всех вложенных папок
+# Работает, если задано CLEAN_OLD=true
 CLEAN_OLD_EMPTYDIR=true
 
 
@@ -85,6 +97,9 @@ if [ "$MOVE_BY_DATE" == true ]; then
 fi	
 
 if [ "$CONV_TO_MP3" == true ]; then
+	if [ "$REMOVE_MIN_SIZE" != "0" ]; then
+		find "$DIR_SOURCE" -maxdepth $DEPTH -type f -name "*$YMD*.wav" -size -"$REMOVE_MIN_SIZE"k -exec rm -rf {} \;
+	fi
 	find "$DIR_SOURCE" -maxdepth $DEPTH -type f -name "*$YMD*.wav" -print0 | while IFS= read -r -d $'\0' line; do
 		TMP_SOURCE="$line"
 		TMP_CONV="${line%.wav}.mp3"
@@ -102,9 +117,12 @@ if [[ "$MOVE_BY_DATE" == true && "$CONV_TO_MP3" == false ]]; then
 fi
 
 if [ "$CLEAN_OLD" == true ]; then
-	find "${DIR_SOURCE}" -maxdepth $DEPTH -type f -mtime +"$CLEAN_OLD_AFTER" -exec rm -rf {} \;
+	if [ "$CLEAN_OLD_MIN_SIZE" != "0" ]; then
+		find "$DIR_SOURCE" -type f -size -"$CLEAN_OLD_MIN_SIZE"k -exec rm -rf {} \;
+	fi
+	find "${DIR_SOURCE}" -type f -mtime +"$CLEAN_OLD_AFTER" -exec rm -rf {} \;
 	if [ "$CLEAN_OLD_EMPTYDIR" == true ]; then
-		find "${DIR_SOURCE}" -maxdepth $DEPTH -type d -empty -exec rm -rf {} \;
+		find "${DIR_SOURCE}" -type d -empty -exec rm -rf {} \;
 	fi
 fi
 
