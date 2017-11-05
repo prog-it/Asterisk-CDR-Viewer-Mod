@@ -1,1 +1,2 @@
-inc/config/config.php
+inc/config/*.php
+TODO.txt
