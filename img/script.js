@@ -1,6 +1,7 @@
 
 $(document).on('ready', function() {
 	initClipboard();
+	selectRange( $('#id_range').val() );
 	
 	// Стрелки навигации
 	$('#scroll-box').on('click', '#scroll-up', function() {
