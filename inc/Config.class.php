@@ -25,7 +25,7 @@ class Config {
 	*/
 	private static function init() {
 		if ( !isset(self::$data) ) {
-			if ( file_exists(self::$path) ) {
+			if ( is_file(self::$path) ) {
 				self::$data = require_once self::$path;
 			} else {
 				exit('File '.self::$path.' not exists'.PHP_EOL);
@@ -42,7 +42,7 @@ class Config {
 	* @return boolean TRUE Если удалось установить новый путь к конфиг-файлу
 	*/
 	public static function setPath($path) {
-		if ( isset($path) && file_exists($path) ) {
+		if ( isset($path) && is_file($path) ) {
 			self::$path = $path;
 			return true;
 		}
