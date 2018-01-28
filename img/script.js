@@ -281,86 +281,143 @@ function showScroll() {
 
 // Быстрый выбор периода
 function selectRange(range) {
-	var curr = new Date,
-		first,
-		last;
-	
 	switch (range) {
+		// Сегодня
 		case 'td':
-			first = curr.getDate();
-			last = new Date(curr.setDate(first));
-			first = new Date(curr.setDate(first));
+			var date = moment().subtract(0, 'day'),
+				startDay = date.format('D'),
+				startMonth = date.format('MM'),
+				startYear = date.format('YYYY'),
+				endDay = startDay,
+				endMonth = startMonth,
+				endYear = startYear
+			;
 			break;
+		// Вчера
 		case 'yd':
-			first = curr.getDate()-1;
-			last = new Date(curr.setDate(first));
-			first = new Date(curr.setDate(first));
+			var date = moment().subtract(1, 'day'),
+				startDay = date.format('D'),
+				startMonth = date.format('MM'),
+				startYear = date.format('YYYY'),
+				endDay = startDay,
+				endMonth = startMonth,
+				endYear = startYear
+			;
 			break;
+		// Последние 3 дня	
 		case '3d':
-			first = curr.getDate()-2;
-			last = new Date(curr.setDate(first+2));
-			first = new Date(curr.setDate(first));
+			var dateStart = moment().subtract(2, 'day'),
+				startDay = dateStart.format('D'),
+				startMonth = dateStart.format('MM'),
+				startYear = dateStart.format('YYYY'),
+				dateEnd = moment().subtract(0, 'day'),
+				endDay = dateEnd.format('D'),
+				endMonth = dateEnd.format('MM'),
+				endYear = dateEnd.format('YYYY')
+			;
 			break;
+		// Текущая неделя
 		case 'tw':
-			// В Воскресенье не работает. Выводится дата на след. неделю
-			first = curr.getDate()-curr.getDay()+1;
-			last = first + 6;
-			first = new Date((new Date(curr)).setDate(first));
-			last = new Date((new Date(curr)).setDate(last));
+			var dateStart = moment().startOf('week'),
+				startDay = dateStart.format('D'),
+				startMonth = dateStart.format('MM'),
+				startYear = dateStart.format('YYYY'),
+				dateEnd = moment().endOf('week'),
+				endDay = dateEnd.format('D'),
+				endMonth = dateEnd.format('MM'),
+				endYear = dateEnd.format('YYYY')
+			;
 			break;
+		// Предыдущая неделя
 		case 'pw':
-			first = curr.getDate()-7-curr.getDay()+1;
-			last = new Date(curr.setDate(first+6));
-			first = new Date(curr.setDate(first));
+			var dateStart = moment().subtract(7, 'day').startOf('week'),
+				startDay = dateStart.format('D'),
+				startMonth = dateStart.format('MM'),
+				startYear = dateStart.format('YYYY'),
+				dateEnd = moment().subtract(7, 'day').endOf('week'),
+				endDay = dateEnd.format('D'),
+				endMonth = dateEnd.format('MM'),
+				endYear = dateEnd.format('YYYY')
+			;
 			break;
+		// Последние 3 недели
 		case '3w':
-			// В Воскресенье не работает. Выводится дата на след. неделю
-			first = curr.getDate()-curr.getDay()+1;
-			last = first + 6;
-			last = new Date((new Date(curr)).setDate(last));
-			first = curr.getDate()-14-curr.getDay()+1;
-			first = new Date((new Date(curr)).setDate(first));
+			var dateStart = moment().subtract(2, 'week').startOf('week'),
+				startDay = dateStart.format('D'),
+				startMonth = dateStart.format('MM'),
+				startYear = dateStart.format('YYYY'),
+				dateEnd = moment().subtract(0, 'day').endOf('week'),
+				endDay = dateEnd.format('D'),
+				endMonth = dateEnd.format('MM'),
+				endYear = dateEnd.format('YYYY')
+			;
 			break;
+		// Текущий месяц
 		case 'tm':
-			first = new Date(curr.getFullYear(), curr.getMonth(), 1);
-			last = new Date(curr.getFullYear(), curr.getMonth()+1, 0);
+			var dateStart = moment().startOf('month'),
+				startDay = dateStart.format('D'),
+				startMonth = dateStart.format('MM'),
+				startYear = dateStart.format('YYYY'),
+				dateEnd = moment().endOf('month'),
+				endDay = dateEnd.format('D'),
+				endMonth = dateEnd.format('MM'),
+				endYear = dateEnd.format('YYYY')
+			;
 			break;
+		// Предыдущий месяц
 		case 'pm':
-			first = new Date(curr.getFullYear(), curr.getMonth()-1, 1);
-			last = new Date(curr.getFullYear(), curr.getMonth(), 0);
-			break;	
-		case '3m':
-			first = new Date(curr.getFullYear(), curr.getMonth()-2, 1);
-			last = new Date(curr.getFullYear(), curr.getMonth()+1, 0);
+			var dateStart = moment().subtract(1, 'month').startOf('month'),
+				startDay = dateStart.format('D'),
+				startMonth = dateStart.format('MM'),
+				startYear = dateStart.format('YYYY'),
+				dateEnd = moment().subtract(1, 'month').endOf('month'),
+				endDay = dateEnd.format('D'),
+				endMonth = dateEnd.format('MM'),
+				endYear = dateEnd.format('YYYY')
+			;
 			break;
+		// Последние 3 месяца
+		case '3m':
+			var dateStart = moment().subtract(2, 'month').startOf('month'),
+				startDay = dateStart.format('D'),
+				startMonth = dateStart.format('MM'),
+				startYear = dateStart.format('YYYY'),
+				dateEnd = moment().endOf('month'),
+				endDay = dateEnd.format('D'),
+				endMonth = dateEnd.format('MM'),
+				endYear = dateEnd.format('YYYY')
+			;
+			break;
+		// По умолчанию - Сегодня и до конца месяца
 		default:
-			first = curr.getDate();
-			last = new Date(curr.getFullYear(), curr.getMonth()+1, 0);
-			first = new Date(curr.setDate(first));
+			var dateStart = moment().subtract(0, 'day'),
+				startDay = dateStart.format('D'),
+				startMonth = dateStart.format('MM'),
+				startYear = dateStart.format('YYYY'),
+				dateEnd = moment().subtract(0, 'day').endOf('month'),
+				endDay = dateEnd.format('D'),
+				endMonth = dateEnd.format('MM'),
+				endYear = dateEnd.format('YYYY')
+			;
 	}
-	
-	if (typeof(first) !== 'undefined') {
-		$('#startmonth').prop('selectedIndex', first.getMonth());
-		$('#startday').val(first.getDate());
-		
-		var $selector = $('#startyear');
-		$selector.find('option').each(function(index, element) {
-			if ( element.value == first.getFullYear() ) {
-				$selector.prop('selectedIndex', index);
-				return false;
-			}
-		});
-		$('#endmonth').prop('selectedIndex', last.getMonth());
-		$('#endday').val(last.getDate());
-		
-		$selector = $('#endyear');
-		$selector.find('option').each(function(index, element) {
-			if ( element.value == last.getFullYear() ) {
-				$selector.prop('selectedIndex', index);
-				return false;
-			}
-		});		
-	}
+
+	changeStateSelect('#startday', startDay);
+	changeStateSelect('#startmonth', startMonth);
+	changeStateSelect('#startyear', startYear);
+	changeStateSelect('#endday', endDay);
+	changeStateSelect('#endmonth', endMonth);
+	changeStateSelect('#endyear', endYear);
+}
+
+// Изменить состояние HTML элемента "select"
+function changeStateSelect(selector, findValue) {
+	var $selector = $(selector);
+	$selector.find('option').each(function(index, element) {
+		if ( element.value == findValue ) {
+			$selector.prop('selectedIndex', index);
+			return false;
+		}
+	});	
 }
 
 // Копирование в буфер

@@ -26,6 +26,8 @@
 <script src="<?php echo Config::get('cdn.js.player_skin'); ?>"></script>
 <script src="<?php echo Config::get('cdn.js.jquery_contextmenu'); ?>"></script>
 <script src="<?php echo Config::get('cdn.js.jquery_ui_position'); ?>"></script>
+<script src="<?php echo Config::get('cdn.js.moment_js'); ?>"></script>
+<script src="<?php echo Config::get('cdn.js.moment_js_locale'); ?>"></script>
 
 <script>
 	// ID элемента с фоном плеера

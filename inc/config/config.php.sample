@@ -275,6 +275,10 @@ return array(
 			'jquery_contextmenu' => 'img/jquery-contextmenu/jquery.contextMenu.min.js',
 			## jQuery UI position
 			'jquery_ui_position' => 'img/jquery-contextmenu/jquery.ui.position.min.js',
+			## Moment JS
+			'moment_js' => 'img/moment.js/moment.min.js',
+			## Moment JS - Locale RU
+			'moment_js_locale' => 'img/moment.js/ru.js',			
 		),		
 	),	
 	
