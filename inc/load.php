@@ -4,7 +4,7 @@ require_once 'inc/Config.class.php';
 Config::setPath('inc/config/config.php');
 
 # Пользовательский конфиг
-if ( isset($_REQUEST['config']) && preg_match('#^[A-Za-z0-9]+$#', $_REQUEST['config']) ) {
+if ( isset($_REQUEST['config']) && preg_match('#^[A-Za-z0-9_-]+$#', $_REQUEST['config']) ) {
 	Config::setPath('inc/config/config-' . $_REQUEST['config'] . '.php');
 }
 
