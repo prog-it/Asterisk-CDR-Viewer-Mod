@@ -131,7 +131,7 @@ context internal {
 ```
 ; MixMonitor
 [macro-recording]
-exten => s,1,GoToIf($["${RECORDING}" = "1"]?mp3:no)
+exten => s,1,GoToIf($["${RECORDING}" = "1"]?mp3)
 exten => s,n,GoToIf($["${RECORDING}" = "2"]?wav:no)
 exten => s,n(mp3),Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${ARG1}-${ARG2});
 exten => s,n,Set(monopt=nice -n 19 /usr/bin/lame -b 32  --silent "${DIR_RECORDS}${fname}.wav"  "${DIR_RECORDS}${fname}.mp3" && rm -f "${DIR_RECORDS}${fname}.wav" && chmod o+r "${DIR_RECORDS}${fname}.mp3");
@@ -388,17 +388,15 @@ c		- за весь звонок (нет доп. тарифа)
 
 Как пример для создания нового плагина, можно использовать плагин `inc/plugins/my_callrates.php`
 
-### Работа с БД "Postgres"
+### Работа с БД PostgreSQL
 
-Для использования CDR Viewer с базой данных "Postgres", в базу необходимо добавить следующую функцию:
+Для использования CDR Viewer с базой данных PostgreSQL, в базу необходимо добавить следующую функцию:
 ```
 CREATE FUNCTION unix_timestamp(TIMESTAMP) RETURNS INTEGER AS '
 SELECT date_part(''epoch'', $1)::INTEGER AS RESULT
 ' LANGUAGE sql;
 CREATE FUNCTION
 ```
-
-### Остальное можно прочитать с файле "Старый Readme.txt"	
 	
 ## Использование CDR Viewer
 
@@ -426,7 +424,8 @@ CREATE FUNCTION
 
 #### Примеры
 
-- _1001, _1003, _1005
+- _1001, _1002, _1003
+- _100., _100Z, _1005
 - _1XXX, _562., _.0075, _2XXN
 
 
