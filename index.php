@@ -362,7 +362,7 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 				}
 				foreach($superresult as $val) {
 					if ( 
-						$val['disposition'] == 'ANSWERED' &&
+						in_array($val['disposition'], array('ANSWERED', 'NORMAL_CLEARING', 'NORMAL_UNSPECIFIED')) &&
 						array_key_exists($val['uniqueid'].'-'.'NO ANSWER' , $superresult) 
 					)
 					{
@@ -846,7 +846,7 @@ if ( isset($_REQUEST['need_asr_report']) && $_REQUEST['need_asr_report'] == 'tru
 			$all_asr_total_calls += $row[2];
 			$all_asr_bill_secs += $row[3];
 			
-			if ( $row[1] == 'ANSWERED' ) {
+			if ( in_array($row[1], array('ANSWERED', 'NORMAL_CLEARING', 'NORMAL_UNSPECIFIED')) ) {
 				$asr_answered_calls += $row[2];
 				$all_asr_answered_calls += $row[2]; 
 			}

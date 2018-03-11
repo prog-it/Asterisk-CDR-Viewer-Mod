@@ -396,6 +396,17 @@ foreach ($months as $i => $month) {
 			<option value="BUSY">Занято</option>
 			<option value="FAILED">Ошибка</option>
 			<option value="CONGESTION">Перегрузка</option>
+
+			<option value="NORMAL_CLEARING">Отвечено FS</option>
+			<option value="NORMAL_UNSPECIFIED">Отвечено FS (возможно прерван)</option>
+			<option value="RECOVERY_ON_TIMER_EXPIRE">Не отвечено FS</option>
+			<option value="ORIGINATOR_CANCEL">Звонящий отменил FS</option>
+			<option value="USER_BUSY">Занято FS</option>
+			<option value="CALL_REJECTED">Ошибка FS</option>
+			<option value="USER_NOT_REGISTERED">Пользователь не зарегистрирован FS</option>
+			<option value="NO_USER_RESPONSE">Нет ответа FS</option>
+			<option value="UNALLOCATED_NUMBER">Не существующий номер FS</option>
+			<option value="NORMAL_TEMPORARY_FAILURE">Перегрузка FS</option>
 		</select>
 	</td>
 </tr>
