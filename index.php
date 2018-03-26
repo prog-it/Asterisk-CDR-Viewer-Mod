@@ -517,7 +517,6 @@ switch ($group) {
 	break;
 	case "dst":
 		$graph_col_title = 'Куда звонили';
-		$graph_col_title = 'Куда звонили';
 	break;
 	case "did":
 		$graph_col_title = 'DID';
@@ -529,7 +528,7 @@ switch ($group) {
 		$graph_col_title = 'CallerID';
 	break;
 	case "userfield":
-		$graph_col_title = 'Польз. поле';
+		$graph_col_title = 'Комментарий';
 	break;
 	case "hour":
 		$group_by_field_php = array( '%Y-%m-%d %H', 13, '' );
