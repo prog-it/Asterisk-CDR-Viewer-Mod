@@ -45,9 +45,16 @@ var playerOverlayId = '#playerOverlay',
 	// Изменение поля "Комментарий" (userfield)
 	userfieldEdit = <?php echo Config::exists('display.main.userfield_edit') && Config::get('display.main.userfield_edit') == 1 ? 'true' : 'false'; ?>,
 	// Удаление строки из базы
-	entryDelete = <?php echo Config::exists('display.main.entry_delete') && Config::get('display.main.entry_delete') == 1 ? 'true' : 'false'; ?>;	
+	entryDelete = <?php echo Config::exists('display.main.entry_delete') && Config::get('display.main.entry_delete') == 1 ? 'true' : 'false'; ?>;
 </script>
 <script src="img/script.js?<?php echo filemtime('img/script.js'); ?>"></script>
+<style>
+/* Минимальная и максимальная ширина всего шаблона */
+#container {
+	min-width: <?php echo Config::get('site.main.min_width') ? Config::get('site.main.min_width') : '1024px'; ?>;	
+	max-width: <?php echo Config::get('site.main.max_width') ? Config::get('site.main.max_width') : '1400px'; ?>;
+}
+</style>
 </head>
 <body>
 <div id="container">
