@@ -405,11 +405,41 @@ foreach ($months as $i => $month) {
 		<input class="margin-left0" type="checkbox" name="disposition_neg" id="id_disposition_neg" value="true"> <label for="id_disposition_neg">Не</label>&nbsp;
 		<select name="disposition" id="disposition">
 			<option selected="selected" value="all">Любой</option>
-			<option value="ANSWERED">Отвечено</option>
-			<option value="NO ANSWER">Не отвечено</option>
-			<option value="BUSY">Занято</option>
-			<option value="FAILED">Ошибка</option>
-			<option value="CONGESTION">Перегрузка</option>
+			<!-- Asterisk -->
+			<?php if ( Config::get('system.server_mode') == 0 || Config::get('system.server_mode') == 1 ) { ?>
+				<?php if ( Config::get('system.server_mode') == 0 ) { ?>
+				<optgroup label="Asterisk">
+				<?php } ?>			
+					<option value="ANSWERED">Отвечено</option>
+					<option value="NO ANSWER">Не отвечено</option>
+					<option value="BUSY">Занято</option>
+					<option value="FAILED">Ошибка</option>
+					<option value="CONGESTION">Перегрузка</option>
+				<?php if ( Config::get('system.server_mode') == 0 ) { ?>
+				</optgroup>
+				<?php } ?>				
+			<?php } ?>
+			<!-- / Asterisk -->
+			<!-- FreeSWITCH -->
+			<?php if ( Config::get('system.server_mode') == 0 || Config::get('system.server_mode') == 2 ) { ?>
+				<?php if ( Config::get('system.server_mode') == 0 ) { ?>
+				<optgroup label="FreeSWITCH">
+				<?php } ?>				
+					<option value="NORMAL_CLEARING">Отвечено FS</option>
+					<option value="NORMAL_UNSPECIFIED">Отвечено FS (возможно прерван)</option>
+					<option value="RECOVERY_ON_TIMER_EXPIRE">Не отвечено FS</option>
+					<option value="ORIGINATOR_CANCEL">Звонящий отменил FS</option>
+					<option value="USER_BUSY">Занято FS</option>
+					<option value="CALL_REJECTED">Ошибка FS</option>
+					<option value="USER_NOT_REGISTERED">Пользователь не зарегистрирован FS</option>
+					<option value="NO_USER_RESPONSE">Нет ответа FS</option>
+					<option value="UNALLOCATED_NUMBER">Несуществующий номер FS</option>
+					<option value="NORMAL_TEMPORARY_FAILURE">Перегрузка FS</option>
+					<?php if ( Config::get('system.server_mode') == 0 ) { ?>
+					</optgroup>
+					<?php } ?>
+			<?php } ?>
+			<!-- / FreeSWITCH -->
 		</select>
 	</td>
 </tr>

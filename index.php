@@ -361,9 +361,9 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 					$superresult[$val['uniqueid'].'-'.$val['disposition']] = $val;
 				}
 				foreach($superresult as $val) {
-					if ( 
-						$val['disposition'] == 'ANSWERED' &&
-						array_key_exists($val['uniqueid'].'-'.'NO ANSWER' , $superresult) 
+					if (
+						in_array($val['disposition'], array('ANSWERED', 'NORMAL_CLEARING', 'NORMAL_UNSPECIFIED'))
+						&& array_key_exists($val['uniqueid'].'-'.'NO ANSWER' , $superresult) 
 					)
 					{
 						unset ($superresult[$val['uniqueid'].'-'.'NO ANSWER']);

@@ -252,7 +252,48 @@ function formatDisposition($disposition, $amaflags) {
 		case 'CONGESTION':
 			$dispTxt = 'Перегрузка';
 			$style = 'congestion';
-			break;			
+			break;
+		// FreeSWITCH
+		case 'NORMAL_CLEARING':
+			$dispTxt = 'Отвечено FS';
+			$style = 'answer';
+			break;
+		case 'NORMAL_UNSPECIFIED':
+			$dispTxt = 'Отвечено FS (возможно прерван)';
+			$style = 'answer';
+			break;
+		case 'RECOVERY_ON_TIMER_EXPIRE':
+			$dispTxt = 'Не отвечено FS';
+			$style = 'noanswer';
+			break;
+		case 'ORIGINATOR_CANCEL':
+			$dispTxt = 'Звонящий отменил FS';
+			$style = 'noanswer';
+			break;
+		case 'USER_BUSY':
+			$dispTxt = 'Занято FS';
+			$style = 'busy';
+			break;
+		case 'CALL_REJECTED':
+			$dispTxt = 'Ошибка FS';
+			$style = 'failed';
+			break;
+		case 'USER_NOT_REGISTERED':
+			$dispTxt = 'Пользователь не зарегистрирован FS';
+			$style = 'failed';
+			break;
+		case 'NO_USER_RESPONSE':
+			$dispTxt = 'Нет ответа FS';
+			$style = 'failed';
+			break;
+		case 'UNALLOCATED_NUMBER':
+			$dispTxt = 'Несуществующий номер FS';
+			$style = 'failed';
+			break;
+		case 'NORMAL_TEMPORARY_FAILURE':
+			$dispTxt = 'Перегрузка FS';
+			$style = 'congestion';
+			break;
 		default:
 			$dispTxt = $disposition;
 	}
