@@ -262,7 +262,20 @@ function formatDisposition($disposition, $amaflags) {
 function formatDuration($duration, $billsec) {
 	$duration = sprintf( '%02d', intval($duration/60) ).':'.sprintf( '%02d', intval($duration%60) );
 	$billduration = sprintf( '%02d', intval($billsec/60) ).':'.sprintf( '%02d', intval($billsec%60) );
-	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-clipboard data-clipboard-text="'.$billduration.'" data-tooltip="По биллингу: '.$billduration.'">'.$duration.'</abbr></td>' . PHP_EOL;
+	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-clipboard data-clipboard-text="'.$billduration.'" data-tooltip="Обработка звонка: '.$billduration.'">'.$duration.'</abbr></td>' . PHP_EOL;
+}
+
+function formatDurWait($duration, $billsec) {
+	$durwait = $duration - $billsec;
+	$durwait = sprintf( '%02d', intval($durwait/60) ).':'.sprintf( '%02d', intval($durwait%60) );
+	$duration = sprintf( '%02d', intval($duration/60) ).':'.sprintf( '%02d', intval($duration%60) );
+	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-clipboard data-clipboard-text="'.$duration.'" data-tooltip="Длительность: '.$duration.'">'.$durwait.'</abbr></td>' . PHP_EOL;
+}
+
+function formatBillSec($duration, $billsec) {
+	$duration = sprintf( '%02d', intval($duration/60) ).':'.sprintf( '%02d', intval($duration%60) );
+	$billduration = sprintf( '%02d', intval($billsec/60) ).':'.sprintf( '%02d', intval($billsec%60) );
+	echo '<td class="record_col"><abbr class="simptip-position-top simptip-smooth simptip-fade" data-clipboard data-clipboard-text="'.$duration.'" data-tooltip="Длительность: '.$duration.'">'.$billduration.'</abbr></td>' . PHP_EOL;
 }
 
 function formatUserField($userfield) {

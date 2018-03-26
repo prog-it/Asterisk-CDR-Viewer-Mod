@@ -352,10 +352,24 @@ foreach ($months as $i => $month) {
 </tr>
 <?php } ?>
 
+<?php if ( Config::get('display.search.billsec') == (1||2) ) { ?>
+<tr class="<?php if ( Config::get('display.search.billsec') == 2 ) { echo 'spoilers'; } ?>">
+	<td>
+		<input type="radio" id="id_order_billsec" name="order" value="billsec">&nbsp;<label for="id_order_billsec">Длительность обработки звонка</label>
+	</td>
+	<td>
+		<input type="number" min="0" step="1" name="bill_min" id="id_bill_min" placeholder="от">
+		&ensp;&ndash;&ensp;
+		<input type="number" min="0" step="1" name="bill_max" id="id_bill_max" placeholder="до">
+		&nbsp;<label for="id_bill_max">сек.</label>
+	</td>
+</tr>
+<?php } ?>
+
 <?php if ( Config::get('display.search.duration') == (1||2) ) { ?>
 <tr class="<?php if ( Config::get('display.search.duration') == 2 ) { echo 'spoilers'; } ?>">
 	<td>
-		<input type="radio" id="id_order_duration" name="order" value="duration">&nbsp;<label for="id_order_duration">Длительность</label>
+		<input type="radio" id="id_order_duration" name="order" value="duration">&nbsp;<label for="id_order_duration">Длительность полная</label>
 	</td>
 	<td>
 		<input type="number" min="0" step="1" name="dur_min" id="id_dur_min" placeholder="от">

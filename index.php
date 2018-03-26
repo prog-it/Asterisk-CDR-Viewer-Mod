@@ -387,48 +387,69 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 				if ( $i == Config::get('display.main.header_step') ) {
 				?>
 					<tr>
-					<th class="record_col">Дата</th>
-					<th class="record_col">Статус</th>
-					<th class="record_col">Кто звонил</th>
-					<th class="record_col">Куда звонили</th>
-					<?php
-					if ( Config::exists('display.column.did') && Config::get('display.column.did') == 1 ) {
-						echo '<th class="record_col">DID</th>';
-					}
-					?>					
-					<th class="record_col">Длительность</th>
-					<?php
-					if ( $use_callrates === true ) {
-						if ( Config::exists('display.column.callrates') && Config::get('display.column.callrates') == 1 ) {
-							echo '<th class="record_col">Тариф</th>';
+						<th rowspan="2" class="record_col">Дата и время</th>
+						<th rowspan="2" class="record_col">Статус</th>
+						<th rowspan="2" class="record_col">Кто звонил</th>
+						<th rowspan="2" class="record_col">Куда звонили</th>
+						<?php
+						if ( Config::exists('display.column.did') && Config::get('display.column.did') == 1 ) {
+							echo '<th rowspan="2" class="record_col">DID</th>';
 						}
-						// Показать Направление
-						if ( Config::exists('display.column.callrates_dst') && Config::get('display.column.callrates_dst') == 1 ) {
-							echo '<th class="record_col">Направление</th>';
+						if ( Config::get('display.column.durwait') == 1
+							|| Config::get('display.column.billsec') == 1
+							|| Config::get('display.column.duration') == 1
+						) {
+							$colspan_duration = array_sum(array(
+								Config::get('display.column.durwait'),
+								Config::get('display.column.billsec'),
+								Config::get('display.column.duration'),
+							));
+							echo '<th colspan="'.$colspan_duration.'" class="record_col">Длительность</th>';
+						}						
+						if ( $use_callrates === true ) {
+							if ( Config::exists('display.column.callrates') && Config::get('display.column.callrates') == 1 ) {
+								echo '<th rowspan="2" class="record_col">Тариф</th>';
+							}
+							// Показать Направление
+							if ( Config::exists('display.column.callrates_dst') && Config::get('display.column.callrates_dst') == 1 ) {
+								echo '<th rowspan="2" class="record_col">Направление</th>';
+							}
 						}
-					}
-					if ( Config::exists('display.column.lastapp') && Config::get('display.column.lastapp') == 1 ) {
-						echo '<th class="record_col">Приложение</th>';
-					}
-					if ( Config::exists('display.column.channel') && Config::get('display.column.channel') == 1 ) {
-						echo '<th class="record_col">Вх. канал</th>';
-					}
-					if ( Config::exists('display.column.clid') && Config::get('display.column.clid') == 1 ) {
-						echo '<th class="record_col">CallerID</th>';
-					}
-					if ( Config::exists('display.column.dstchannel') && Config::get('display.column.dstchannel') == 1 ) {
-						echo '<th class="record_col">Исх. канал</th>';
-					}
-					if ( Config::exists('display.column.file') && Config::get('display.column.file') == 1 ) {
-						echo '<th class="record_col">Файл</th>';
-					}
-					if ( Config::exists('display.column.accountcode') && Config::get('display.column.accountcode') == 1 ) {
-						echo '<th class="record_col">Аккаунт</th>';
-					}
-					if ( Config::exists('display.column.userfield') && Config::get('display.column.userfield') == 1 ) {
-						echo '<th class="record_col">Комментарий</th>';
-					}
-					?>
+						if ( Config::exists('display.column.lastapp') && Config::get('display.column.lastapp') == 1 ) {
+							echo '<th rowspan="2" class="record_col">Приложение</th>';
+						}
+						if ( Config::exists('display.column.channel') && Config::get('display.column.channel') == 1 ) {
+							echo '<th rowspan="2" class="record_col">Вх. канал</th>';
+						}
+						if ( Config::exists('display.column.clid') && Config::get('display.column.clid') == 1 ) {
+							echo '<th rowspan="2" class="record_col">CallerID</th>';
+						}
+						if ( Config::exists('display.column.dstchannel') && Config::get('display.column.dstchannel') == 1 ) {
+							echo '<th rowspan="2" class="record_col">Исх. канал</th>';
+						}
+						if ( Config::exists('display.column.file') && Config::get('display.column.file') == 1 ) {
+							echo '<th rowspan="2" class="record_col">Файл</th>';
+						}
+						if ( Config::exists('display.column.accountcode') && Config::get('display.column.accountcode') == 1 ) {
+							echo '<th rowspan="2" class="record_col">Аккаунт</th>';
+						}
+						if ( Config::exists('display.column.userfield') && Config::get('display.column.userfield') == 1 ) {
+							echo '<th rowspan="2" class="record_col">Комментарий</th>';
+						}
+						?>
+					</tr>
+					<tr>
+						<?php
+						if ( Config::exists('display.column.durwait') && Config::get('display.column.durwait') == 1 ) {
+							echo '<th class="record_col">ожидание ответа</th>';
+						}
+						if ( Config::exists('display.column.billsec') && Config::get('display.column.billsec') == 1 ) {
+							echo '<th class="record_col">обработка звонка</th>';
+						}
+						if ( Config::exists('display.column.duration') && Config::get('display.column.duration') == 1 ) {
+							echo '<th class="record_col">полная</th>';
+						}						
+						?>
 					</tr>
 					<?php
 					$i = 0;
@@ -447,7 +468,15 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 						formatDst('', $row['dcontext']);
 					}					
 				}
-				formatDuration($row['duration'], $row['billsec']);
+				if ( Config::exists('display.column.durwait') && Config::get('display.column.durwait') == 1 ) {
+					formatDurWait($row['duration'], $row['billsec']);
+				}
+				if ( Config::exists('display.column.billsec') && Config::get('display.column.billsec') == 1 ) {
+					formatBillSec($row['duration'], $row['billsec']);
+				}
+				if ( Config::exists('display.column.duration') && Config::get('display.column.duration') == 1 ) {
+					formatDuration($row['duration'], $row['billsec']);
+				}				
 				if ( $use_callrates === true ) {
 					$rates = callrates( $row['dst'],$row['billsec'],Config::get('callrate.csv_file') );
 					if ( Config::exists('display.column.callrates') && Config::get('display.column.callrates') == 1 ) {
