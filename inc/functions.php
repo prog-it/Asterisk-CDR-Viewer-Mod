@@ -125,7 +125,7 @@ function getFileParams($row) {
 	$rec['path'] = Config::get('system.monitor_dir').'/'.$rec['filename'];
 	
 	# Аудио
-	if ( file_exists($rec['path']) && $recorded_file && filesize($rec['path'])/1024 >= Config::get('system.fsize_exists') && preg_match('#(.+)\.'.$tmp['system_audio_format'].'$#i', $rec['filename']) ) {
+	if ( is_file($rec['path']) && $recorded_file && filesize($rec['path'])/1024 >= Config::get('system.fsize_exists') && preg_match('#(.+)\.'.$tmp['system_audio_format'].'$#i', $rec['filename']) ) {
 		$tmp['result'] = array(
 			'type' => 'audio',
 			'path' => base64_encode($rec['filename']),
@@ -135,7 +135,7 @@ function getFileParams($row) {
 	else if ( 
 			Config::exists('system.archive_format') && 
 			$recorded_file &&
-			file_exists($rec['path'].'.'.Config::get('system.archive_format')) &&
+			is_file($rec['path'].'.'.Config::get('system.archive_format')) &&
 			filesize($rec['path'].'.'.Config::get('system.archive_format'))/1024 >= Config::get('system.fsize_exists') 
 		) {
 		$tmp['result'] = array(
@@ -145,7 +145,7 @@ function getFileParams($row) {
 	}
 	# Факс
 	//else if (file_exists($rec['path']) && preg_match('#(.*)\.tiff?$#i', $rec['filename']) && $rec['filesize'] >= Config::get('system.fsize_exists')) {
-	else if ( file_exists($rec['path']) && $recorded_file && filesize($rec['path'])/1024 >= Config::get('system.fsize_exists') ) {
+	else if ( is_file($rec['path']) && $recorded_file && filesize($rec['path'])/1024 >= Config::get('system.fsize_exists') ) {
 		$tmp['result'] = array(
 			'type' => 'fax',
 			'path' => base64_encode($rec['filename']),

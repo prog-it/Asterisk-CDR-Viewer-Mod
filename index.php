@@ -220,7 +220,7 @@ if ( strlen($where) > 9 ) {
 }
 
 $use_callrates = false;
-if ( Config::get('callrate.enabled') == 1 && file_exists(Config::get('callrate.csv_file')) ) {
+if ( Config::get('callrate.enabled') == 1 && is_file(Config::get('callrate.csv_file')) ) {
 	$use_callrates = true;	
 }
 
@@ -233,7 +233,7 @@ if ( isset($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) {
 	$csv_date = time();
 	$csv_fname = 'report__' . date('Y-m-d_H-i-s', $csv_date) . '_' . md5($csv_date.'-'.$where) . '.csv';
 	$csv_delim = Config::get('system.csv_delim');
-	if ( !file_exists(Config::get('system.tmp_dir').'/'.$csv_fname) ) {
+	if ( !is_file(Config::get('system.tmp_dir').'/'.$csv_fname) ) {
 		$handle = fopen(Config::get('system.tmp_dir').'/'.$csv_fname, "w");
 		$query = "SELECT * FROM $db_table_name $where $order $sort LIMIT $result_limit";
 		try {
