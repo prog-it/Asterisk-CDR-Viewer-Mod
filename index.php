@@ -428,7 +428,7 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 							echo '<th rowspan="2" class="record_col">Исх. канал</th>';
 						}
 						if ( Config::exists('display.column.file') && Config::get('display.column.file') == 1 ) {
-							echo '<th rowspan="2" class="record_col">Файл</th>';
+							echo '<th rowspan="2" class="record_col">Запись</th>';
 						}
 						if ( Config::exists('display.column.accountcode') && Config::get('display.column.accountcode') == 1 ) {
 							echo '<th rowspan="2" class="record_col">Аккаунт</th>';

@@ -212,7 +212,7 @@ return array(
 			'dstchannel' => 1,
 			## Приложение
 			'lastapp' => 1,
-			## Файл
+			## Запись
 			'file' => 1,			
 			## Комментарий (userfield)
 			'userfield' => 1,			
