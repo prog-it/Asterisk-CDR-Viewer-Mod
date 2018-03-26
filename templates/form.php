@@ -428,7 +428,7 @@ foreach ($months as $i => $month) {
 			<optgroup label="Номер телефона">
 				<option value="clid">Имя звонящего</option>
 				<option value="src">Кто звонил</option>
-				<option value="dst">DID</option>
+				<option value="did">DID</option>
 				<option value="dst">Куда звонили</option>
 			</optgroup>
 			<optgroup label="Тех. информация">
