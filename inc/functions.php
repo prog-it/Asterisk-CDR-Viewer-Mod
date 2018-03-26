@@ -118,6 +118,10 @@ function getFileParams($row) {
 		$rec['filename'] = "$mycalldate_y/$mycalldate_ym/$mycalldate_ymd/$recorded_file";
 	} else if ( Config::get('system.storage_format') === 4 ) {
 		$rec['filename'] = "$mycalldate_y/$mycalldate_m/$mycalldate_d/$recorded_file";
+	} else if ( Config::get('system.storage_format') === 5 ) {
+		$rec['filename'] = $recorded_file;
+	} else if ( Config::get('system.storage_format') === 6 ) {
+		$rec['filename'] = $recorded_file.'.'.$tmp['system_audio_format'];
 	} else {
 		$rec['filename'] = $recorded_file;
 	}
@@ -125,19 +129,22 @@ function getFileParams($row) {
 	$rec['path'] = Config::get('system.monitor_dir').'/'.$rec['filename'];
 	
 	# Аудио
-	if ( is_file($rec['path']) && $recorded_file && filesize($rec['path'])/1024 >= Config::get('system.fsize_exists') && preg_match('#(.+)\.'.$tmp['system_audio_format'].'$#i', $rec['filename']) ) {
+	if ( is_file($rec['path'])
+		&& $recorded_file
+		&& filesize($rec['path'])/1024 >= Config::get('system.fsize_exists')
+		&& preg_match('#(.+)\.'.$tmp['system_audio_format'].'$#i', $rec['filename'])
+	) {
 		$tmp['result'] = array(
 			'type' => 'audio',
 			'path' => base64_encode($rec['filename']),
 		);
 	}
 	# Архив
-	else if ( 
-			Config::exists('system.archive_format') && 
-			$recorded_file &&
-			is_file($rec['path'].'.'.Config::get('system.archive_format')) &&
-			filesize($rec['path'].'.'.Config::get('system.archive_format'))/1024 >= Config::get('system.fsize_exists') 
-		) {
+	else if ( Config::exists('system.archive_format')
+		&& $recorded_file
+		&& is_file($rec['path'].'.'.Config::get('system.archive_format'))
+		&& filesize($rec['path'].'.'.Config::get('system.archive_format'))/1024 >= Config::get('system.fsize_exists')
+	) {
 		$tmp['result'] = array(
 			'type' => 'archive',
 			'path' => base64_encode( $rec['filename'].'.'.Config::get('system.archive_format') ),
@@ -145,7 +152,10 @@ function getFileParams($row) {
 	}
 	# Факс
 	//else if (file_exists($rec['path']) && preg_match('#(.*)\.tiff?$#i', $rec['filename']) && $rec['filesize'] >= Config::get('system.fsize_exists')) {
-	else if ( is_file($rec['path']) && $recorded_file && filesize($rec['path'])/1024 >= Config::get('system.fsize_exists') ) {
+	else if ( is_file($rec['path'])
+		&& $recorded_file
+		&& filesize($rec['path'])/1024 >= Config::get('system.fsize_exists')
+	) {
 		$tmp['result'] = array(
 			'type' => 'fax',
 			'path' => base64_encode($rec['filename']),
