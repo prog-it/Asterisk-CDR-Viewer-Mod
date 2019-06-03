@@ -141,7 +141,7 @@ context internal {
 
 ```
 ; MixMonitor
-[macro-recording]
+[recording]
 exten => s,1,GoToIf($["${RECORDING}" = "1"]?mp3)
 exten => s,n,GoToIf($["${RECORDING}" = "2"]?wav:no)
 exten => s,n(mp3),Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${ARG1}-${ARG2});
