@@ -164,7 +164,7 @@ exten => s,n(no),Verbose(Exit record);
 
 ```
 [internal]
-exten => _X.,1,Macro(recording,${CALLERID(num)},${EXTEN})
+exten => _X.,1,GoSub(recording,s,1(${CALLERID(num)},${EXTEN}))
 exten => _X.,n,Dial(SIP/${EXTEN},60)
 exten => _X.,n,Hangup()
 ```
