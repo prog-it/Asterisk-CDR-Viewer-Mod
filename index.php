@@ -658,9 +658,11 @@ if ( isset($_REQUEST['need_chart']) && $_REQUEST['need_chart'] == 'true' ) {
 	}
 }
 
-if ( isset($_REQUEST['need_minutes_report']) && $_REQUEST['need_minutes_report'] == 'true' ) {
-	$query2 = "SELECT $group_by_field AS group_by_field, count(*) AS total_calls, sum(duration), sum(billsec) AS total_duration FROM $db_table_name $where GROUP BY group_by_field ORDER BY group_by_field ASC LIMIT $result_limit";
+$db_index = Config::get('db.index');
+$db_table_index = !empty($db_index) ? " USE INDEX ($db_index) " : "";
 
+if ( isset($_REQUEST['need_minutes_report']) && $_REQUEST['need_minutes_report'] == 'true' ) {
+	$query2 = "SELECT $group_by_field AS group_by_field, count(*) AS total_calls, sum(duration), sum(billsec) AS total_duration FROM " . $db_table_name . $db_table_index  . $where . "GROUP BY group_by_field ORDER BY group_by_field ASC LIMIT $result_limit";
 	$tot_calls = 0;
 	$tot_duration = 0;
 

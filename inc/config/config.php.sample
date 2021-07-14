@@ -3,6 +3,7 @@
 return array(
 	### Подключение к базе данных
 	'db' => array(
+	        'index' => 'calldate',
 		# Тип базы, который поддерживается PDO. Например: mysql, pgsql
 		'type' => 'mysql',
 		# Хост
